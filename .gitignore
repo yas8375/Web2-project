@@ -1,0 +1,19 @@
+# Angular
+node_modules/
+dist/
+.angular/
+
+# Spring Boot
+target/
+*.class
+.mvn/
+
+# IDEs
+.vscode/
+.idea/
+*.iml
+
+# OS & Secrets
+.DS_Store
+Thumbs.db
+.env
