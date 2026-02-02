@@ -1,17 +1,32 @@
+# -----------------------------------------------------------------------
+# Phase 1: CI Setup Verification
+# This workflow proves that GitHub Actions is correctly configured.
+# -----------------------------------------------------------------------
+
 name: Setup Verification Workflow
 
+# 1. Triggers: When should this robot start working?
+# It runs when code is Pushed or a Pull Request is opened on the 'main' branch.
 on:
   push:
-    branches: [ main ]
+    branches: [ "main" ]
   pull_request:
-    branches: [ main ]
+    branches: [ "main" ]
 
+# 2. Jobs: The tasks to be executed.
 jobs:
   build:
+    # We use a standard Linux (Ubuntu) server provided by GitHub.
     runs-on: ubuntu-latest
 
+    # 3. Steps: The sequence of actions the robot will take.
     steps:
-    - uses: actions/checkout@v3
     
-    - name: Run a one-line script
-      run: echo "GitHub Actions is working successfully! The setup is correct."
+    # Step A: Download the code from the repository to the server.
+    - name: Checkout code
+      uses: actions/checkout@v3
+    
+    # Step B: Run a simple script to verify the system is working.
+    # In Phase 3, we will replace this with real tests (e.g., 'mvn test' or 'npm test').
+    - name: Verify Setup
+      run: echo "✅ GitHub Actions is working successfully! The setup is correct."
