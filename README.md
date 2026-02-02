@@ -62,8 +62,8 @@
 
 
 Team Members:
-Yasmeen Otyfah - 443204580
-Samiha Nasser - 443204635
-Raghad Alyousfy - 444203521
-Aleen Alqasem - 444201194
-roua Wadah - 443204606
+* Yasmeen Otyfah - 443204580
+* Samiha Nasser - 443204635
+* Raghad Alyousfy - 444203521
+* Aleen Alqasem - 444201194
+* roua Wadah - 443204606
