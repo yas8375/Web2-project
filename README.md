@@ -28,3 +28,10 @@ This web application offers a complete experience for browsing and renting movie
 
 ### 5. User Interface
 - Responsive Design: The interface is built using Bootstrap to ensure it works smoothly on various screen sizes.
+
+## Team Members
+- Yasmeen Otyfah - 443204580
+- Samiha Nasser - 443204635
+- Raghad Alyousfy - 444203521
+- Aleen Alqasem - 444201194
+- roua Wadah - 443204606
