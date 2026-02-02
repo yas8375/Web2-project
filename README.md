@@ -26,19 +26,12 @@ This web application offers a complete experience for browsing and renting movie
 - Secure Login: Users must log in with an email and password to access the system.
 - Access Control: Ensures restricted pages are only accessible to authorized users.
 
-# 
+### 5. User Interface
+- Responsive Design: The interface is built using Bootstrap to ensure it works smoothly on various screen sizes.
 
-# \### 5. User Interface
-
-# \*   \*\*Responsive Design:\*\* The interface is built using Bootstrap to ensure it works smoothly on various screen sizes.
-
-# 
-
-
-
-Team Members:
-* Yasmeen Otyfah - 443204580
-* Samiha Nasser - 443204635
-* Raghad Alyousfy - 444203521
-* Aleen Alqasem - 444201194
-* roua Wadah - 443204606
+## Team Members
+- Yasmeen Otyfah - 443204580
+- Samiha Nasser - 443204635
+- Raghad Alyousfy - 444203521
+- Aleen Alqasem - 444201194
+- roua Wadah - 443204606
