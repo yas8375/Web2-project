@@ -34,4 +34,4 @@ This web application offers a complete experience for browsing and renting movie
 - Samiha Nasser - 443204635
 - Raghad Alyousfy - 444203521
 - Aleen Alqasem - 444201194
-- rouaa Wadah - 443204606
+- roua Wadah - 443204606
