@@ -80,6 +80,7 @@ Not required.
 }
 ```
 
+**Frontend &lt;-&gt; Backend**
 **Frontend <-> Backend**
 
 - Page: Login page.
@@ -117,6 +118,7 @@ Required (session cookie, e.g., `JSESSIONID`).
 - Validation:
   - User must be authenticated; else `401`.
   - `movieId` must exist; else `404`.
+  - `quantity` must be integer &gt;= 1 for add/update; else `400`.
   - `quantity` must be integer >= 1 for add/update; else `400`.
 
 ### 2.1 GET /api/cart
@@ -178,6 +180,7 @@ Required (session cookie, e.g., `JSESSIONID`).
 **Validation**
 
 - `movieId` required, non-empty.
+- `quantity` optional; default 1; if provided, must be integer &gt;= 1.
 - `quantity` optional; default 1; if provided, must be integer >= 1.
 
 **Responses**
@@ -210,6 +213,7 @@ Required (session cookie, e.g., `JSESSIONID`).
 {
   "success": false,
   "message": "Validation error",
+  "errors": ["movieId is required", "quantity must be &gt;= 1"]
   "errors": ["movieId is required", "quantity must be >= 1"]
 }
 ```
@@ -253,6 +257,7 @@ Required (session cookie, e.g., `JSESSIONID`).
 
 **Validation**
 
+- `quantity` required, integer &gt;= 1.
 - `quantity` required, integer >= 1.
 
 **Responses**
@@ -285,6 +290,7 @@ Required (session cookie, e.g., `JSESSIONID`).
 {
   "success": false,
   "message": "Validation error",
+  "errors": ["quantity is required", "quantity must be &gt;= 1"]
   "errors": ["quantity is required", "quantity must be >= 1"]
 }
 ```
@@ -363,6 +369,7 @@ Required (session cookie, e.g., `JSESSIONID`).
 }
 ```
 
+**Frontend &lt;-&gt; Backend**
 **Frontend <-> Backend**
 
 - Page: Shopping Cart.
@@ -375,6 +382,7 @@ Required (session cookie, e.g., `JSESSIONID`).
 **Database Contract**
 
 - Tables: `cart_items` (links `users` and `movies`)
+- Columns: `user_id` (FK -&gt; users.id), `movie_id` (FK -&gt; movies.id), `quantity` (int &gt;= 1)
 - Columns: `user_id` (FK -> users.id), `movie_id` (FK -> movies.id), `quantity` (int >= 1)
 - Behavior:
   - Add: if `(user_id, movie_id)` exists, increment `quantity`; else insert.
@@ -449,6 +457,7 @@ Not required.
 }
 ```
 
+**Frontend &lt;-&gt; Backend**
 **Frontend <-> Backend**
 
 - Page: Single Movie page.
@@ -528,6 +537,7 @@ Not required.
 }
 ```
 
+**Frontend &lt;-&gt; Backend**
 **Frontend <-> Backend**
 
 - Page: Single Star page.
@@ -543,3 +553,221 @@ Not required.
   - `movies`: `id`, `title`, `year`
   - `stars_in_movies`: `star_id`, `movie_id`
 - Behavior: fetch star, join to movies via `stars_in_movies`, return combined result.
+
+---
+
+## 5. Searching Feature
+
+**Purpose**  
+Allow users to search for movies using keywords and optional filters such as title, year, genre, or actor name.
+
+**Endpoint**  
+`GET /api/movies/search`
+
+**Authentication**  
+Not required.
+
+**Request**
+
+- Headers: `Content-Type: application/json`
+- Query Parameters (example): `keyword=batman&year=2020&genre=Action&actor=Tom&page=1&size=20`
+- Parameters:
+  - `keyword`: optional search text.
+  - `year`: optional movie year.
+  - `genre`: optional genre filter.
+  - `actor`: optional actor name.
+  - `page`: pagination page number.
+  - `size`: number of results per page.
+
+**Responses**
+
+- `200 OK` - Success
+
+```json
+{
+  "success": true,
+  "results": [
+    {
+      "id": "tt12345",
+      "title": "Batman Begins",
+      "year": 2005,
+      "rating": 8.2
+    }
+  ],
+  "page": 1,
+  "totalResults": 120
+}
+```
+
+- `400 Bad Request`
+
+```json
+{
+  "success": false,
+  "message": "Invalid query parameters"
+}
+```
+
+- `500 Internal Server Error`
+
+```json
+{
+  "success": false,
+  "message": "Unexpected server error"
+}
+```
+
+**Frontend &lt;-&gt; Backend**
+
+- User enters search filters.
+- Frontend calls `/api/movies/search`.
+- Backend returns matching movies.
+- Frontend displays results.
+
+**Database Contract**
+
+- Backend searches `movies` table joined with `genres` and `actors` tables.
+
+---
+
+## 6. Browse by Movie Genre Feature
+
+**Purpose**  
+Allow users to browse movies filtered by genre.
+
+**Endpoint**  
+`GET /api/movies/genre/{genreName}`
+
+Example: `/api/movies/genre/Action?page=1&size=20`
+
+**Authentication**  
+Not required.
+
+**Request**
+
+- Path variable: `genreName` (genre name).
+- Query Parameters:
+  - `page`: pagination page.
+  - `size`: results per page.
+
+**Responses**
+
+- `200 OK`
+
+```json
+{
+  "success": true,
+  "genre": "Action",
+  "movies": [
+    {
+      "id": "tt111",
+      "title": "Mad Max",
+      "year": 2015
+    }
+  ]
+}
+```
+
+**Frontend &lt;-&gt; Backend**
+
+- User selects a genre → frontend requests movies → movies displayed.
+
+**Database Contract**
+
+- Movies are fetched using movie–genre relationship table.
+
+---
+
+## 7. Browse by Movie Title Feature
+
+**Purpose**  
+Allow users to browse movies alphabetically by title.
+
+**Endpoint**  
+`GET /api/movies/title/{letter}`
+
+Example: `/api/movies/title/B?page=1&size=20`
+
+**Authentication**  
+Not required.
+
+**Request**
+
+- Path variable: `letter` (starting letter).
+- Query Parameters:
+  - `page`, `size`: pagination parameters.
+
+**Responses**
+
+- `200 OK`
+
+```json
+{
+  "success": true,
+  "letter": "B",
+  "movies": [
+    {
+      "id": "tt222",
+      "title": "Batman",
+      "year": 2008
+    }
+  ]
+}
+```
+
+**Frontend &lt;-&gt; Backend**
+
+- User clicks a letter → movies starting with that letter appear.
+
+**Database Contract**
+
+- Backend filters movies where title starts with provided letter.
+
+---
+
+## 8. Movie List Feature
+
+**Purpose**  
+Display a paginated list of movies on the main browsing page.
+
+**Endpoint**  
+`GET /api/movies`
+
+Example: `/api/movies?page=1&size=20&sort=rating`
+
+**Authentication**  
+Not required.
+
+**Request**
+
+- Query Parameters:
+  - `page`: page number.
+  - `size`: number of movies per page.
+  - `sort`: sorting field (rating, year, title).
+
+**Responses**
+
+- `200 OK`
+
+```json
+{
+  "success": true,
+  "movies": [
+    {
+      "id": "tt333",
+      "title": "Inception",
+      "year": 2010,
+      "rating": 8.8
+    }
+  ],
+  "page": 1
+}
+```
+
+**Frontend &lt;-&gt; Backend**
+
+- Homepage loads → frontend calls movies endpoint → movies displayed.
+
+**Database Contract**
+
+- Movies retrieved from `movies` table with sorting and pagination.
