@@ -81,6 +81,7 @@ Not required.
 ```
 
 **Frontend &lt;-&gt; Backend**
+**Frontend <-> Backend**
 
 - Page: Login page.
 - On submit: send `POST /api/auth/login` with JSON body.
@@ -118,6 +119,7 @@ Required (session cookie, e.g., `JSESSIONID`).
   - User must be authenticated; else `401`.
   - `movieId` must exist; else `404`.
   - `quantity` must be integer &gt;= 1 for add/update; else `400`.
+  - `quantity` must be integer >= 1 for add/update; else `400`.
 
 ### 2.1 GET /api/cart
 
@@ -179,6 +181,7 @@ Required (session cookie, e.g., `JSESSIONID`).
 
 - `movieId` required, non-empty.
 - `quantity` optional; default 1; if provided, must be integer &gt;= 1.
+- `quantity` optional; default 1; if provided, must be integer >= 1.
 
 **Responses**
 
@@ -211,6 +214,7 @@ Required (session cookie, e.g., `JSESSIONID`).
   "success": false,
   "message": "Validation error",
   "errors": ["movieId is required", "quantity must be &gt;= 1"]
+  "errors": ["movieId is required", "quantity must be >= 1"]
 }
 ```
 
@@ -254,6 +258,7 @@ Required (session cookie, e.g., `JSESSIONID`).
 **Validation**
 
 - `quantity` required, integer &gt;= 1.
+- `quantity` required, integer >= 1.
 
 **Responses**
 
@@ -286,6 +291,7 @@ Required (session cookie, e.g., `JSESSIONID`).
   "success": false,
   "message": "Validation error",
   "errors": ["quantity is required", "quantity must be &gt;= 1"]
+  "errors": ["quantity is required", "quantity must be >= 1"]
 }
 ```
 
@@ -364,6 +370,7 @@ Required (session cookie, e.g., `JSESSIONID`).
 ```
 
 **Frontend &lt;-&gt; Backend**
+**Frontend <-> Backend**
 
 - Page: Shopping Cart.
 - On load: `GET /api/cart`.
@@ -376,6 +383,7 @@ Required (session cookie, e.g., `JSESSIONID`).
 
 - Tables: `cart_items` (links `users` and `movies`)
 - Columns: `user_id` (FK -&gt; users.id), `movie_id` (FK -&gt; movies.id), `quantity` (int &gt;= 1)
+- Columns: `user_id` (FK -> users.id), `movie_id` (FK -> movies.id), `quantity` (int >= 1)
 - Behavior:
   - Add: if `(user_id, movie_id)` exists, increment `quantity`; else insert.
   - Update: set `quantity` for `(user_id, movie_id)`.
@@ -450,6 +458,7 @@ Not required.
 ```
 
 **Frontend &lt;-&gt; Backend**
+**Frontend <-> Backend**
 
 - Page: Single Movie page.
 - When a movie is clicked: navigate to `/movies/{movieId}` and call `GET /api/movies/{movieId}`.
@@ -529,6 +538,7 @@ Not required.
 ```
 
 **Frontend &lt;-&gt; Backend**
+**Frontend <-> Backend**
 
 - Page: Single Star page.
 - When a star name is clicked from movie details: navigate to `/stars/{starId}` and call `GET /api/stars/{starId}`.
