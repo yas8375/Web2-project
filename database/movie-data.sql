@@ -112130,7 +112130,7 @@ INSERT INTO stars_in_movies VALUES('nm0560368','tt0404213');
 INSERT INTO stars_in_movies VALUES('nm0917962','tt0404213');
 INSERT INTO stars_in_movies VALUES('nm0325431','tt0404213');
 INSERT INTO stars_in_movies VALUES('nm0573847','tt0404213');
-INSERT INTO stars_in_movies VALUES('nm0108703','tt0404213');
+INSERT INTO stars_in_movies VALUES('nm0108703','tt0404213');1
 INSERT INTO stars_in_movies VALUES('nm0032714','tt0404215');
 INSERT INTO stars_in_movies VALUES('nm3526931','tt0404215');
 INSERT INTO stars_in_movies VALUES('nm1580795','tt0404215');
