@@ -33,7 +33,11 @@ public class CartController {
     @GetMapping("/cart")
     public ResponseEntity<?> getCart() {
         return ResponseEntity.status(HttpStatus.NOT_IMPLEMENTED)
-                .body(Map.of("message", "Planned for next phase", "items", List.of()));
+                .body(Map.of(
+                        "page", "cart",
+                        "endpoint", "GET /api/cart",
+                        "items", List.of(),
+                        "message", "You are on Cart page. Cart retrieval implementation is planned for next phase."));
     }
 
     /**
@@ -49,7 +53,10 @@ public class CartController {
     @PostMapping("/cart/items")
     public ResponseEntity<?> addToCart(@RequestBody Map<String, Object> body) {
         return ResponseEntity.status(HttpStatus.NOT_IMPLEMENTED)
-                .body(Map.of("message", "Planned for next phase"));
+                .body(Map.of(
+                        "page", "cart",
+                        "endpoint", "POST /api/cart/items",
+                        "message", "You are on Cart page. Add-to-cart implementation is planned for next phase."));
     }
 
     /**
@@ -67,7 +74,11 @@ public class CartController {
             @PathVariable String movieId,
             @RequestBody Map<String, Object> body) {
         return ResponseEntity.status(HttpStatus.NOT_IMPLEMENTED)
-                .body(Map.of("message", "Planned for next phase", "movieId", movieId));
+                .body(Map.of(
+                        "page", "cart",
+                        "endpoint", "PUT /api/cart/items/{movieId}",
+                        "movieId", movieId,
+                        "message", "You are on Cart page. Update quantity implementation is planned for next phase."));
     }
 
     /**
@@ -83,6 +94,10 @@ public class CartController {
     @DeleteMapping("/cart/items/{movieId}")
     public ResponseEntity<?> removeCartItem(@PathVariable String movieId) {
         return ResponseEntity.status(HttpStatus.NOT_IMPLEMENTED)
-                .body(Map.of("message", "Planned for next phase", "movieId", movieId));
+                .body(Map.of(
+                        "page", "cart",
+                        "endpoint", "DELETE /api/cart/items/{movieId}",
+                        "movieId", movieId,
+                        "message", "You are on Cart page. Remove item implementation is planned for next phase."));
     }
 }

@@ -63,11 +63,12 @@ public class MovieController {
      */
     @GetMapping("/movies/{movieId}")
     public ResponseEntity<?> getMovieById(@PathVariable String movieId) {
-        Movie movie = movieService.getMovieById(movieId);
-        if (movie == null) {
-            return ResponseEntity.notFound().build();
-        }
-        return ResponseEntity.ok(movie);
+        return ResponseEntity.status(HttpStatus.NOT_IMPLEMENTED)
+                .body(Map.of(
+                        "page", "movie-details",
+                        "endpoint", "GET /api/movies/{movieId}",
+                        "movieId", movieId,
+                        "message", "You are on Movie Details page. Single movie implementation is planned for next phase."));
     }
 
     /**
@@ -83,6 +84,9 @@ public class MovieController {
     @GetMapping("/genres")
     public ResponseEntity<?> getGenres() {
         return ResponseEntity.status(HttpStatus.NOT_IMPLEMENTED)
-                .body(Map.of("message", "Planned for next phase"));
+                .body(Map.of(
+                        "page", "browse-genres",
+                        "endpoint", "GET /api/genres",
+                        "message", "You are on Browse by Genres page. Genres list implementation is planned for next phase."));
     }
 }

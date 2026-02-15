@@ -1,0 +1,7 @@
+<section>
+  <h1>Shopping Cart</h1>
+  <button (click)="loadCart()">Refresh</button>
+  <p class="error" *ngIf="errorMessage">{{ errorMessage }}</p>
+  <pre *ngIf="response">{{ response | json }}</pre>
+  <a routerLink="/checkout">Proceed to Checkout</a>
+</section>

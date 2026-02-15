@@ -1,0 +1,11 @@
+<section>
+  <h1>Checkout</h1>
+  <form (ngSubmit)="submit()" class="card">
+    <input name="firstName" [(ngModel)]="form.firstName" placeholder="First name" required />
+    <input name="lastName" [(ngModel)]="form.lastName" placeholder="Last name" required />
+    <input name="cardNumber" [(ngModel)]="form.cardNumber" placeholder="Card number" required />
+    <input name="expiration" [(ngModel)]="form.expiration" placeholder="YYYY-MM-DD" required />
+    <button type="submit">Pay</button>
+  </form>
+  <p>{{ message }}</p>
+</section>

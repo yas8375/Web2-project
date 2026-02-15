@@ -1,0 +1,25 @@
+<section>
+  <h1>Movie List</h1>
+  <p class="error" *ngIf="errorMessage">{{ errorMessage }}</p>
+
+  <table *ngIf="movies.length > 0">
+    <thead>
+      <tr>
+        <th>ID</th>
+        <th>Title</th>
+        <th>Year</th>
+        <th>Director</th>
+        <th>Action</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let m of movies">
+        <td>{{ m.id }}</td>
+        <td><a [routerLink]="['/movies', m.id]">{{ m.title }}</a></td>
+        <td>{{ m.year }}</td>
+        <td>{{ m.director }}</td>
+        <td><button (click)="addToCart(m.id)">Add</button></td>
+      </tr>
+    </tbody>
+  </table>
+</section>

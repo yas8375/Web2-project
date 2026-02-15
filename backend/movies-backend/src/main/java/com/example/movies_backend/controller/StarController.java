@@ -28,6 +28,10 @@ public class StarController {
     @GetMapping("/stars/{starId}")
     public ResponseEntity<?> getStarById(@PathVariable String starId) {
         return ResponseEntity.status(HttpStatus.NOT_IMPLEMENTED)
-                .body(Map.of("message", "Planned for next phase", "starId", starId));
+                .body(Map.of(
+                        "page", "star-details",
+                        "endpoint", "GET /api/stars/{starId}",
+                        "starId", starId,
+                        "message", "You are on Star Details page. Star details implementation is planned for next phase."));
     }
 }

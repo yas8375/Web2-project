@@ -12,8 +12,14 @@ export interface Movie {
 @Injectable({ providedIn: 'root' })
 export class MovieService {
   private api = 'http://localhost:8081/api/movies';
+
   constructor(private http: HttpClient) {}
+
   getMovies(): Observable<Movie[]> {
     return this.http.get<Movie[]>(this.api);
+  }
+
+  getMovieById(movieId: string): Observable<Movie> {
+    return this.http.get<Movie>(`${this.api}/${movieId}`);
   }
 }

@@ -28,6 +28,9 @@ public class AuthController {
     @PostMapping("/login")
     public ResponseEntity<?> login(@RequestBody Map<String, String> body) {
         return ResponseEntity.status(HttpStatus.NOT_IMPLEMENTED)
-                .body(Map.of("message", "Planned for next phase"));
+                .body(Map.of(
+                        "page", "login",
+                        "endpoint", "POST /api/login",
+                        "message", "You are on Login page. Authentication logic is planned for next phase."));
     }
 }

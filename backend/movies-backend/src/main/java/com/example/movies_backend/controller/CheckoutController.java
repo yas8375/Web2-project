@@ -28,6 +28,9 @@ public class CheckoutController {
     @PostMapping("/checkout")
     public ResponseEntity<?> checkout(@RequestBody Map<String, Object> body) {
         return ResponseEntity.status(HttpStatus.NOT_IMPLEMENTED)
-                .body(Map.of("message", "Planned for next phase"));
+                .body(Map.of(
+                        "page", "checkout",
+                        "endpoint", "POST /api/checkout",
+                        "message", "You are on Checkout page. Payment and order logic is planned for next phase."));
     }
 }

@@ -1,0 +1,6 @@
+<section>
+  <h1>Browse by Title</h1>
+  <div>
+    <a *ngFor="let l of letters" [routerLink]="['/movies']" [queryParams]="{ letter: l }">{{ l }} </a>
+  </div>
+</section>

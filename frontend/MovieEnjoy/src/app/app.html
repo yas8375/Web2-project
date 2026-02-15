@@ -1,58 +1,12 @@
-<div class="page">
-  <header class="topbar">
-    <div class="brand">MovieEnjoy</div>
-    <nav class="menu">
-      <a class="active" href="#">Home</a>
-      <a href="#">Movies</a>
-      <a href="#">Series</a>
-      <a href="#">Collection</a>
-      <a href="#">FAQ</a>
-    </nav>
-  </header>
+<header class="topbar">
+  <a routerLink="/main">Home</a>
+  <a routerLink="/movies">Movies</a>
+  <a routerLink="/browse/genres">Genres</a>
+  <a routerLink="/browse/titles">Titles</a>
+  <a routerLink="/cart">Cart</a>
+  <a routerLink="/login">Login</a>
+</header>
 
-  <section class="hero">
-    <h1>Movies</h1>
-    <p>Discover your next watch</p>
-  </section>
-
-  <section class="search-panel">
-    <div class="search-title">Advanced Search</div>
-    <div class="search-row">
-      <input type="text" placeholder="Search title..." />
-      <button type="button">Search</button>
-    </div>
-    <div class="chips">
-      <span>Drama</span>
-      <span>Action</span>
-      <span>Adventure</span>
-      <span>Romance</span>
-      <span>Comedy</span>
-      <span>Thriller</span>
-    </div>
-  </section>
-
-  @if (error) {
-    <p class="error">{{ error }}</p>
-  }
-
-  @if (!error && movies.length === 0) {
-    <p class="loading">Loading movies...</p>
-  }
-
-  @if (movies.length > 0) {
-    <section class="movies-grid">
-      @for (m of movies; track m.id) {
-        <article class="movie-card">
-          <div class="plus">+</div>
-          <div class="poster">
-            <span>{{ m.title.charAt(0) }}</span>
-          </div>
-          <div class="meta">
-            <h3>{{ m.title }}</h3>
-            <p>{{ m.year }} • {{ m.director }}</p>
-          </div>
-        </article>
-      }
-    </section>
-  }
-</div>
+<main class="container">
+  <router-outlet></router-outlet>
+</main>
