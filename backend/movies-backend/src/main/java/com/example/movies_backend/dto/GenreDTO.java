@@ -1,13 +1,13 @@
 package com.example.movies_backend.dto;
 
-public class GenreDT {
+public class GenreDTO {
     private Integer id;
     private String name;
 
-    public GenreDT() {
+    public GenreDTO() {
     }
 
-    public GenreDT(Integer id, String name) {
+    public GenreDTO(Integer id, String name) {
         this.id = id;
         this.name = name;
     }
