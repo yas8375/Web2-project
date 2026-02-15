@@ -1,5 +1,5 @@
 package com.example.movies_backend.model;
 
-public class moviemodel {
+public class CreditCard {
 
 }

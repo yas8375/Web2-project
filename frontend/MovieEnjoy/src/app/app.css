@@ -1,0 +1,228 @@
+:host {
+  --bg-main: #050b1e;
+  --bg-card: #0b1733;
+  --bg-soft: #111f42;
+  --text-main: #f4f6ff;
+  --text-soft: #9ca8cc;
+  --line: #213669;
+  --accent: #5fd3ff;
+  --chip: #ff4db8;
+  display: block;
+  min-height: 100vh;
+  background:
+    radial-gradient(circle at 85% 8%, rgba(59, 134, 255, 0.28), transparent 35%),
+    radial-gradient(circle at 15% 85%, rgba(255, 77, 184, 0.25), transparent 30%),
+    var(--bg-main);
+  color: var(--text-main);
+  font-family: "Poppins", "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+}
+
+.page {
+  max-width: 1160px;
+  margin: 24px auto;
+  padding: 16px;
+}
+
+.topbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 16px;
+  padding: 12px 16px;
+  border: 1px solid var(--line);
+  border-radius: 14px;
+  background: rgba(5, 11, 30, 0.8);
+  backdrop-filter: blur(6px);
+}
+
+.brand {
+  font-size: 20px;
+  font-weight: 700;
+  color: var(--accent);
+}
+
+.menu {
+  display: flex;
+  gap: 16px;
+  flex-wrap: wrap;
+}
+
+.menu a {
+  color: var(--text-soft);
+  text-decoration: none;
+  font-size: 14px;
+  transition: color 0.2s ease;
+}
+
+.menu a.active,
+.menu a:hover {
+  color: var(--text-main);
+}
+
+.hero {
+  margin: 24px 0 14px;
+}
+
+.hero h1 {
+  margin: 0;
+  font-size: 36px;
+  font-weight: 700;
+}
+
+.hero p {
+  margin: 6px 0 0;
+  color: var(--text-soft);
+}
+
+.search-panel {
+  border: 1px solid var(--line);
+  border-radius: 16px;
+  background: linear-gradient(180deg, rgba(17, 31, 66, 0.6), rgba(8, 18, 40, 0.85));
+  padding: 14px;
+  margin-bottom: 22px;
+}
+
+.search-title {
+  display: inline-block;
+  margin-bottom: 12px;
+  padding: 5px 12px;
+  border-radius: 999px;
+  background: rgba(95, 211, 255, 0.16);
+  color: var(--accent);
+  font-size: 13px;
+  font-weight: 600;
+}
+
+.search-row {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 12px;
+}
+
+.search-row input {
+  flex: 1;
+  min-width: 0;
+  border: 1px solid var(--line);
+  background: #0a1634;
+  color: var(--text-main);
+  border-radius: 10px;
+  padding: 10px 12px;
+  font-size: 14px;
+}
+
+.search-row input::placeholder {
+  color: #7f8eb8;
+}
+
+.search-row button {
+  border: 1px solid var(--line);
+  background: #0f2f67;
+  color: white;
+  border-radius: 10px;
+  padding: 10px 14px;
+  cursor: pointer;
+}
+
+.chips {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.chips span {
+  padding: 6px 10px;
+  border-radius: 999px;
+  font-size: 12px;
+  border: 1px solid #3b4f86;
+  background: #0a1634;
+  color: #d7e1ff;
+}
+
+.chips span:nth-child(odd) {
+  background: rgba(255, 77, 184, 0.2);
+  border-color: rgba(255, 77, 184, 0.4);
+}
+
+.error {
+  color: #ffd2d2;
+  background: rgba(139, 27, 27, 0.4);
+  border: 1px solid rgba(255, 117, 117, 0.45);
+  padding: 10px 12px;
+  border-radius: 10px;
+}
+
+.loading {
+  color: var(--text-soft);
+}
+
+.movies-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(170px, 1fr));
+  gap: 14px;
+}
+
+.movie-card {
+  position: relative;
+  border: 1px solid var(--line);
+  border-radius: 14px;
+  overflow: hidden;
+  background: linear-gradient(165deg, #111f42, #0a1530);
+}
+
+.plus {
+  position: absolute;
+  top: 8px;
+  left: 8px;
+  width: 24px;
+  height: 24px;
+  border-radius: 8px;
+  background: rgba(8, 12, 26, 0.82);
+  color: #c7eeff;
+  display: grid;
+  place-items: center;
+  font-weight: 700;
+  z-index: 2;
+}
+
+.poster {
+  height: 190px;
+  display: grid;
+  place-items: center;
+  background:
+    linear-gradient(140deg, rgba(95, 211, 255, 0.35), transparent 55%),
+    linear-gradient(320deg, rgba(255, 77, 184, 0.35), transparent 55%),
+    #0b1733;
+}
+
+.poster span {
+  font-size: 54px;
+  font-weight: 800;
+  color: rgba(255, 255, 255, 0.88);
+}
+
+.meta {
+  padding: 10px;
+}
+
+.meta h3 {
+  margin: 0;
+  font-size: 14px;
+  line-height: 1.4;
+}
+
+.meta p {
+  margin: 6px 0 0;
+  font-size: 12px;
+  color: var(--text-soft);
+}
+
+@media (max-width: 720px) {
+  .topbar {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .search-row {
+    flex-direction: column;
+  }
+}
