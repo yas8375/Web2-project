@@ -18,3 +18,10 @@ build/
 
 # Security
 .env
+.env.*
+!.env.example
+
+# Local override configs
+*.local
+backend/movies-backend/src/main/resources/application-local.properties
+frontend/MovieEnjoy/src/environments/environment.local.ts
