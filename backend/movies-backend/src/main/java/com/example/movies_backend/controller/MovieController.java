@@ -45,9 +45,9 @@ public class MovieController {
             @RequestParam(defaultValue = "title") String sort,
             @RequestParam(defaultValue = "asc") String order,
             @RequestParam(defaultValue = "1") Integer page,
-            @RequestParam(defaultValue = "10") Integer size) {
+            @RequestParam(defaultValue = "50") Integer size) {
 
-        List<Movie> movies = movieService.getAllMovies();
+        List<Movie> movies = movieService.getMoviesPage(page, size);
         return ResponseEntity.ok(movies);
     }
 

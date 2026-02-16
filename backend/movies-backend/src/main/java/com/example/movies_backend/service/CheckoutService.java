@@ -25,6 +25,7 @@ public class CheckoutService {
             String lastName,
             String cardNumber,
             String expiration) {
-        throw new UnsupportedOperationException("Planned for next phase");
+        // Placeholder for Phase 3
+        return null;
     }
 }

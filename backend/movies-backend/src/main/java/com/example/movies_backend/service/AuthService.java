@@ -17,6 +17,7 @@ public class AuthService {
      * true/false login status (planned for next phase).
      */
     public boolean login(String email, String password) {
-        throw new UnsupportedOperationException("Planned for next phase");
+        // Placeholder for Phase 3
+        return false;
     }
 }

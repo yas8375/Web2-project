@@ -18,6 +18,7 @@ public class StarService {
      * Star details map/object (planned for next phase).
      */
     public Map<String, Object> getStarById(String starId) {
-        throw new UnsupportedOperationException("Planned for next phase");
+        // Placeholder for Phase 3
+        return null;
     }
 }

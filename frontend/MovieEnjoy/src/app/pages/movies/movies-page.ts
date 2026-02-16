@@ -1,24 +1,36 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { RouterLink } from '@angular/router';
 import { Movie, MovieService } from '../../movie.service';
 
 @Component({
   selector: 'app-movies-page',
   standalone: true,
-  imports: [CommonModule, RouterLink],
+  imports: [CommonModule],
   templateUrl: './movies-page.html'
 })
 export class MoviesPageComponent implements OnInit {
   movies: Movie[] = [];
   errorMessage = '';
+  loading = false;
 
   constructor(private movieService: MovieService) {}
 
   ngOnInit(): void {
+    this.loadMovies();
+  }
+
+  loadMovies(): void {
+    this.loading = true;
+    this.errorMessage = '';
     this.movieService.getMovies().subscribe({
-      next: (data) => this.movies = data,
-      error: () => this.errorMessage = 'Failed to load movies'
+      next: (data) => {
+        this.movies = data;
+        this.loading = false;
+      },
+      error: () => {
+        this.errorMessage = 'Failed to load movies';
+        this.loading = false;
+      }
     });
   }
 
