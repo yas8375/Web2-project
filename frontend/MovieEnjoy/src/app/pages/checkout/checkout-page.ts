@@ -2,6 +2,7 @@ import { Component } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { HttpClient } from '@angular/common/http';
 import { Router } from '@angular/router';
+import { environment } from '../../../environments/environment';
 
 @Component({
   selector: 'app-checkout-page',
@@ -21,7 +22,7 @@ export class CheckoutPageComponent {
   constructor(private http: HttpClient, private router: Router) {}
 
   submit(): void {
-    this.http.post('http://localhost:8081/api/checkout', this.form).subscribe({
+    this.http.post(`${environment.apiBaseUrl}/api/checkout`, this.form).subscribe({
       next: () => {
         this.router.navigate(['/confirmation'], { state: { success: true, message: 'Checkout complete' } });
       },

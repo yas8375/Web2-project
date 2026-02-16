@@ -18,7 +18,8 @@ public class CartService {
      * Cart object/map (planned for next phase).
      */
     public Map<String, Object> getCart() {
-        throw new UnsupportedOperationException("Planned for next phase");
+        // Placeholder for Phase 3
+        return null;
     }
 
     /**
@@ -33,7 +34,8 @@ public class CartService {
      * Operation result map (planned for next phase).
      */
     public Map<String, Object> addToCart(String movieId, Integer quantity) {
-        throw new UnsupportedOperationException("Planned for next phase");
+        // Placeholder for Phase 3
+        return null;
     }
 
     /**
@@ -48,7 +50,8 @@ public class CartService {
      * Operation result map (planned for next phase).
      */
     public Map<String, Object> updateCartItem(String movieId, Integer quantity) {
-        throw new UnsupportedOperationException("Planned for next phase");
+        // Placeholder for Phase 3
+        return null;
     }
 
     /**
@@ -62,6 +65,7 @@ public class CartService {
      * Operation result map (planned for next phase).
      */
     public Map<String, Object> removeCartItem(String movieId) {
-        throw new UnsupportedOperationException("Planned for next phase");
+        // Placeholder for Phase 3
+        return null;
     }
 }

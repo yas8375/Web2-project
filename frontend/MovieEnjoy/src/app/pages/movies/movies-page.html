@@ -1,11 +1,11 @@
 <section>
   <h1>Movie List</h1>
+  <p *ngIf="loading">Loading movies...</p>
   <p class="error" *ngIf="errorMessage">{{ errorMessage }}</p>
 
   <table *ngIf="movies.length > 0">
     <thead>
       <tr>
-        <th>ID</th>
         <th>Title</th>
         <th>Year</th>
         <th>Director</th>
@@ -14,12 +14,13 @@
     </thead>
     <tbody>
       <tr *ngFor="let m of movies">
-        <td>{{ m.id }}</td>
-        <td><a [routerLink]="['/movies', m.id]">{{ m.title }}</a></td>
+        <td>{{ m.title }}</td>
         <td>{{ m.year }}</td>
         <td>{{ m.director }}</td>
         <td><button (click)="addToCart(m.id)">Add</button></td>
       </tr>
     </tbody>
   </table>
+
+  <p *ngIf="!loading && !errorMessage && movies.length === 0">No movies found.</p>
 </section>

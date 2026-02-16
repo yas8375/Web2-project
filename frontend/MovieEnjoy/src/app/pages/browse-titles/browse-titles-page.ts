@@ -1,13 +1,24 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { RouterLink } from '@angular/router';
+import { HttpClient } from '@angular/common/http';
+import { environment } from '../../../environments/environment';
 
 @Component({
   selector: 'app-browse-titles-page',
   standalone: true,
-  imports: [CommonModule, RouterLink],
+  imports: [CommonModule],
   templateUrl: './browse-titles-page.html'
 })
-export class BrowseTitlesPageComponent {
-  letters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789'.split('');
+export class BrowseTitlesPageComponent implements OnInit {
+  response: any;
+  errorMessage = '';
+
+  constructor(private http: HttpClient) {}
+
+  ngOnInit(): void {
+    this.http.get(`${environment.apiBaseUrl}/api/titles`).subscribe({
+      next: (data) => this.response = data,
+      error: (err) => this.errorMessage = err?.error?.message ?? 'Not implemented yet'
+    });
+  }
 }

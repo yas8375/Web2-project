@@ -3,6 +3,7 @@ package com.example.movies_backend.controller;
 import java.util.List;
 import java.util.Map;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
@@ -15,10 +16,15 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.example.movies_backend.service.CartService;
+
 @RestController
 @RequestMapping("/api")
 @CrossOrigin(origins = "http://localhost:4200")
 public class CartController {
+
+    @Autowired
+    private CartService cartService;
 
     /**
      * Logic:
@@ -32,6 +38,9 @@ public class CartController {
      */
     @GetMapping("/cart")
     public ResponseEntity<?> getCart() {
+        // Service Contract:
+        cartService.getCart();
+
         return ResponseEntity.status(HttpStatus.NOT_IMPLEMENTED)
                 .body(Map.of(
                         "page", "cart",
@@ -52,6 +61,9 @@ public class CartController {
      */
     @PostMapping("/cart/items")
     public ResponseEntity<?> addToCart(@RequestBody Map<String, Object> body) {
+        // Service Contract:
+        cartService.addToCart((String) body.get("movieId"), (Integer) body.get("quantity"));
+
         return ResponseEntity.status(HttpStatus.NOT_IMPLEMENTED)
                 .body(Map.of(
                         "page", "cart",
@@ -73,6 +85,9 @@ public class CartController {
     public ResponseEntity<?> updateCartItem(
             @PathVariable String movieId,
             @RequestBody Map<String, Object> body) {
+        // Service Contract:
+        cartService.updateCartItem(movieId, (Integer) body.get("quantity"));
+
         return ResponseEntity.status(HttpStatus.NOT_IMPLEMENTED)
                 .body(Map.of(
                         "page", "cart",
@@ -93,6 +108,9 @@ public class CartController {
      */
     @DeleteMapping("/cart/items/{movieId}")
     public ResponseEntity<?> removeCartItem(@PathVariable String movieId) {
+        // Service Contract:
+        cartService.removeCartItem(movieId);
+
         return ResponseEntity.status(HttpStatus.NOT_IMPLEMENTED)
                 .body(Map.of(
                         "page", "cart",
