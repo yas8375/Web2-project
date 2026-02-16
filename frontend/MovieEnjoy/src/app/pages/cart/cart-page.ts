@@ -2,6 +2,7 @@ import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { HttpClient } from '@angular/common/http';
 import { RouterLink } from '@angular/router';
+import { environment } from '../../../environments/environment';
 
 @Component({
   selector: 'app-cart-page',
@@ -18,7 +19,7 @@ export class CartPageComponent {
   }
 
   loadCart(): void {
-    this.http.get('http://localhost:8081/api/cart').subscribe({
+    this.http.get(`${environment.apiBaseUrl}/api/cart`).subscribe({
       next: (data) => this.response = data,
       error: (err) => this.errorMessage = err?.error?.message ?? 'Not implemented yet'
     });

@@ -1,6 +1,7 @@
 import { Component } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { HttpClient } from '@angular/common/http';
+import { environment } from '../../../environments/environment';
 
 @Component({
   selector: 'app-login-page',
@@ -19,7 +20,7 @@ export class LoginPageComponent {
   onLogin(): void {
     this.loading = true;
     this.message = '';
-    this.http.post('http://localhost:8081/api/login', {
+    this.http.post(`${environment.apiBaseUrl}/api/login`, {
       email: this.email,
       password: this.password
     }).subscribe({

@@ -4,7 +4,6 @@ import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import com.example.movies_backend.model.Movie;
@@ -44,7 +43,7 @@ public class MovieService {
     public List<Movie> getMoviesPage(Integer page, Integer size) {
         int safePage = page == null || page < 1 ? 1 : page;
         int safeSize = size == null || size < 1 ? 50 : size;
-        return movieRepository.findAll(PageRequest.of(safePage - 1, safeSize, Sort.by("title").ascending())).getContent();
+        return movieRepository.findAll(PageRequest.of(safePage - 1, safeSize)).getContent();
     }
 
     /**

@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ActivatedRoute } from '@angular/router';
 import { HttpClient } from '@angular/common/http';
+import { environment } from '../../../environments/environment';
 
 @Component({
   selector: 'app-star-details-page',
@@ -22,7 +23,7 @@ export class StarDetailsPageComponent implements OnInit {
       return;
     }
 
-    this.http.get(`http://localhost:8081/api/stars/${starId}`).subscribe({
+    this.http.get(`${environment.apiBaseUrl}/api/stars/${starId}`).subscribe({
       next: (data) => this.response = data,
       error: (err) => this.errorMessage = err?.error?.message ?? 'Not implemented yet'
     });

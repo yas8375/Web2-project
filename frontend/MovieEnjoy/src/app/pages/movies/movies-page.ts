@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, NgZone, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Movie, MovieService } from '../../movie.service';
 
@@ -13,7 +13,10 @@ export class MoviesPageComponent implements OnInit {
   errorMessage = '';
   loading = false;
 
-  constructor(private movieService: MovieService) {}
+  constructor(
+    private movieService: MovieService,
+    private ngZone: NgZone
+  ) {}
 
   ngOnInit(): void {
     this.loadMovies();
@@ -24,12 +27,16 @@ export class MoviesPageComponent implements OnInit {
     this.errorMessage = '';
     this.movieService.getMovies().subscribe({
       next: (data) => {
-        this.movies = data;
-        this.loading = false;
+        this.ngZone.run(() => {
+          this.movies = Array.isArray(data) ? data : [];
+          this.loading = false;
+        });
       },
       error: () => {
-        this.errorMessage = 'Failed to load movies';
-        this.loading = false;
+        this.ngZone.run(() => {
+          this.errorMessage = 'Failed to load movies';
+          this.loading = false;
+        });
       }
     });
   }

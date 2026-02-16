@@ -89,4 +89,23 @@ public class MovieController {
                         "endpoint", "GET /api/genres",
                         "message", "You are on Browse by Genres page. Genres list implementation is planned for next phase."));
     }
+
+    /**
+     * Logic:
+     * Returns browse-by-title options.
+     *
+     * Params:
+     * None.
+     *
+     * Return:
+     * HTTP 501 Not Implemented for Phase 2 (contract only).
+     */
+    @GetMapping("/titles")
+    public ResponseEntity<?> getTitles() {
+        return ResponseEntity.status(HttpStatus.NOT_IMPLEMENTED)
+                .body(Map.of(
+                        "page", "browse-titles",
+                        "endpoint", "GET /api/titles",
+                        "message", "You are on Browse by Title page. Title browsing implementation is planned for next phase."));
+    }
 }
