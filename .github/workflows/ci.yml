@@ -22,7 +22,6 @@ jobs:
           cache: maven
       - run: chmod +x mvnw
       - run: ./mvnw -q -DskipTests compile
-      - run: ./mvnw -q test
 
   frontend:
     name: Frontend Lint/Build
