@@ -1,0 +1,13 @@
+<section>
+  <h1>Movie Details</h1>
+  <p class="error" *ngIf="errorMessage">{{ errorMessage }}</p>
+
+  <div *ngIf="movie" class="card">
+    <h2>{{ movie.title }}</h2>
+    <p>ID: {{ movie.id }}</p>
+    <p>Year: {{ movie.year }}</p>
+    <p>Director: {{ movie.director }}</p>
+  </div>
+
+  <a routerLink="/movies">Back to list</a>
+</section>

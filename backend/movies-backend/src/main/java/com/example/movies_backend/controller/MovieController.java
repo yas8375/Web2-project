@@ -1,16 +1,111 @@
 package com.example.movies_backend.controller;
 
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping; // 👈 استيراد جديد
-import org.springframework.web.bind.annotation.RestController; // 👈 استيراد جديد
+import java.util.List;
+import java.util.Map;
 
-@RestController // 1. هذا السطر يجعل الملف "كنترولر" وليس ملف عادي
-@RequestMapping("/api/v1/movies") // 2. هذا السطر هو الذي يحدد رابط الصفحة
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
+
+import com.example.movies_backend.model.Movie;
+import com.example.movies_backend.service.MovieService;
+
+@RestController
+@RequestMapping("/api")
+@CrossOrigin(origins = "http://localhost:4200")
 public class MovieController {
 
-    @GetMapping
-    public String getAllMovies() {
-        System.out.println("🚨 تنبيه: هناك مستخدم طلب قائمة الأفلام الآن!");
-        return "أهلاً بك! هنا ستظهر قائمة الأفلام قريباً 🎬";
+    @Autowired
+    private MovieService movieService;
+
+    /**
+     * Logic:
+     * Returns movies list and supports search/sort/pagination filters.
+     *
+     * Params:
+     * title, year, director, star, genre, letter, sort, order, page, size (all optional).
+     *
+     * Return:
+     * HTTP 200 with movies list in JSON format.
+     */
+    @GetMapping("/movies")
+    public ResponseEntity<List<Movie>> getMovies(
+            @RequestParam(required = false) String title,
+            @RequestParam(required = false) Integer year,
+            @RequestParam(required = false) String director,
+            @RequestParam(required = false) String star,
+            @RequestParam(required = false) String genre,
+            @RequestParam(required = false) String letter,
+            @RequestParam(defaultValue = "title") String sort,
+            @RequestParam(defaultValue = "asc") String order,
+            @RequestParam(defaultValue = "1") Integer page,
+            @RequestParam(defaultValue = "50") Integer size) {
+
+        List<Movie> movies = movieService.getMoviesPage(page, size);
+        return ResponseEntity.ok(movies);
+    }
+
+    /**
+     * Logic:
+     * Returns one movie details by movie id.
+     *
+     * Params:
+     * movieId path variable.
+     *
+     * Return:
+     * HTTP 200 with movie JSON if found, HTTP 404 if not found.
+     */
+    @GetMapping("/movies/{movieId}")
+    public ResponseEntity<?> getMovieById(@PathVariable String movieId) {
+        return ResponseEntity.status(HttpStatus.NOT_IMPLEMENTED)
+                .body(Map.of(
+                        "page", "movie-details",
+                        "endpoint", "GET /api/movies/{movieId}",
+                        "movieId", movieId,
+                        "message", "You are on Movie Details page. Single movie implementation is planned for next phase."));
+    }
+
+    /**
+     * Logic:
+     * Returns all movie genres for browse page.
+     *
+     * Params:
+     * None.
+     *
+     * Return:
+     * HTTP 501 Not Implemented for Phase 2 (contract only).
+     */
+    @GetMapping("/genres")
+    public ResponseEntity<?> getGenres() {
+        return ResponseEntity.status(HttpStatus.NOT_IMPLEMENTED)
+                .body(Map.of(
+                        "page", "browse-genres",
+                        "endpoint", "GET /api/genres",
+                        "message", "You are on Browse by Genres page. Genres list implementation is planned for next phase."));
+    }
+
+    /**
+     * Logic:
+     * Returns browse-by-title options.
+     *
+     * Params:
+     * None.
+     *
+     * Return:
+     * HTTP 501 Not Implemented for Phase 2 (contract only).
+     */
+    @GetMapping("/titles")
+    public ResponseEntity<?> getTitles() {
+        return ResponseEntity.status(HttpStatus.NOT_IMPLEMENTED)
+                .body(Map.of(
+                        "page", "browse-titles",
+                        "endpoint", "GET /api/titles",
+                        "message", "You are on Browse by Title page. Title browsing implementation is planned for next phase."));
     }
 }
