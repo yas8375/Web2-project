@@ -67,4 +67,12 @@ describe('BrowseTitlesPageComponent', () => {
 
     expect(component.errorMessage).toBe('Not implemented yet');
   });
+
+  it('should expose title letters model for A-Z browsing (Phase 4 expectation)', () => {
+    const fixture = TestBed.createComponent(BrowseTitlesPageComponent);
+    const component = fixture.componentInstance;
+
+    expect(Array.isArray((component as any).letters)).toBe(true);
+    expect((component as any).letters?.length).toBeGreaterThanOrEqual(27);
+  });
 });

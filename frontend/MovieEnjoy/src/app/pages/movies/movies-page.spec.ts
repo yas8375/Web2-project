@@ -81,4 +81,10 @@ describe('MoviesPageComponent', () => {
 
     expect(component.movies).toEqual([]);
   });
+
+  it('should expose pagination state and actions (Phase 4 expectation)', () => {
+    expect(typeof (component as any).currentPage).toBe('number');
+    expect(typeof (component as any).nextPage).toBe('function');
+    expect(typeof (component as any).previousPage).toBe('function');
+  });
 });

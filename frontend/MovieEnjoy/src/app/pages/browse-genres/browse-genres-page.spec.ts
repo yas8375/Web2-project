@@ -67,4 +67,11 @@ describe('BrowseGenresPageComponent', () => {
 
     expect(component.errorMessage).toBe('Not implemented yet');
   });
+
+  it('should expose parsed genres list for clickable browse UI (Phase 4 expectation)', () => {
+    const fixture = TestBed.createComponent(BrowseGenresPageComponent);
+    const component = fixture.componentInstance;
+
+    expect(Array.isArray((component as any).genres)).toBe(true);
+  });
 });
