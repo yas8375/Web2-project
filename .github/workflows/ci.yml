@@ -22,6 +22,11 @@ jobs:
           cache: maven
       - run: chmod +x mvnw
       - run: ./mvnw -q -DskipTests compile
+      
+     
+      # Phase 3: Backend Tests
+      - name: Run Backend Unit/Integration Tests
+        run: ./mvnw test
 
   frontend:
     name: Frontend Lint/Build
@@ -39,3 +44,7 @@ jobs:
       - run: npm ci
       - run: npm run lint --if-present
       - run: npm run build
+
+      # Phase 3: Angular Tests
+      - name: Run Frontend Unit/Integration Tests
+        run: npm test -- --watch=false --browsers=ChromeHeadless
