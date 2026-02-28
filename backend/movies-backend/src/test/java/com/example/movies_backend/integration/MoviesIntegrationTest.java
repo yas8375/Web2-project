@@ -2,124 +2,94 @@ package com.example.movies_backend.integration;
 
 import java.util.List;
 
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
-import static org.mockito.ArgumentMatchers.eq;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.webmvc.test.autoconfigure.AutoConfigureMockMvc;
-import org.springframework.test.context.bean.override.mockito.MockitoBean;
+import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import com.example.movies_backend.model.Movie;
-import com.example.movies_backend.service.AuthService;
-import com.example.movies_backend.service.CartService;
-import com.example.movies_backend.service.CheckoutService;
-import com.example.movies_backend.service.MovieService;
-import com.example.movies_backend.service.StarService;
+import com.example.movies_backend.repository.MovieRepository;
 
-@SpringBootTest(properties = {
-        "spring.autoconfigure.exclude=org.springframework.boot.jdbc.autoconfigure.DataSourceAutoConfiguration,org.springframework.boot.data.jpa.autoconfigure.DataJpaRepositoriesAutoConfiguration,org.springframework.boot.hibernate.autoconfigure.HibernateJpaAutoConfiguration"
-})
+@SpringBootTest
 @AutoConfigureMockMvc
+@ActiveProfiles("integration")
 class MoviesIntegrationTest {
 
     @Autowired
     private MockMvc mockMvc;
 
-    @MockitoBean
-    private MovieService movieService;
+    @Autowired
+    private MovieRepository movieRepository;
 
-    @MockitoBean
-    private CartService cartService;
+    @BeforeEach
+    void seedMovies() {
+        movieRepository.deleteAll();
+        movieRepository.saveAll(List.of(
+                new Movie("tt1000001", "Alpha Movie", 1990, "Director A"),
+                new Movie("tt1000002", "Beta Movie", 2000, "Director B"),
+                new Movie("tt1000003", "Gamma Movie", 2010, "Director C")));
+    }
 
-    @MockitoBean
-    private CheckoutService checkoutService;
-
-    @MockitoBean
-    private StarService starService;
-
-    @MockitoBean
-    private AuthService authService;
-
+    // Expected status: 200. Verifies GET /api/movies reads seeded rows through full stack + database.
     @Test
-    void getMovies_returnsOkAndMovieList_whenServiceReturnsMovies() throws Exception {
-        when(movieService.getMoviesPage(eq(1), eq(50)))
-                .thenReturn(List.of(new Movie("tt0421974", "Sky Fighters", 2005, "Gerard Pires")));
-
+    void getMovies_returnsMoviesFromDatabase_withDefaultPagination() throws Exception {
         mockMvc.perform(get("/api/movies"))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$[0].id").value("tt0421974"))
-                .andExpect(jsonPath("$[0].title").value("Sky Fighters"))
-                .andExpect(jsonPath("$[0].year").value(2005))
-                .andExpect(jsonPath("$[0].director").value("Gerard Pires"));
-
-        verify(movieService).getMoviesPage(1, 50);
+                .andExpect(jsonPath("$.length()").value(3))
+                .andExpect(jsonPath("$[0].id").isString())
+                .andExpect(jsonPath("$[0].title").isString());
     }
 
+    // Expected status: 200. Verifies DB-backed pagination for page=2 and size=2.
     @Test
-    void getMovies_usesProvidedPageAndSize_whenQueryParamsPresent() throws Exception {
-        when(movieService.getMoviesPage(eq(3), eq(10)))
-                .thenReturn(List.of(new Movie("tt1234567", "Sample Movie", 1999, "Sample Director")));
-
+    void getMovies_appliesPageAndSize_onDatabaseResults() throws Exception {
         mockMvc.perform(get("/api/movies")
-                        .param("page", "3")
-                        .param("size", "10"))
+                        .param("page", "2")
+                        .param("size", "2"))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$[0].id").value("tt1234567"));
-
-        verify(movieService).getMoviesPage(3, 10);
+                .andExpect(jsonPath("$.length()").value(1))
+                .andExpect(jsonPath("$[0].id").isString());
     }
 
+    // Expected status: 200. Verifies invalid page/size fallback to safe defaults in service.
     @Test
-    void getMovieById_returnsNotImplemented_whenEndpointIsContractOnly() throws Exception {
-        mockMvc.perform(get("/api/movies/tt0421974"))
-                .andExpect(status().isNotImplemented())
-                .andExpect(jsonPath("$.page").value("movie-details"))
-                .andExpect(jsonPath("$.endpoint").value("GET /api/movies/{movieId}"))
-                .andExpect(jsonPath("$.movieId").value("tt0421974"));
+    void getMovies_fallsBackToSafeDefaults_whenInvalidPageAndSizeProvided() throws Exception {
+        mockMvc.perform(get("/api/movies")
+                        .param("page", "0")
+                        .param("size", "0"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.length()").value(3));
     }
 
+    // Expected status (Phase 4): 200. Fails now because single-movie endpoint is still not implemented.
     @Test
     @Tag("phase4")
-    void getMovieById_returnsOkAndMoviePayload_whenMovieExists() throws Exception {
+    void getMovieById_returnsOkAndMoviePayload_whenImplemented() throws Exception {
         mockMvc.perform(get("/api/movies/tt0421974"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.id").value("tt0421974"));
     }
 
-    @Test
-    void getGenres_returnsNotImplemented_whenEndpointIsContractOnly() throws Exception {
-        mockMvc.perform(get("/api/genres"))
-                .andExpect(status().isNotImplemented())
-                .andExpect(jsonPath("$.page").value("browse-genres"))
-                .andExpect(jsonPath("$.endpoint").value("GET /api/genres"));
-    }
-
+    // Expected status (Phase 4): 200. Fails now because genres endpoint is still not implemented.
     @Test
     @Tag("phase4")
-    void getGenres_returnsOkAndGenresArray() throws Exception {
+    void getGenres_returnsOkAndGenresArray_whenImplemented() throws Exception {
         mockMvc.perform(get("/api/genres"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$[0]").isString());
     }
 
-    @Test
-    void getTitles_returnsNotImplemented_whenEndpointIsContractOnly() throws Exception {
-        mockMvc.perform(get("/api/titles"))
-                .andExpect(status().isNotImplemented())
-                .andExpect(jsonPath("$.page").value("browse-titles"))
-                .andExpect(jsonPath("$.endpoint").value("GET /api/titles"));
-    }
-
+    // Expected status (Phase 4): 200. Fails now because titles endpoint is still not implemented.
     @Test
     @Tag("phase4")
-    void getTitles_returnsOkAndTitleBuckets() throws Exception {
+    void getTitles_returnsOkAndTitleBuckets_whenImplemented() throws Exception {
         mockMvc.perform(get("/api/titles"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$[0]").exists());
