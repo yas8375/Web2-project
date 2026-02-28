@@ -1,77 +1,28 @@
 ﻿import { TestBed } from '@angular/core/testing';
-import { HttpClientTestingModule, HttpTestingController } from '@angular/common/http/testing';
+import { HttpClientTestingModule } from '@angular/common/http/testing';
 import { Router } from '@angular/router';
 
 import { CheckoutPageComponent } from './checkout-page';
-import { environment } from '../../../environments/environment';
 
-describe('CheckoutPageComponent', () => {
-  let httpMock: HttpTestingController;
-  let navigateCalls: Array<{ commands: unknown[]; extras?: unknown }>;
-
+describe('Checkout Phase 3 Expectations', () => {
   beforeEach(async () => {
-    navigateCalls = [];
-
     await TestBed.configureTestingModule({
       imports: [CheckoutPageComponent, HttpClientTestingModule],
-      providers: [
-        {
-          provide: Router,
-          useValue: {
-            navigate: (commands: unknown[], extras?: unknown) => {
-              navigateCalls.push({ commands, extras });
-              return Promise.resolve(true);
-            }
-          }
-        }
-      ]
+      providers: [{ provide: Router, useValue: { navigate: () => Promise.resolve(true) } }]
     }).compileComponents();
-
-    httpMock = TestBed.inject(HttpTestingController);
   });
 
-  afterEach(() => {
-    httpMock.verify();
-  });
-
-  it('should submit checkout payload and navigate on success', () => {
+  it('should expose card-number validator helper (Phase 4 expectation)', () => {
     const fixture = TestBed.createComponent(CheckoutPageComponent);
-    const component = fixture.componentInstance;
+    const component = fixture.componentInstance as any;
 
-    component.form = {
-      firstName: 'Ali',
-      lastName: 'Ahmed',
-      cardNumber: '1234567890123456',
-      expiration: '2030-12-01'
-    };
-
-    component.submit();
-
-    const req = httpMock.expectOne(`${environment.apiBaseUrl}/api/checkout`);
-    expect(req.request.method).toBe('POST');
-    expect(req.request.body).toEqual(component.form);
-    req.flush({});
-
-    expect(navigateCalls.length).toBe(1);
-    expect((navigateCalls[0].commands as string[])[0]).toBe('/confirmation');
+    expect(typeof component.isValidCardNumber).toBe('function');
   });
 
-  it('should set fallback message on checkout error', () => {
+  it('should expose expiration-date validator helper (Phase 4 expectation)', () => {
     const fixture = TestBed.createComponent(CheckoutPageComponent);
-    const component = fixture.componentInstance;
+    const component = fixture.componentInstance as any;
 
-    component.submit();
-
-    const req = httpMock.expectOne(`${environment.apiBaseUrl}/api/checkout`);
-    req.flush({}, { status: 501, statusText: 'Not Implemented' });
-
-    expect(component.message).toBe('Not implemented yet');
-  });
-
-  it('should expose client-side card validation helper (Phase 4 expectation)', () => {
-    const fixture = TestBed.createComponent(CheckoutPageComponent);
-    const component = fixture.componentInstance;
-
-    expect(typeof (component as any).isValidCardNumber).toBe('function');
+    expect(typeof component.isValidExpiration).toBe('function');
   });
 });

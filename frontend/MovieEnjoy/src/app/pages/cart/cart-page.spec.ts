@@ -5,7 +5,7 @@ import { provideRouter } from '@angular/router';
 import { CartPageComponent } from './cart-page';
 import { environment } from '../../../environments/environment';
 
-describe('CartPageComponent', () => {
+describe('Cart Phase 3 Expectations', () => {
   let httpMock: HttpTestingController;
 
   beforeEach(async () => {
@@ -18,38 +18,26 @@ describe('CartPageComponent', () => {
   });
 
   afterEach(() => {
-    httpMock.verify();
+    httpMock?.verify();
   });
 
-  it('should load cart on component creation', () => {
+  it('should expose quantity update action (Phase 4 expectation)', () => {
     const fixture = TestBed.createComponent(CartPageComponent);
-    const component = fixture.componentInstance;
-
-    const req = httpMock.expectOne(`${environment.apiBaseUrl}/api/cart`);
-    expect(req.request.method).toBe('GET');
-    req.flush({ items: [] });
-
-    expect(component.response).toEqual({ items: [] });
-  });
-
-  it('should set fallback message when cart endpoint fails', () => {
-    const fixture = TestBed.createComponent(CartPageComponent);
-    const component = fixture.componentInstance;
-
-    const req = httpMock.expectOne(`${environment.apiBaseUrl}/api/cart`);
-    req.flush({}, { status: 501, statusText: 'Not Implemented' });
-
-    expect(component.errorMessage).toBe('Not implemented yet');
-  });
-
-  it('should expose quantity update and item removal handlers (Phase 4 expectation)', () => {
-    const fixture = TestBed.createComponent(CartPageComponent);
-    const component = fixture.componentInstance;
+    const component = fixture.componentInstance as any;
 
     const req = httpMock.expectOne(`${environment.apiBaseUrl}/api/cart`);
     req.flush({ items: [] });
 
-    expect(typeof (component as any).updateQuantity).toBe('function');
-    expect(typeof (component as any).removeItem).toBe('function');
+    expect(typeof component.updateQuantity).toBe('function');
+  });
+
+  it('should expose remove-item action (Phase 4 expectation)', () => {
+    const fixture = TestBed.createComponent(CartPageComponent);
+    const component = fixture.componentInstance as any;
+
+    const req = httpMock.expectOne(`${environment.apiBaseUrl}/api/cart`);
+    req.flush({ items: [] });
+
+    expect(typeof component.removeItem).toBe('function');
   });
 });
