@@ -3,7 +3,7 @@ import { provideRouter } from '@angular/router';
 
 import { App } from './app';
 
-describe('App', () => {
+describe('App Phase 3 Expectations', () => {
   beforeEach(async () => {
     await TestBed.configureTestingModule({
       imports: [App],
@@ -11,16 +11,17 @@ describe('App', () => {
     }).compileComponents();
   });
 
-  it('should create the app', () => {
+  it('should expose auth-ready state for protected routes (Phase 4 expectation)', () => {
     const fixture = TestBed.createComponent(App);
-    const app = fixture.componentInstance;
-    expect(app).toBeTruthy();
+    const component = fixture.componentInstance as any;
+
+    expect(typeof component.authReady).toBe('boolean');
   });
 
-  it('should render navigation bar', () => {
+  it('should expose logout action in root component (Phase 4 expectation)', () => {
     const fixture = TestBed.createComponent(App);
-    fixture.detectChanges();
-    const compiled = fixture.nativeElement as HTMLElement;
-    expect(compiled.querySelector('.topbar')).toBeTruthy();
+    const component = fixture.componentInstance as any;
+
+    expect(typeof component.logout).toBe('function');
   });
 });

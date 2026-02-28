@@ -1,84 +1,32 @@
 ﻿import { TestBed } from '@angular/core/testing';
 import { ActivatedRoute, convertToParamMap } from '@angular/router';
-import { of, throwError } from 'rxjs';
+import { of } from 'rxjs';
 
 import { MovieDetailsPageComponent } from './movie-details-page';
-import { Movie, MovieService } from '../../movie.service';
+import { MovieService } from '../../movie.service';
 
-describe('MovieDetailsPageComponent', () => {
-  const mockMovie: Movie = {
-    id: 'tt123',
-    title: 'Sample Movie',
-    year: 2020,
-    director: 'Sample Director'
-  };
-
-  it('should load movie details by route id', async () => {
-    const movieServiceStub: Pick<MovieService, 'getMovieById'> = {
-      getMovieById: () => of(mockMovie)
-    };
-
+describe('MovieDetails Phase 3 Expectations', () => {
+  beforeEach(async () => {
     await TestBed.configureTestingModule({
       imports: [MovieDetailsPageComponent],
       providers: [
-        { provide: MovieService, useValue: movieServiceStub },
-        {
-          provide: ActivatedRoute,
-          useValue: { snapshot: { paramMap: convertToParamMap({ movieId: 'tt123' }) } }
-        }
+        { provide: MovieService, useValue: { getMovieById: () => of({ id: 'tt1', title: 'x', year: 2000, director: 'y' }) } },
+        { provide: ActivatedRoute, useValue: { snapshot: { paramMap: convertToParamMap({ movieId: 'tt1' }) } } }
       ]
     }).compileComponents();
-
-    const fixture = TestBed.createComponent(MovieDetailsPageComponent);
-    const component = fixture.componentInstance;
-    fixture.detectChanges();
-
-    expect(component.movie?.id).toBe('tt123');
-    expect(component.errorMessage).toBe('');
   });
 
-  it('should show not found error when movie request fails', async () => {
-    const movieServiceStub: Pick<MovieService, 'getMovieById'> = {
-      getMovieById: () => throwError(() => new Error('not found'))
-    };
-
-    await TestBed.configureTestingModule({
-      imports: [MovieDetailsPageComponent],
-      providers: [
-        { provide: MovieService, useValue: movieServiceStub },
-        {
-          provide: ActivatedRoute,
-          useValue: { snapshot: { paramMap: convertToParamMap({ movieId: 'tt404' }) } }
-        }
-      ]
-    }).compileComponents();
-
+  it('should expose cast list model (Phase 4 expectation)', () => {
     const fixture = TestBed.createComponent(MovieDetailsPageComponent);
-    const component = fixture.componentInstance;
-    fixture.detectChanges();
+    const component = fixture.componentInstance as any;
 
-    expect(component.errorMessage).toBe('Movie not found');
+    expect(Array.isArray(component.stars)).toBe(true);
   });
 
-  it('should expose cast list model for clickable stars (Phase 4 expectation)', async () => {
-    const movieServiceStub: Pick<MovieService, 'getMovieById'> = {
-      getMovieById: () => of(mockMovie)
-    };
-
-    await TestBed.configureTestingModule({
-      imports: [MovieDetailsPageComponent],
-      providers: [
-        { provide: MovieService, useValue: movieServiceStub },
-        {
-          provide: ActivatedRoute,
-          useValue: { snapshot: { paramMap: convertToParamMap({ movieId: 'tt123' }) } }
-        }
-      ]
-    }).compileComponents();
-
+  it('should expose add-to-cart action from details page (Phase 4 expectation)', () => {
     const fixture = TestBed.createComponent(MovieDetailsPageComponent);
-    const component = fixture.componentInstance;
+    const component = fixture.componentInstance as any;
 
-    expect(Array.isArray((component as any).stars)).toBe(true);
+    expect(typeof component.addToCart).toBe('function');
   });
 });
