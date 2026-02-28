@@ -1,4 +1,4 @@
-package com.example.movies_backend.controller;
+ package com.example.movies_backend.controller;
 
 import java.util.List;
 import java.util.Map;

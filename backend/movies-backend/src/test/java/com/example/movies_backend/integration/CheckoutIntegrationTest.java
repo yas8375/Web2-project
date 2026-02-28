@@ -1,6 +1,6 @@
 package com.example.movies_backend.integration;
 
-import org.junit.jupiter.api.Disabled;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -22,7 +22,7 @@ import com.example.movies_backend.service.StarService;
         "spring.autoconfigure.exclude=org.springframework.boot.jdbc.autoconfigure.DataSourceAutoConfiguration,org.springframework.boot.data.jpa.autoconfigure.DataJpaRepositoriesAutoConfiguration,org.springframework.boot.hibernate.autoconfigure.HibernateJpaAutoConfiguration"
 })
 @AutoConfigureMockMvc
-class LoginIntegrationTest {
+class CheckoutIntegrationTest {
 
     @Autowired
     private MockMvc mockMvc;
@@ -43,45 +43,55 @@ class LoginIntegrationTest {
     private AuthService authService;
 
     @Test
-    void login_returnsNotImplemented_whenLoginIsNotImplemented() throws Exception {
-        mockMvc.perform(post("/api/login")
+    void checkout_returnsNotImplemented_whenEndpointIsContractOnly() throws Exception {
+        mockMvc.perform(post("/api/checkout")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content("""
                                 {
-                                  "email": "user@example.com",
-                                  "password": "secret"
+                                  "firstName": "Ali",
+                                  "lastName": "Ahmed",
+                                  "cardNumber": "1234567890123456",
+                                  "expiration": "2030-12"
                                 }
                                 """))
                 .andExpect(status().isNotImplemented())
-                .andExpect(jsonPath("$.page").value("login"))
-                .andExpect(jsonPath("$.endpoint").value("POST /api/login"));
+                .andExpect(jsonPath("$.page").value("checkout"))
+                .andExpect(jsonPath("$.endpoint").value("POST /api/checkout"));
     }
 
-    @Disabled("Enable when login feature is implemented. Current behavior is 501 Not Implemented.")
     @Test
-    void login_returnsOk_whenCredentialsAreValid() throws Exception {
-        mockMvc.perform(post("/api/login")
+    @Tag("phase4")
+    void checkout_returnsOkAndOrderConfirmation_whenPaymentIsValid() throws Exception {
+        mockMvc.perform(post("/api/checkout")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content("""
                                 {
-                                  "email": "valid@example.com",
-                                  "password": "correct-password"
+                                  "firstName": "Ali",
+                                  "lastName": "Ahmed",
+                                  "cardNumber": "1234567890123456",
+                                  "expiration": "2030-12"
                                 }
                                 """))
-                .andExpect(status().isOk());
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.success").value(true))
+                .andExpect(jsonPath("$.orderId").exists());
     }
 
-    @Disabled("Enable when login feature is implemented. Current behavior is 501 Not Implemented.")
     @Test
-    void login_returnsUnauthorized_whenCredentialsAreInvalid() throws Exception {
-        mockMvc.perform(post("/api/login")
+    @Tag("phase4")
+    void checkout_returnsBadRequest_whenPaymentPayloadIsInvalid() throws Exception {
+        mockMvc.perform(post("/api/checkout")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content("""
                                 {
-                                  "email": "valid@example.com",
-                                  "password": "wrong-password"
+                                  "firstName": "",
+                                  "lastName": "",
+                                  "cardNumber": "",
+                                  "expiration": ""
                                 }
                                 """))
-                .andExpect(status().isUnauthorized());
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.success").value(false))
+                .andExpect(jsonPath("$.error").exists());
     }
 }
