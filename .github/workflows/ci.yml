@@ -24,9 +24,9 @@ jobs:
       - run: ./mvnw -q -DskipTests compile
       
      
-      # Phase 3: Backend Tests
+      # Run all backend tests including phase4-tagged future-behavior tests
       - name: Run Backend Unit/Integration Tests
-        run: ./mvnw test
+        run: ./mvnw -D"junit.tags.exclude=" test
 
   frontend:
     name: Frontend Lint/Build
