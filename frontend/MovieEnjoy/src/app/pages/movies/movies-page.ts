@@ -1,4 +1,4 @@
-import { Component, NgZone, OnInit } from '@angular/core';
+import { ChangeDetectorRef, Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Movie, MovieService } from '../../movie.service';
 
@@ -6,7 +6,7 @@ import { Movie, MovieService } from '../../movie.service';
   selector: 'app-movies-page',
   standalone: true,
   imports: [CommonModule],
-  templateUrl: './movies-page.html'
+  templateUrl: './movies-page.html',
 })
 export class MoviesPageComponent implements OnInit {
   movies: Movie[] = [];
@@ -15,7 +15,7 @@ export class MoviesPageComponent implements OnInit {
 
   constructor(
     private movieService: MovieService,
-    private ngZone: NgZone
+    private cdr: ChangeDetectorRef,
   ) {}
 
   ngOnInit(): void {
@@ -27,17 +27,15 @@ export class MoviesPageComponent implements OnInit {
     this.errorMessage = '';
     this.movieService.getMovies().subscribe({
       next: (data) => {
-        this.ngZone.run(() => {
-          this.movies = Array.isArray(data) ? data : [];
-          this.loading = false;
-        });
+        this.movies = Array.isArray(data) ? data : [];
+        this.loading = false;
+        this.cdr.detectChanges();
       },
       error: () => {
-        this.ngZone.run(() => {
-          this.errorMessage = 'Failed to load movies';
-          this.loading = false;
-        });
-      }
+        this.errorMessage = 'Failed to load movies';
+        this.loading = false;
+        this.cdr.detectChanges();
+      },
     });
   }
 
