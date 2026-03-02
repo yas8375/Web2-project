@@ -1,88 +1,7 @@
-# IMDb Movie Rental Web Application
+﻿# IMDb Movie Rental Web Application
 
-Full-stack movie rental web application using the IMDb dataset.
+Full-stack movie rental web application inspired by CS122B, implemented with Angular + Spring Boot.
 
-## Project Features
-This web application offers a complete experience for browsing and renting movies based on the IMDb dataset. The key functionalities include:
-
-### 1. Browsing and Searching
-- Advanced Search: Users can search for movies using specific conditions (e.g., title, year, director).
-- Browsing Categories: Browse the movie collection either by Genre or by Title.
-- Movie List: View search results with options for Sorting and Pagination (Previous/Next).
-
-### 2. Movie and Cast Details
-- Single Movie Page: Displays detailed information about a selected movie, including its cast and rating.
-- Single Star Page: Provides a profile for specific actors/actresses with a list of their movies.
-- Hyperlinked Navigation: Allows easy navigation between movies and stars (clicking a star's name takes you to their profile).
-
-### 3. E-Commerce Functionality
-- Shopping Cart: Users can add movies to their cart to review before renting.
-- Checkout Process: A dedicated flow to collect customer information and finalize the rental.
-- Order Confirmation: Displays a success or failure message upon completing the transaction.
-
-### 4. User Management & Security
-- Secure Login: Users must log in with an email and password to access the system.
-- Access Control: Ensures restricted pages are only accessible to authorized users.
-
-### 5. User Interface
-- Responsive Design: The interface is built using Bootstrap to ensure it works smoothly on various screen sizes.
-
-<<<<<<< HEAD
-<<<<<<< HEAD
-# 
-
-# \### 1. Browsing and Searching
-
-# \*   \*\*Advanced Search:\*\* Users can search for movies using specific conditions (e.g., title, year, director).
-
-# \*   \*\*Browsing Categories:\*\* Browse the movie collection either by Genre or by Title.
-
-# \*   \*\*Movie List:\*\* View search results with options for Sorting and Pagination (Previous/Next).
-
-# 
-
-# \### 2. Movie and Cast Details
-
-# \*   \*\*Single Movie Page:\*\* Displays detailed information about a selected movie, including its cast and rating.
-
-# \*   \*\*Single Star Page:\*\* Provides a profile for specific actors/actresses with a list of their movies.
-
-# \*   \*\*Hyperlinked Navigation:\*\* Allows easy navigation between movies and stars (clicking a star's name takes you to their profile).
-
-# 
-
-# \### 3. E-Commerce Functionality
-
-# \*   \*\*Shopping Cart:\*\* Users can add movies to their cart to review before renting.
-
-# \*   \*\*Checkout Process:\*\* A dedicated flow to collect customer information and finalize the rental.
-
-# \*   \*\*Order Confirmation:\*\* Displays a success or failure message upon completing the transaction.
-
-# 
-
-# \### 4. User Management \& Security
-
-# \*   \*\*Secure Login:\*\* Users must log in with an email and password to access the system.
-
-# \*   \*\*Access Control:\*\* Ensures restricted pages are only accessible to authorized users.
-
-# 
-
-# \### 5. User Interface
-
-# \*   \*\*Responsive Design:\*\* The interface is built using Bootstrap to ensure it works smoothly on various screen sizes.
-
-# 
-
-
-Team Members:
-* Yasmeen Otyfah - 443204580
-* Samiha Nasser - 443204635
-* Raghad Alyousfy - 444203521
-* Aleen Alqasem - 444201194
-* roua Wadah - 443204606
-=======
 ## Team Members
 - Yasmeen Otyfah - 443204580
 - Samiha Nasser - 443204635
@@ -91,146 +10,152 @@ Team Members:
 - Roua Wadah - 443204606
 
 ## Repository Structure
-- `frontend/MovieEnjoy`: Angular frontend
-- `backend/movies-backend`: Spring Boot backend (Java 17)
-- `database/schema.sql`: database schema script
-- `database/movie-data.sql`: IMDb dataset loading script
-- `API_SPECIFICATION.md`: API and interface contract for planned features
+- `frontend/MovieEnjoy` - Angular frontend
+- `backend/movies-backend` - Spring Boot backend
+- `database/schema.sql` - DB schema
+- `database/movie-data.sql` - DB seed data
+- `API_SPECIFICATION.md` - API/interface contract
 
-## Phase 2 Scope (What is delivered)
-- Full-stack architecture setup (frontend + backend + PostgreSQL)
-- IMDb dataset loaded into PostgreSQL
-- Schema and data-loading scripts included
-- Frontend-backend-database communication working
-- API/interface specification documented for planned features
+## Phase 3 Deliverables Summary
+This repository includes all Phase 3 testing deliverables:
+- Unit tests
+- Integration tests
+- End-to-end (E2E) tests
+- Stress/performance tests
+- Robustness tests (simulated failures)
+- CI workflow for automated test execution
 
-## Prerequisites
-- Java 17 (Temurin recommended)
-- Node.js + npm
-- PostgreSQL 18 (or compatible)
-- Windows PowerShell
+## 1) Testing Types Implemented
+### A) Unit Tests
+Backend (service + controller level):
+- `backend/movies-backend/src/test/java/com/example/movies_backend/service/*Test.java`
+- `backend/movies-backend/src/test/java/com/example/movies_backend/controller/*Test.java`
 
-## 1) Database Setup
+Frontend (component-level):
+- `frontend/MovieEnjoy/src/app/**/*.spec.ts`
 
-### 1.1 Create database (if not created yet)
-Run from PowerShell:
+### B) Integration Tests
+Backend integration (controller + service + persistence behavior via Spring context):
+- `backend/movies-backend/src/test/java/com/example/movies_backend/integration/*IntegrationTest.java`
 
+Integration profile config:
+- `backend/movies-backend/src/test/resources/application-integration.properties`
+
+### C) End-to-End (E2E) Tests
+Playwright E2E tests:
+- `frontend/MovieEnjoy/tests/e2e/navigation-smoke.spec.ts`
+- `frontend/MovieEnjoy/tests/e2e/main-to-movies.spec.ts`
+- `frontend/MovieEnjoy/tests/e2e/single-movie-route.spec.ts`
+- `frontend/MovieEnjoy/tests/e2e/browse-genres-flow.spec.ts`
+- `frontend/MovieEnjoy/tests/e2e/full-journey-fail.spec.ts` (future-flow expected fail)
+
+### D) Stress / Performance Tests
+k6 HTTP stress test:
+- `frontend/MovieEnjoy/tests/performance/movies-stress.js`
+
+### E) Robustness Tests
+Simulated backend failure handling:
+- `backend/movies-backend/src/test/java/com/example/movies_backend/controller/MovieControllerRobustnessTest.java`
+
+This test suite verifies safe error handling for cases like:
+- database/resource failure -> 503 + safe JSON response
+- unexpected runtime failure -> 500 + safe JSON response
+
+## 2) Main Scenarios Tested
+### Unit
+- Service behavior, paging defaults, validation placeholders, and controller contract behavior.
+
+### Integration
+- `GET /api/movies` data retrieval with pagination/defaults.
+- Future-feature integration scenarios for login/cart/checkout/movie-details/star-details (kept as planned behavior tests).
+
+### E2E
+- Top navigation flow across core pages.
+- Main page -> Movies page journey.
+- Direct single-movie route rendering and back navigation.
+- Browse-by-genres page opening.
+- Full checkout journey as future expected behavior test.
+
+### Stress / Robustness
+- Concurrent/ramping HTTP load against `/api/movies` using k6.
+- Failure simulation in controller tests using mocked service exceptions.
+
+## 3) How Stress/Robustness Testing Was Performed
+### Stress (k6)
+- Endpoint under load: `/api/movies?page=1&size=50`
+- Scenario: ramping virtual users from 5 to 50 and back down.
+- Thresholds:
+  - failed request rate < 1%
+  - p95 latency < 1000 ms
+
+### Robustness (Mocked Failures)
+- Backend service is mocked to throw controlled exceptions.
+- Assertions verify HTTP status and safe JSON contract for error responses.
+
+## 4) Tools and Frameworks Used
+- Backend test framework: JUnit 5 + Spring Boot Test + MockMvc + Mockito
+- Backend build/test runner: Maven (`mvnw`)
+- Frontend unit/component tests: Angular test runner (`ng test`)
+- E2E tests: Playwright
+- Stress/performance tests: k6
+- CI/CD: GitHub Actions (`.github/workflows/ci.yml`)
+
+## 5) Test Commands
+### Backend
+From `backend/movies-backend`:
+
+Run all backend tests (default tagging behavior):
 ```powershell
-& "C:\Program Files\PostgreSQL\18\bin\psql.exe" -U postgres -c "CREATE DATABASE moviedb;"
+.\mvnw test
 ```
 
-### 1.2 Load schema + data
-
+Run integration tests only:
 ```powershell
-& "C:\Program Files\PostgreSQL\18\bin\psql.exe" -U postgres -d moviedb -f D:\Desktop\Web2-project\database\schema.sql
-& "C:\Program Files\PostgreSQL\18\bin\psql.exe" -U postgres -d moviedb -f D:\Desktop\Web2-project\database\movie-data.sql
+.\mvnw "-Dtest=*IntegrationTest" test
 ```
 
-### 1.3 Verify data is loaded
-
+### Frontend Unit/Component
+From `frontend/MovieEnjoy`:
 ```powershell
-& "C:\Program Files\PostgreSQL\18\bin\psql.exe" -U postgres -d moviedb -c "SELECT COUNT(*) FROM movies;"
-& "C:\Program Files\PostgreSQL\18\bin\psql.exe" -U postgres -d moviedb -c "SELECT COUNT(*) FROM stars;"
-& "C:\Program Files\PostgreSQL\18\bin\psql.exe" -U postgres -d moviedb -c "SELECT COUNT(*) FROM genres;"
+npm ci
+npm test -- --watch=false
 ```
 
-## 2) Environment Variables (Required)
-Sensitive config is read from environment variables, not hardcoded.
+### E2E
+From `frontend/MovieEnjoy`:
 
-Backend reads:
-- `DB_URL`
-- `DB_USER`
-- `DB_PASS`
-
-Current backend config file:
-- `backend/movies-backend/src/main/resources/application.properties`
-
-Set variables (PowerShell, persistent):
-
+Stable E2E suite (for current implemented flows):
 ```powershell
-setx DB_URL "jdbc:postgresql://localhost:5432/moviedb"
-setx DB_USER "postgres"
-setx DB_PASS "<YOUR_DB_PASSWORD>"
+npm run e2e:stable
 ```
 
-Important:
-- Close and reopen terminal after `setx`.
-- Never commit passwords or secrets to GitHub.
-
-Quick check:
-
+Full E2E suite:
 ```powershell
-echo $env:DB_URL
-echo $env:DB_USER
+npm run e2e
 ```
 
-## 3) Run Backend
-
+### Stress (k6)
+From `frontend/MovieEnjoy`:
 ```powershell
-cd D:\Desktop\Web2-project\backend\movies-backend
-.\mvnw spring-boot:run
+npm run perf:k6:movies:smoke
 ```
 
-Expected:
-- Backend starts on `http://localhost:8081`
-- Log should show JDBC URL `jdbc:postgresql://localhost:5432/moviedb`
-
-Basic endpoint test:
-- `http://localhost:8081/api/movies`
-
-## 4) Run Frontend
-Open a new terminal:
-
+or:
 ```powershell
-cd D:\Desktop\Web2-project\frontend\MovieEnjoy
-npm install
-npm start
+npm run perf:k6:movies:stress
 ```
 
-Expected:
-- Frontend starts on `http://localhost:4200`
-- Frontend consumes backend movie data
+## 6) CI Configuration
+Automated checks are defined in:
+- `.github/workflows/ci.yml`
 
-## 5) Frontend <-> Backend Contract (Current)
-Implemented and tested now:
-- `GET /api/movies` from backend
-- Angular frontend fetches and displays movies list/cards
+The workflow runs:
+- backend build/test job (includes robustness tests, e.g., `MovieControllerRobustnessTest`)
+- frontend lint/build/unit-test job
+- E2E job (mock backend + Playwright stable suite)
+- stress job (k6 smoke test) against backend mock endpoint `/api/movies`
 
-## 6) API / Interface Specification
-Planned feature contracts are documented in:
-- `API_SPECIFICATION.md`
+Stress/performance tests are now integrated in CI through the `Stress Test (k6 Smoke)` job, and can also be run locally using the npm scripts listed above.
 
-Includes:
-- REST endpoint paths and HTTP methods
-- Request parameters/payloads
-- Response formats and status codes
-- Authentication expectations
-- Frontend-backend and backend-database mapping notes
 
-## 7) Notes for Review / Submission
-- Use Pull Requests for all changes.
-- Ensure no credentials, API keys, or secrets are committed.
-- Keep environment variables local only.
-- Enable and pass repository checks (format/lint/tests) before merge.
 
-## 8) Troubleshooting
-
-### Port `8081` already in use
-Stop old backend process or close old terminal running Spring Boot.
-
-### `ERR_CONNECTION_REFUSED` on frontend
-Make sure Angular app is running (`npm start`) and open `http://localhost:4200`.
-
-### Backend starts but wrong DB (e.g., `postgres` instead of `moviedb`)
-- Recheck `DB_URL`
-- Reopen terminal after `setx`
-- Restart backend
-
-### Java version issue (`release version 17 not supported`)
-Use Java 17 and verify:
-
-```powershell
-java -version
-.\mvnw -v
-```
->>>>>>> 81402cbe5e96ddd8d65ed9db814b912382c3fe1a

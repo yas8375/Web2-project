@@ -132,3 +132,49 @@ jobs:
             backend.log
             frontend.log
           if-no-files-found: warn
+
+  stress_k6:
+    name: Stress Test (k6 Smoke)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: "17"
+          cache: maven
+
+      - name: Install k6
+        uses: grafana/setup-k6-action@v1
+
+      - name: Start Backend (mock profile)
+        working-directory: backend/movies-backend
+        run: |
+          chmod +x mvnw
+          ./mvnw -q spring-boot:run "-Dspring-boot.run.profiles=mock" > ../../backend-k6.log 2>&1 &
+          echo $! > ../../backend-k6.pid
+
+      - name: Wait for Backend
+        run: |
+          for i in {1..60}; do
+            if curl -fsS "http://localhost:8081/api/movies?page=1&size=50" > /dev/null; then
+              echo "Backend is ready for k6"
+              exit 0
+            fi
+            sleep 2
+          done
+          echo "Backend failed to start in time"
+          exit 1
+
+      - name: Run k6 Smoke Stress Test
+        working-directory: frontend/MovieEnjoy
+        run: BASE_URL=http://localhost:8081 npm run perf:k6:movies:smoke
+
+      - name: Upload k6 Logs
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: k6-server-logs
+          path: backend-k6.log
+          if-no-files-found: warn
