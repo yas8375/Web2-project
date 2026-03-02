@@ -1,4 +1,4 @@
-{
+﻿{
   "name": "movie-enjoy",
   "version": "0.0.0",
   "scripts": {
@@ -8,6 +8,7 @@
     "watch": "ng build --watch --configuration development",
     "test": "ng test",
     "e2e": "playwright test",
+    "e2e:stable": "playwright test tests/e2e/navigation-smoke.spec.ts tests/e2e/main-to-movies.spec.ts tests/e2e/single-movie-route.spec.ts tests/e2e/browse-genres-flow.spec.ts",
     "serve:ssr:MovieEnjoy": "node dist/MovieEnjoy/server/server.mjs",
     "perf:k6:movies:smoke": "k6 run --vus 10 --duration 20s tests/performance/movies-stress.js",
     "perf:k6:movies:stress": "k6 run tests/performance/movies-stress.js"
