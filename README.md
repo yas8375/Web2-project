@@ -152,10 +152,13 @@ Automated checks are defined in:
 The workflow runs:
 - backend build/test job (includes robustness tests, e.g., `MovieControllerRobustnessTest`)
 - frontend lint/build/unit-test job
-- E2E job (mock backend + Playwright stable suite)
+- E2E job (mock backend + full Playwright suite)
 - stress job (k6 smoke test) against backend mock endpoint `/api/movies`
 
 Stress/performance tests are now integrated in CI through the `Stress Test (k6 Smoke)` job, and can also be run locally using the npm scripts listed above.
+Some E2E scenarios represent future expected behavior and may fail intentionally until the related features are fully implemented.
+
+
 
 
 

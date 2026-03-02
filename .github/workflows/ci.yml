@@ -111,9 +111,9 @@ jobs:
           echo "Frontend failed to start in time"
           exit 1
 
-      - name: Run Stable E2E Tests
+      - name: Run Full E2E Tests
         working-directory: frontend/MovieEnjoy
-        run: npm run e2e:stable
+        run: npm run e2e
 
       - name: Upload Playwright Report
         if: always()
