@@ -1,10 +1,10 @@
 package com.example.movies_backend.service;
 
-import static org.junit.jupiter.api.Assertions.*;
-
 import java.util.Map;
 
-import org.junit.jupiter.api.Disabled;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import org.junit.jupiter.api.Test;
 
 class StarServiceTest {
@@ -30,7 +30,7 @@ class StarServiceTest {
      * getStarById() should return star details and related movies.
      * Disabled until implementation is completed.
      */
-    @Disabled("Phase 4: getStarById() should return star details and related movies")
+    //@Disabled("Phase 4: getStarById() should return star details and related movies")
     @Test
     void getStarById_shouldReturnStarData_inPhase4() {
         StarService starService = new StarService();

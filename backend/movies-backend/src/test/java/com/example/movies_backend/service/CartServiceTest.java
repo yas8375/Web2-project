@@ -1,10 +1,9 @@
 package com.example.movies_backend.service;
 
-import static org.junit.jupiter.api.Assertions.*;
-
 import java.util.Map;
 
-import org.junit.jupiter.api.Disabled;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
 import org.junit.jupiter.api.Test;
 
 class CartServiceTest {
@@ -30,7 +29,7 @@ class CartServiceTest {
      * getCart() should return a non-null cart object.
      * Disabled until implementation is completed.
      */
-    @Disabled("Phase 4: getCart() should return cart data after implementation")
+    //@Disabled("Phase 4: getCart() should return cart data after implementation")
     @Test
     void getCart_shouldReturnCartObject_inPhase4() {
         CartService cartService = new CartService();
@@ -47,7 +46,7 @@ class CartServiceTest {
      * Phase 4 Expected Behavior:
      * addToCart should return operation result map.
      */
-    @Disabled("Phase 4: addToCart() not implemented yet")
+    //@Disabled("Phase 4: addToCart() not implemented yet")
     @Test
     void addToCart_shouldReturnResultMap_inPhase4() {
         CartService cartService = new CartService();
@@ -65,7 +64,7 @@ class CartServiceTest {
      * Phase 4 Expected Behavior:
      * updateCartItem should return updated cart info.
      */
-    @Disabled("Phase 4: updateCartItem() not implemented yet")
+    //@Disabled("Phase 4: updateCartItem() not implemented yet")
     @Test
     void updateCartItem_shouldReturnResultMap_inPhase4() {
         CartService cartService = new CartService();
@@ -83,7 +82,7 @@ class CartServiceTest {
      * Phase 4 Expected Behavior:
      * removeCartItem should return operation result map.
      */
-    @Disabled("Phase 4: removeCartItem() not implemented yet")
+    //@Disabled("Phase 4: removeCartItem() not implemented yet")
     @Test
     void removeCartItem_shouldReturnResultMap_inPhase4() {
         CartService cartService = new CartService();
