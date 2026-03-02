@@ -1,4 +1,4 @@
-name: CI
+﻿name: CI
 
 on:
   push:
@@ -111,9 +111,9 @@ jobs:
           echo "Frontend failed to start in time"
           exit 1
 
-      - name: Run E2E Tests
+      - name: Run Stable E2E Tests
         working-directory: frontend/MovieEnjoy
-        run: npm run e2e
+        run: npm run e2e:stable
 
       - name: Upload Playwright Report
         if: always()

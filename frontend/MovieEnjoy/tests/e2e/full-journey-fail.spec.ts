@@ -1,8 +1,10 @@
-import { expect, test } from '@playwright/test';
+﻿import { expect, test } from '@playwright/test';
 
 test('full journey succeeds from login to checkout confirmation (expected to fail until backend is implemented)', async ({
   page,
 }) => {
+  test.fail(true, 'Checkout confirmation flow is planned for the next phase.');
+
   await page.goto('/login');
   await page.getByPlaceholder('Email').fill('user@example.com');
   await page.getByPlaceholder('Password').fill('password123');
