@@ -13,7 +13,7 @@ class AuthServiceTest {
    * Phase 3 current behavior:
    * - login() is a placeholder and always returns false, so this test will FAIL for now (RED).
    */
-  @Disabled("Phase 3: login() is a placeholder and always returns false. Enable in Phase 4 after implementation.")
+  //@Disabled("Phase 3: login() is a placeholder and always returns false. Enable in Phase 4 after implementation.")
   @Test
   void login_shouldReturnTrue_whenCredentialsAreValid_phase4Expected() {
     AuthService authService = new AuthService();

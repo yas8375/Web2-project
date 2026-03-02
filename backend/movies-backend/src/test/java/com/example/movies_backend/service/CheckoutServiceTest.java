@@ -34,7 +34,7 @@ class CheckoutServiceTest {
    * With valid payment info, checkout should return a non-null result map
    * (e.g., confirmation/orderId/status).
    */
-  @Disabled("Phase 4: checkout() should return confirmation data after implementation")
+  //@Disabled("Phase 4: checkout() should return confirmation data after implementation")
   @Test
   void checkout_shouldReturnResultMap_whenPaymentValid_phase4Expected() {
     CheckoutService checkoutService = new CheckoutService();
@@ -57,7 +57,7 @@ class CheckoutServiceTest {
    * Missing/invalid fields should be rejected (either return error map or throw exception).
    * Here we specify it should NOT succeed (non-null success result).
    */
-  @Disabled("Phase 4: input validation not implemented yet")
+  //@Disabled("Phase 4: input validation not implemented yet")
   @Test
   void checkout_shouldRejectInvalidPayload_phase4Expected() {
     CheckoutService checkoutService = new CheckoutService();
