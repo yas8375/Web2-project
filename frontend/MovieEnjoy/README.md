@@ -54,6 +54,30 @@ ng e2e
 
 Angular CLI does not come with an end-to-end testing framework by default. You can choose one that suits your needs.
 
+## Running k6 stress tests (Phase 3)
+
+These tests target backend endpoint `GET /api/movies`.
+
+1. Start backend app on `http://localhost:8081`.
+2. Make sure `k6` is installed and available in your terminal.
+3. Run one of:
+
+```bash
+npm run perf:k6:movies:smoke
+npm run perf:k6:movies:stress
+```
+
+To test another base URL:
+
+```bash
+k6 run -e BASE_URL=http://localhost:8082 tests/performance/movies-stress.js
+```
+
+Current pass thresholds in `tests/performance/movies-stress.js`:
+
+- `http_req_failed < 1%`
+- `p95(http_req_duration) < 1000ms`
+
 ## Additional Resources
 
 For more information on using the Angular CLI, including detailed command references, visit the [Angular CLI Overview and Command Reference](https://angular.dev/tools/cli) page.
