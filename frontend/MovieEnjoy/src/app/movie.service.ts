@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpParams } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { environment } from '../environments/environment';
 
@@ -10,14 +10,51 @@ export interface Movie {
   director: string;
 }
 
+export interface MovieSearchParams {
+  title?: string;
+  year?: string;
+  director?: string;
+  star?: string;
+  page?: number;
+  size?: number;
+  sort?: string;
+  order?: string;
+}
+
 @Injectable({ providedIn: 'root' })
 export class MovieService {
   private api = `${environment.apiBaseUrl}/api/movies`;
 
   constructor(private http: HttpClient) {}
 
-  getMovies(): Observable<Movie[]> {
-    return this.http.get<Movie[]>(`${this.api}?page=1&size=50`);
+  getMovies(params?: MovieSearchParams): Observable<Movie[]> {
+    let httpParams = new HttpParams();
+    const safeParams = params ?? {};
+
+    if (safeParams.title) {
+      httpParams = httpParams.set('title', safeParams.title);
+    }
+    if (safeParams.year) {
+      httpParams = httpParams.set('year', safeParams.year);
+    }
+    if (safeParams.director) {
+      httpParams = httpParams.set('director', safeParams.director);
+    }
+    if (safeParams.star) {
+      httpParams = httpParams.set('star', safeParams.star);
+    }
+
+    httpParams = httpParams.set('page', String(safeParams.page ?? 1));
+    httpParams = httpParams.set('size', String(safeParams.size ?? 50));
+
+    if (safeParams.sort) {
+      httpParams = httpParams.set('sort', safeParams.sort);
+    }
+    if (safeParams.order) {
+      httpParams = httpParams.set('order', safeParams.order);
+    }
+
+    return this.http.get<Movie[]>(this.api, { params: httpParams });
   }
 
   getMovieById(movieId: string): Observable<Movie> {

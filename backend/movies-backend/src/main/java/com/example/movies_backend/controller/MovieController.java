@@ -47,7 +47,7 @@ public class MovieController {
             @RequestParam(defaultValue = "1") Integer page,
             @RequestParam(defaultValue = "50") Integer size) {
 
-        List<Movie> movies = movieService.getMoviesPage(page, size);
+        List<Movie> movies = movieService.searchMovies(title, year, director, star, sort, order, page, size);
         return ResponseEntity.ok(movies);
     }
 

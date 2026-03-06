@@ -2,6 +2,19 @@
   <h1>Main Page</h1>
   <p>Browse movies from database.</p>
   <div>
+    <h2>Search</h2>
+    <input #titleInput type="text" placeholder="Title" />
+    <input #yearInput type="text" placeholder="Year" />
+    <input #directorInput type="text" placeholder="Director" />
+    <input #starInput type="text" placeholder="Star name" />
+    <button
+      type="button"
+      (click)="searchMovies(titleInput.value, yearInput.value, directorInput.value, starInput.value)"
+    >
+      Search Movies
+    </button>
+  </div>
+  <div>
     <button type="button" (click)="browseMovies()">Browse Movies</button>
   </div>
 </section>
