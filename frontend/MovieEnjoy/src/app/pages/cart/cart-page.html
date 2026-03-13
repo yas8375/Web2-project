@@ -1,7 +1,39 @@
 <section>
   <h1>Shopping Cart</h1>
+
   <button (click)="loadCart()">Refresh</button>
+
   <p class="error" *ngIf="errorMessage">{{ errorMessage }}</p>
-  <pre *ngIf="response">{{ response | json }}</pre>
+
+  <table *ngIf="response?.items?.length > 0">
+    <thead>
+      <tr>
+        <th>Title</th>
+        <th>Year</th>
+        <th>Director</th>
+        <th>Quantity</th>
+        <th>Actions</th>
+      </tr>
+    </thead>
+
+    <tbody>
+      <tr *ngFor="let item of response.items">
+        <td>{{ item.title }}</td>
+        <td>{{ item.year }}</td>
+        <td>{{ item.director }}</td>
+        <td>{{ item.quantity }}</td>
+        <td>
+          <button (click)="updateQuantity(item.movieId, item.quantity + 1)">+</button>
+          <button (click)="updateQuantity(item.movieId, item.quantity - 1)">-</button>
+          <button (click)="removeItem(item.movieId)">Remove</button>
+        </td>
+      </tr>
+    </tbody>
+  </table>
+
+  <p *ngIf="response && response.totalItems === 0">Your cart is empty.</p>
+
+  <p *ngIf="response">Total Items: {{ response.totalItems }}</p>
+
   <a routerLink="/checkout">Proceed to Checkout</a>
 </section>
