@@ -15,10 +15,12 @@ public class CreditCard {
     @Column(name = "id", nullable = false, length = 20)
     private String id;
 
-    @Column(name = "firstName", nullable = false, length = 50)
+    // DB column is `firstname` (not `first_name`).
+    @Column(name = "firstname", nullable = false, length = 50)
     private String firstName;
 
-    @Column(name = "lastName", nullable = false, length = 50)
+    // DB column is `lastname` (not `last_name`).
+    @Column(name = "lastname", nullable = false, length = 50)
     private String lastName;
 
     @Column(name = "expiration", nullable = false)
