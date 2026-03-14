@@ -5,7 +5,7 @@
     <input name="lastName" [(ngModel)]="form.lastName" placeholder="Last name" required />
     <input name="cardNumber" [(ngModel)]="form.cardNumber" placeholder="Card number" required />
     <input name="expiration" [(ngModel)]="form.expiration" placeholder="YYYY-MM-DD" required />
-    <button type="submit">Pay</button>
+    <button type="submit" [disabled]="isSubmitting">{{ isSubmitting ? 'Processing...' : 'Pay' }}</button>
   </form>
-  <p>{{ message }}</p>
+  <p *ngIf="message">{{ message }}</p>
 </section>
