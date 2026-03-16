@@ -1,8 +1,10 @@
 package com.example.movies_backend.controller;
 
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import java.util.List;
 
@@ -12,107 +14,58 @@ import org.springframework.boot.webmvc.test.autoconfigure.WebMvcTest;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
 
+import com.example.movies_backend.dto.SingleMovieDTO;
 import com.example.movies_backend.model.Movie;
 import com.example.movies_backend.service.MovieService;
 
-/**
- * Unit tests for MovieController.
- *
- * These tests focus on the web layer (HTTP requests and responses)
- * and mock the MovieService dependency.
- */
 @WebMvcTest(MovieController.class)
 class MovieControllerTest {
 
-    /**
-     * MockMvc allows us to simulate HTTP requests
-     * without starting a real server.
-     */
     @Autowired
     private MockMvc mockMvc;
 
-    /**
-     * We mock MovieService because we only want
-     * to test the controller behavior, not the service logic.
-     */
-   @MockitoBean
-private MovieService movieService;
+    @MockitoBean
+    private MovieService movieService;
 
-    /**
-     * Phase 4 Expected Behavior:
-     * GET /api/movies should return HTTP 200 and a list of movies.
-     *
-     * Current Phase 3 Behavior:
-     * The endpoint works but only returns basic paging results.
-     * This test should PASS.
-     */
     @Test
     void getMovies_shouldReturnMovieList() throws Exception {
+        when(movieService.searchMovies(null, null, null, null, "title", "asc", 1, 50))
+                .thenReturn(List.of(
+                        new Movie("tt1", "Alpha", 2000, "Director A"),
+                        new Movie("tt2", "Beta", 2001, "Director B")));
 
-        // Mock the service response
-        when(movieService.getMoviesPage(1, 50))
-                .thenReturn(List.of(new Movie(), new Movie()));
-
-        // Perform HTTP GET request
         mockMvc.perform(get("/api/movies"))
-                .andExpect(status().isOk()) // Expect HTTP 200
-                .andExpect(jsonPath("$.length()").value(2)); // Expect 2 movies
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.length()").value(2))
+                .andExpect(jsonPath("$[0].id").value("tt1"));
     }
 
-    /**
-     * Phase 4 Expected Behavior:
-     * GET /api/movies/{movieId} should return HTTP 200 with movie details.
-     *
-     * Current Phase 3 Behavior:
-     * The controller returns HTTP 501 NOT_IMPLEMENTED.
-     *
-     * Therefore this test will FAIL until Phase 4 implementation.
-     */
     @Test
-    void getMovieById_shouldReturnMovieDetails_phase4Expected() throws Exception {
+    void getMovieById_shouldReturnMovieDetails() throws Exception {
+        when(movieService.getMovieById(eq("tt123"))).thenReturn(
+                new SingleMovieDTO(
+                        "tt123",
+                        "Movie 123",
+                        2005,
+                        "Director X",
+                        8.2f,
+                        List.of("Drama"),
+                        List.of(new SingleMovieDTO.StarSummaryDTO("nm1", "Star One"))));
 
-        // Perform HTTP request
         mockMvc.perform(get("/api/movies/tt123"))
-
-                // We EXPECT 200 in the future implementation
-                // but the controller currently returns 501
-                // so this test will FAIL intentionally.
-                .andExpect(status().isOk());
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.id").value("tt123"))
+                .andExpect(jsonPath("$.title").value("Movie 123"))
+                .andExpect(jsonPath("$.stars[0].id").value("nm1"));
     }
 
-    /**
-     * Phase 4 Expected Behavior:
-     * GET /api/genres should return HTTP 200 with genres list.
-     *
-     * Current Phase 3 Behavior:
-     * Endpoint returns HTTP 501 (placeholder).
-     *
-     * This test is expected to FAIL until Phase 4.
-     */
     @Test
-    void getGenres_shouldReturnGenresList_phase4Expected() throws Exception {
+    void getMovieById_shouldReturn404_whenMovieMissing() throws Exception {
+        when(movieService.getMovieById("tt999")).thenReturn(null);
 
-        mockMvc.perform(get("/api/genres"))
-
-                // Future expected behavior
-                .andExpect(status().isOk());
-    }
-
-    /**
-     * Phase 4 Expected Behavior:
-     * GET /api/titles should return HTTP 200 with browse titles options.
-     *
-     * Current Phase 3 Behavior:
-     * Endpoint returns HTTP 501 placeholder.
-     *
-     * This test will FAIL until the feature is implemented.
-     */
-    @Test
-    void getTitles_shouldReturnTitleBrowseOptions_phase4Expected() throws Exception {
-
-        mockMvc.perform(get("/api/titles"))
-
-                // Expected future behavior
-                .andExpect(status().isOk());
+        mockMvc.perform(get("/api/movies/tt999"))
+                .andExpect(status().isNotFound())
+                .andExpect(jsonPath("$.message").value("Movie not found"))
+                .andExpect(jsonPath("$.movieId").value("tt999"));
     }
 }

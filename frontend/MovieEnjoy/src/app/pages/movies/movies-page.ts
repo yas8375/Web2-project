@@ -1,15 +1,14 @@
 import { ChangeDetectorRef, Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { Movie, MovieService } from '../../movie.service';
 import { HttpClient } from '@angular/common/http';
-import { Router } from '@angular/router';
 import { environment } from '../../../environments/environment.development';
 
 @Component({
   selector: 'app-movies-page',
   standalone: true,
-  imports: [CommonModule],
+  imports: [CommonModule, RouterLink],
   templateUrl: './movies-page.html',
 })
 export class MoviesPageComponent implements OnInit {

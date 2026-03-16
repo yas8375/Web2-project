@@ -1,77 +1,84 @@
 package com.example.movies_backend.service;
 
-import static org.junit.jupiter.api.Assertions.*;
+import java.time.LocalDate;
+import java.util.Optional;
 
-import java.util.Map;
-
-import org.junit.jupiter.api.Disabled;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import static org.mockito.Mockito.when;
+import org.mockito.junit.jupiter.MockitoExtension;
 
+import com.example.movies_backend.dto.CheckoutRequestDTO;
+import com.example.movies_backend.dto.CheckoutResponseDTO;
+import com.example.movies_backend.model.CreditCard;
+import com.example.movies_backend.repository.CreditCardRepository;
+
+@ExtendWith(MockitoExtension.class)
 class CheckoutServiceTest {
 
-  /**
-   * Phase 3 Current Behavior:
-   * checkout() is a placeholder and returns null.
-   */
-  @Test
-  void checkout_returnsNull_inPhase3() {
-    CheckoutService checkoutService = new CheckoutService();
+  @Mock
+  private CreditCardRepository creditCardRepository;
 
-    Map<String, Object> result = checkoutService.checkout(
+  @InjectMocks
+  private CheckoutService checkoutService;
+
+  @Test
+  void checkout_shouldReturnSuccess_whenPaymentInfoMatchesStoredCard() {
+    CreditCard card = new CreditCard(
+        "4111111111111111",
         "Rick",
         "Carter",
-        "6831232434544301",
-        "2006/06/08"
-    );
-    assertNull(
-        result,
-        "Phase 3: checkout() is a placeholder and should return null"
-    );
-  }
+        LocalDate.of(2006, 6, 8));
+    when(creditCardRepository.findByNormalizedId("4111111111111111"))
+        .thenReturn(Optional.of(card));
 
-  /**
-   * Phase 4 Expected Behavior:
-   * With valid payment info, checkout should return a non-null result map
-   * (e.g., confirmation/orderId/status).
-   */
-  //@Disabled("Phase 4: checkout() should return confirmation data after implementation")
-  @Test
-  void checkout_shouldReturnResultMap_whenPaymentValid_phase4Expected() {
-    CheckoutService checkoutService = new CheckoutService();
-
-    Map<String, Object> result = checkoutService.checkout(
-       "Rick",
+    CheckoutRequestDTO request = new CheckoutRequestDTO(
+        "Rick",
         "Carter",
-        "6831232434544301",
-        "2006/06/08"
-    );
+        "4111 1111 1111 1111",
+        "2006/06/08");
+    CheckoutResponseDTO result = checkoutService.checkout(request, null);
 
-    assertNotNull(
-        result,
-        "Phase 4 expected: checkout() should return non-null result map for valid payment"
-    );
+    assertNotNull(result);
+    assertTrue(result.isSuccess());
+    assertEquals("Checkout complete", result.getMessage());
+    assertNotNull(result.getOrderId());
   }
 
-  /**
-   * Phase 4 Expected Behavior (recommended):
-   * Missing/invalid fields should be rejected (either return error map or throw exception).
-   * Here we specify it should NOT succeed (non-null success result).
-   */
-  //@Disabled("Phase 4: input validation not implemented yet")
   @Test
-  void checkout_shouldRejectInvalidPayload_phase4Expected() {
-    CheckoutService checkoutService = new CheckoutService();
+  void checkout_shouldRejectInvalidPayload() {
+    CheckoutRequestDTO request = new CheckoutRequestDTO(
+        "",
+        "",
+        "",
+        "");
+    CheckoutResponseDTO result = checkoutService.checkout(request, null);
 
-    Map<String, Object> result = checkoutService.checkout(
-        "",     // invalid firstName
-        "",     // invalid lastName
-        "",     // invalid cardNumber
-        ""      // invalid expiration
-    );
+    assertNotNull(result);
+    assertFalse(result.isSuccess());
+    assertEquals("First name and last name are required", result.getMessage());
+  }
 
-    // In Phase 4 you might implement: return Map.of("success", false, "error", "...") OR throw exception.
-    // For now we just specify that invalid payload should not produce a successful checkout result.
-    assertNotNull(result, "Phase 4 expected: invalid payload should return an error result map (not null)");
-    assertEquals(false, result.get("success"), "Phase 4 expected: success should be false for invalid payload");
+  @Test
+  void checkout_shouldRejectUnknownCard() {
+    when(creditCardRepository.findByNormalizedId("4111111111111111"))
+        .thenReturn(Optional.empty());
+
+    CheckoutRequestDTO request = new CheckoutRequestDTO(
+        "Rick",
+        "Carter",
+        "4111111111111111",
+        "2006-06-08");
+    CheckoutResponseDTO result = checkoutService.checkout(request, null);
+
+    assertNotNull(result);
+    assertFalse(result.isSuccess());
+    assertEquals("Card number not found", result.getMessage());
   }
 }

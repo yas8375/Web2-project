@@ -10,6 +10,36 @@ export interface Movie {
   director: string;
 }
 
+export interface StarSummary {
+  id: string;
+  name: string;
+}
+
+export interface SingleMovie {
+  id: string;
+  title: string;
+  year: number;
+  director: string;
+  rating: number | null;
+  genres: string[];
+  stars: StarSummary[];
+}
+
+export interface MovieSummary {
+  id: string;
+  title: string;
+  year: number | null;
+  director: string;
+  rating: number | null;
+}
+
+export interface SingleStar {
+  id: string;
+  name: string;
+  birthYear: number | null;
+  movies: MovieSummary[];
+}
+
 export interface MovieSearchParams {
   title?: string;
   year?: string;
@@ -57,7 +87,11 @@ export class MovieService {
     return this.http.get<Movie[]>(this.api, { params: httpParams });
   }
 
-  getMovieById(movieId: string): Observable<Movie> {
-    return this.http.get<Movie>(`${this.api}/${movieId}`);
+  getMovieById(movieId: string): Observable<SingleMovie> {
+    return this.http.get<SingleMovie>(`${this.api}/${movieId}`);
+  }
+
+  getStarById(starId: string): Observable<SingleStar> {
+    return this.http.get<SingleStar>(`${environment.apiBaseUrl}/api/stars/${starId}`);
   }
 }
