@@ -14,7 +14,7 @@
     </thead>
     <tbody>
       <tr *ngFor="let m of movies">
-        <td>{{ m.title }}</td>
+        <td><a [routerLink]="['/movies', m.id]">{{ m.title }}</a></td>
         <td>{{ m.year }}</td>
         <td>{{ m.director }}</td>
         <td><button (click)="addToCart(m.id)">Add</button></td>

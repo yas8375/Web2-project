@@ -1,5 +1,33 @@
 <section>
   <h1>Star Details</h1>
+  <p *ngIf="loading">Loading star...</p>
   <p class="error" *ngIf="errorMessage">{{ errorMessage }}</p>
-  <pre *ngIf="response">{{ response | json }}</pre>
+
+  <div *ngIf="star" class="card">
+    <h2>{{ star.name }}</h2>
+    <p>ID: {{ star.id }}</p>
+    <p>Birth Year: {{ star.birthYear ?? 'N/A' }}</p>
+
+    <label for="movie-sort">Sort Movies:</label>
+    <select id="movie-sort" [value]="sortDirection" (change)="onSortChange($any($event.target).value)">
+      <option value="asc">A-Z</option>
+      <option value="desc">Z-A</option>
+    </select>
+
+    <div>
+      <strong>Filmography:</strong>
+      <ul *ngIf="movies.length > 0; else noMovies">
+        <li *ngFor="let movie of movies">
+          <a [routerLink]="['/movies', movie.id]">{{ movie.title }}</a>
+          <span *ngIf="movie.year"> ({{ movie.year }})</span>
+          <span *ngIf="movie.rating !== null"> - Rating: {{ movie.rating }}</span>
+        </li>
+      </ul>
+      <ng-template #noMovies>
+        <p>No movies found.</p>
+      </ng-template>
+    </div>
+
+    <button type="button" (click)="goBack()">Back to movie</button>
+  </div>
 </section>

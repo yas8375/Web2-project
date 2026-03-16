@@ -6,9 +6,11 @@ import java.util.Locale;
 import java.util.stream.Stream;
 
 import org.springframework.beans.factory.ObjectProvider;
+import org.springframework.dao.DataAccessException;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 
+import com.example.movies_backend.dto.SingleMovieDTO;
 import com.example.movies_backend.model.Movie;
 import com.example.movies_backend.repository.MovieRepository;
 
@@ -20,6 +22,41 @@ public class MovieService {
             new Movie("tt1000002", "Beta Movie", 2000, "Director B"),
             new Movie("tt1000003", "Gamma Movie", 2010, "Director C"),
             new Movie("tt1000004", "Delta Movie", 2020, "Director D"));
+    private static final List<SingleMovieDTO> MOCK_SINGLE_MOVIES = List.of(
+            new SingleMovieDTO(
+                    "tt1000001",
+                    "Alpha Movie",
+                    1990,
+                    "Director A",
+                    7.5f,
+                    List.of("Action", "Drama"),
+                    List.of(
+                            new SingleMovieDTO.StarSummaryDTO("nm1000001", "Alex Carter"),
+                            new SingleMovieDTO.StarSummaryDTO("nm1000002", "Jamie Lee"))),
+            new SingleMovieDTO(
+                    "tt1000002",
+                    "Beta Movie",
+                    2000,
+                    "Director B",
+                    8.1f,
+                    List.of("Comedy"),
+                    List.of(new SingleMovieDTO.StarSummaryDTO("nm1000003", "Morgan Diaz"))),
+            new SingleMovieDTO(
+                    "tt1000003",
+                    "Gamma Movie",
+                    2010,
+                    "Director C",
+                    6.9f,
+                    List.of("Sci-Fi", "Thriller"),
+                    List.of(new SingleMovieDTO.StarSummaryDTO("nm1000004", "Taylor Reed"))),
+            new SingleMovieDTO(
+                    "tt1000004",
+                    "Delta Movie",
+                    2020,
+                    "Director D",
+                    7.2f,
+                    List.of("Adventure"),
+                    List.of(new SingleMovieDTO.StarSummaryDTO("nm1000005", "Jordan Kim"))));
 
     private final ObjectProvider<MovieRepository> movieRepositoryProvider;
 
@@ -27,16 +64,6 @@ public class MovieService {
         this.movieRepositoryProvider = movieRepositoryProvider;
     }
 
-    /**
-     * Logic:
-     * Retrieves all movies from database through repository layer.
-     *
-     * Params:
-     * None.
-     *
-     * Return:
-     * List<Movie> containing all movie rows.
-     */
     public List<Movie> getAllMovies() {
         MovieRepository movieRepository = movieRepositoryProvider.getIfAvailable();
         if (movieRepository == null) {
@@ -45,17 +72,6 @@ public class MovieService {
         return movieRepository.findAll();
     }
 
-    /**
-     * Logic:
-     * Retrieves movies page from database to avoid loading whole dataset at once.
-     *
-     * Params:
-     * page: 1-based page number.
-     * size: number of records per page.
-     *
-     * Return:
-     * List<Movie> for the requested page.
-     */
     public List<Movie> getMoviesPage(Integer page, Integer size) {
         int safePage = page == null || page < 1 ? 1 : page;
         int safeSize = size == null || size < 1 ? 50 : size;
@@ -94,37 +110,54 @@ public class MovieService {
         return paginate(sorted, safePage, safeSize);
     }
 
-    /**
-     * Logic:
-     * Retrieves one movie by its id.
-     *
-     * Params:
-     * movieId: primary key of the movie.
-     *
-     * Return:
-     * Movie object if exists, otherwise null.
-     */
-    public Movie getMovieById(String movieId) {
+    public SingleMovieDTO getMovieById(String movieId) {
         MovieRepository movieRepository = movieRepositoryProvider.getIfAvailable();
         if (movieRepository == null) {
-            return MOCK_MOVIES.stream()
+            return MOCK_SINGLE_MOVIES.stream()
                     .filter(movie -> movie.getId().equals(movieId))
                     .findFirst()
                     .orElse(null);
         }
-        return movieRepository.findById(movieId).orElse(null);
+
+        Movie movie = movieRepository.findMovieDetailsById(movieId).orElse(null);
+        if (movie == null) {
+            return null;
+        }
+
+        Float rating = null;
+        List<String> genres = List.of();
+        List<SingleMovieDTO.StarSummaryDTO> stars = List.of();
+
+        try {
+            rating = movieRepository.findRatingByMovieId(movieId).orElse(null);
+        } catch (DataAccessException ignored) {
+            rating = null;
+        }
+
+        try {
+            genres = movieRepository.findGenreNamesByMovieId(movieId);
+        } catch (DataAccessException ignored) {
+            genres = List.of();
+        }
+
+        try {
+            stars = movieRepository.findStarRowsByMovieId(movieId).stream()
+                    .map(this::toStarSummary)
+                    .toList();
+        } catch (DataAccessException ignored) {
+            stars = List.of();
+        }
+
+        return new SingleMovieDTO(
+                movie.getId(),
+                movie.getTitle(),
+                movie.getYear(),
+                movie.getDirector(),
+                rating,
+                genres,
+                stars);
     }
 
-    /**
-     * Logic:
-     * Returns available genres list for browsing contracts.
-     *
-     * Params:
-     * None.
-     *
-     * Return:
-     * List<String> with genre names.
-     */
     public List<String> getGenres() {
         return List.of(
                 "Action",
@@ -192,5 +225,20 @@ public class MovieService {
         }
         int to = Math.min(from + size, movies.size());
         return movies.subList(from, to);
+    }
+
+    private SingleMovieDTO.StarSummaryDTO toStarSummary(String row) {
+        if (row == null || row.isBlank()) {
+            return new SingleMovieDTO.StarSummaryDTO("", "");
+        }
+
+        int separator = row.indexOf('|');
+        if (separator < 0) {
+            return new SingleMovieDTO.StarSummaryDTO(row, row);
+        }
+
+        return new SingleMovieDTO.StarSummaryDTO(
+                row.substring(0, separator),
+                row.substring(separator + 1));
     }
 }
