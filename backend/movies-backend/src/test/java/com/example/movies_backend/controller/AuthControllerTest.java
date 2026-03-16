@@ -30,48 +30,57 @@ class AuthControllerTest {
   private AuthService authService;
 
   /**
-   * Phase 3 current behavior:
-   * Endpoint is a contract-only placeholder -> returns 501 NOT_IMPLEMENTED.
-   *
-   * We still verify that controller calls the service with email/password
-   * parsed from request body.
+   * Phase 4 behavior:
+   * - missing email/password -> 400
    */
   @Test
-  void login_shouldReturn501_inPhase3_andCallService() throws Exception {
-
-    // (Optional) Define mock behavior; not required since we only verify call
-    when(authService.login("a@a.com", "123")).thenReturn(false);
-
+  void login_shouldReturn400_whenMissingFields() throws Exception {
     mockMvc.perform(
             post("/api/login")
                 .contentType(MediaType.APPLICATION_JSON)
-                .content("{\"email\":\"a@a.com\",\"password\":\"123\"}")
+                .content("{\"email\":\"\",\"password\":\"\"}")
         )
-        .andExpect(status().isNotImplemented())                 // 501
+        .andExpect(status().isBadRequest())
         .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
-        .andExpect(jsonPath("$.page").value("login"))
-        .andExpect(jsonPath("$.endpoint").value("POST /api/login"))
         .andExpect(jsonPath("$.message").exists());
-
-    // Verify controller delegated to the service
-    verify(authService).login("a@a.com", "123");
   }
 
   /**
-   * Phase 4 expected behavior:
-   * Endpoint should return 200 OK (or 401 for invalid credentials) once implemented.
-   *
-   * Current Phase 3 behavior:
-   * Controller returns 501 -> so this test FAILS intentionally until Phase 4.
+   * Phase 4 behavior:
+   * - invalid credentials -> 401
    */
   @Test
-  void login_shouldReturn200_phase4Expected() throws Exception {
+  void login_shouldReturn401_whenInvalidCredentials() throws Exception {
+    when(authService.login("a@a.com", "bad")).thenReturn(false);
+    mockMvc.perform(
+            post("/api/login")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content("{\"email\":\"a@a.com\",\"password\":\"bad\"}")
+        )
+        .andExpect(status().isUnauthorized())
+        .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
+        .andExpect(jsonPath("$.message").exists());
+
+    verify(authService).login("a@a.com", "bad");
+  }
+
+  /**
+   * Phase 4 behavior:
+   * - valid credentials -> 200
+   */
+  @Test
+  void login_shouldReturn200_whenValidCredentials() throws Exception {
+    when(authService.login("a@a.com", "123")).thenReturn(true);
 
     mockMvc.perform(
             post("/api/login")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content("{\"email\":\"a@a.com\",\"password\":\"123\"}")
         )
-        .andExpect(status().isOk()); // will fail now (actual is 501)
+        .andExpect(status().isOk())
+        .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
+        .andExpect(jsonPath("$.message").value("Login successful"));
+
+    verify(authService).login("a@a.com", "123");
   }
 }

@@ -22,7 +22,9 @@ import com.example.movies_backend.service.CartService;
 
 @RestController
 @RequestMapping("/api")
-@CrossOrigin(origins = "http://localhost:4200", allowCredentials = "true")
+@CrossOrigin(
+        originPatterns = {"http://localhost:*", "http://127.0.0.1:*"},
+        allowCredentials = "true")
 public class CartController {
 
     @Autowired

@@ -1,9 +1,20 @@
 package com.example.movies_backend.service;
 
+import java.util.Optional;
+
 import org.springframework.stereotype.Service;
+
+import com.example.movies_backend.model.Customer;
+import com.example.movies_backend.repository.CustomerRepository;
 
 @Service
 public class AuthService {
+
+    private final CustomerRepository customerRepository;
+
+    public AuthService(CustomerRepository customerRepository) {
+        this.customerRepository = customerRepository;
+    }
 
     /**
      * Logic:
@@ -17,7 +28,16 @@ public class AuthService {
      * true/false login status (planned for next phase).
      */
     public boolean login(String email, String password) {
-        // Placeholder for Phase 3
-        return false;
+        if (email == null || email.isBlank() || password == null || password.isBlank()) {
+            return false;
+        }
+
+        Optional<Customer> customer = customerRepository.findFirstByEmail(email.trim());
+        if (customer.isEmpty()) {
+            return false;
+        }
+
+        // Current DB stores plain-text passwords (per provided dataset).
+        return password.equals(customer.get().getPassword());
     }
 }
