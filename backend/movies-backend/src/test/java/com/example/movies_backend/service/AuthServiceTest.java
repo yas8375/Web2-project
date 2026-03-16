@@ -1,22 +1,42 @@
 package com.example.movies_backend.service;
 
 import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.Mockito.when;
 
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoExtension;
 
+import com.example.movies_backend.model.Customer;
+import com.example.movies_backend.repository.CustomerRepository;
+
+@ExtendWith(MockitoExtension.class)
 class AuthServiceTest {
+
+  @Mock
+  private CustomerRepository customerRepository;
+
+  @InjectMocks
+  private AuthService authService;
 
   /**
    * Phase 4 expected behavior:
    * - When user provides valid credentials, login should succeed (return true).
-   * Phase 3 current behavior:
-   * - login() is a placeholder and always returns false, so this test will FAIL for now (RED).
    */
-  //@Disabled("Phase 3: login() is a placeholder and always returns false. Enable in Phase 4 after implementation.")
   @Test
   void login_shouldReturnTrue_whenCredentialsAreValid_phase4Expected() {
-    AuthService authService = new AuthService();
+    when(customerRepository.findFirstByEmail("valid@example.com"))
+        .thenReturn(java.util.Optional.of(new Customer(
+            null,
+            "First",
+            "Last",
+            "1234",
+            "Address",
+            "valid@example.com",
+            "correct-password"
+        )));
 
     boolean ok = authService.login("valid@example.com", "correct-password");
 
@@ -31,7 +51,16 @@ class AuthServiceTest {
    */
   @Test
   void login_shouldReturnFalse_whenCredentialsAreInvalid_phase4Expected() {
-    AuthService authService = new AuthService();
+    when(customerRepository.findFirstByEmail("valid@example.com"))
+        .thenReturn(java.util.Optional.of(new Customer(
+            null,
+            "First",
+            "Last",
+            "1234",
+            "Address",
+            "valid@example.com",
+            "correct-password"
+        )));
 
     boolean ok = authService.login("valid@example.com", "wrong-password");
 
@@ -46,8 +75,6 @@ class AuthServiceTest {
    */
   @Test
   void login_shouldReturnFalse_whenEmailOrPasswordIsEmpty_phase4Expected() {
-    AuthService authService = new AuthService();
-
     assertFalse(authService.login("", "1234"), "Empty email should be rejected");
     assertFalse(authService.login("a@b.com", ""), "Empty password should be rejected");
   }

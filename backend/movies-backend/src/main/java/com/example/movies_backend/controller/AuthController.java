@@ -15,7 +15,7 @@ import com.example.movies_backend.service.AuthService;
 
 @RestController
 @RequestMapping("/api")
-@CrossOrigin(origins = "http://localhost:4200")
+@CrossOrigin(originPatterns = {"http://localhost:*", "http://127.0.0.1:*"})
 public class AuthController {
 
     @Autowired
@@ -29,17 +29,25 @@ public class AuthController {
      * JSON body with email and password.
      *
      * Return:
-     * HTTP 501 Not Implemented for Phase 2 (contract only).
+     * 200 OK on success, 401 Unauthorized on invalid credentials,
+     * 400 Bad Request if email/password missing.
      */
     @PostMapping("/login")
     public ResponseEntity<?> login(@RequestBody Map<String, String> body) {
-        // Service Contract:
-        authService.login(body.get("email"), body.get("password"));
+        String email = body == null ? null : body.get("email");
+        String password = body == null ? null : body.get("password");
 
-        return ResponseEntity.status(HttpStatus.NOT_IMPLEMENTED)
-                .body(Map.of(
-                        "page", "login",
-                        "endpoint", "POST /api/login",
-                        "message", "Planned for next phase"));
+        if (email == null || email.isBlank() || password == null || password.isBlank()) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                    .body(Map.of("message", "Email and password are required."));
+        }
+
+        boolean ok = authService.login(email, password);
+        if (!ok) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
+                    .body(Map.of("message", "Invalid email or password."));
+        }
+
+        return ResponseEntity.ok(Map.of("message", "Login successful"));
     }
 }

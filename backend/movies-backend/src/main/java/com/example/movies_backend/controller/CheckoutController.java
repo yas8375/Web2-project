@@ -15,7 +15,7 @@ import com.example.movies_backend.service.CheckoutService;
 
 @RestController
 @RequestMapping("/api")
-@CrossOrigin(origins = "http://localhost:4200")
+@CrossOrigin(originPatterns = {"http://localhost:*", "http://127.0.0.1:*"})
 public class CheckoutController {
 
     @Autowired

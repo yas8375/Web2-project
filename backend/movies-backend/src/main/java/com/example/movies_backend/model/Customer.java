@@ -16,13 +16,14 @@ public class Customer {
     @Column(name = "id", nullable = false)
     private Integer id;
 
-    @Column(name = "firstName", nullable = false, length = 50)
+    // Supabase schema uses lowercase column names (e.g., firstname, ccid).
+    @Column(name = "firstname", nullable = false, length = 50)
     private String firstName;
 
-    @Column(name = "lastName", nullable = false, length = 50)
+    @Column(name = "lastname", nullable = false, length = 50)
     private String lastName;
 
-    @Column(name = "ccId", nullable = false, length = 20)
+    @Column(name = "ccid", nullable = false, length = 20)
     private String ccId;
 
     @Column(name = "address", nullable = false, length = 200)
