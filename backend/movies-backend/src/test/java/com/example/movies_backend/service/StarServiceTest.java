@@ -1,55 +1,81 @@
 package com.example.movies_backend.service;
 
-import java.util.Map;
-
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-import org.junit.jupiter.api.Test;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
+import java.util.List;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.beans.factory.ObjectProvider;
+
+import com.example.movies_backend.dto.SingleStarDTO;
+import com.example.movies_backend.model.Movie;
+import com.example.movies_backend.repository.MovieRepository;
+import com.example.movies_backend.repository.StarRepository;
+
+@ExtendWith(MockitoExtension.class)
 class StarServiceTest {
 
-    /**
-     * Phase 3 Current Behavior:
-     * getStarById() is a placeholder and returns null.
-     */
-    @Test
-    void getStarById_returnsNull_inPhase3() {
-        StarService starService = new StarService();
+    @Mock
+    private StarRepository starRepository;
 
-        Map<String, Object> result = starService.getStarById("nm123");
+    @Mock
+    private ObjectProvider<StarRepository> starRepositoryProvider;
 
-        assertNull(
-            result,
-            "Phase 3: getStarById() is a placeholder and should return null"
-        );
+    @Mock
+    private MovieRepository movieRepository;
+
+    @Mock
+    private ObjectProvider<MovieRepository> movieRepositoryProvider;
+
+    private StarService starService;
+
+    private void setupService() {
+        starService = new StarService(starRepositoryProvider, movieRepositoryProvider);
     }
 
-    /**
-     * Phase 4 Expected Behavior:
-     * getStarById() should return star details and related movies.
-     * Disabled until implementation is completed.
-     */
-    //@Disabled("Phase 4: getStarById() should return star details and related movies")
+    private void stubBothProviders() {
+        when(starRepositoryProvider.getIfAvailable()).thenReturn(starRepository);
+        when(movieRepositoryProvider.getIfAvailable()).thenReturn(movieRepository);
+    }
+
     @Test
-    void getStarById_shouldReturnStarData_inPhase4() {
-        StarService starService = new StarService();
+    void getStarById_returnsStarDetails_whenFound() {
+        setupService();
+        stubBothProviders();
+        when(starRepository.findStarRowsById("nm123"))
+                .thenReturn(List.of("nm123|Star Name|1970"));
+        when(starRepository.findMovieIdsByStarId("nm123"))
+                .thenReturn(List.of("tt1"));
+        when(movieRepository.findMovieDetailsById("tt1"))
+                .thenReturn(java.util.Optional.of(new Movie("tt1", "Movie One", 2000, "Director One")));
+        when(movieRepository.findRatingByMovieId("tt1"))
+                .thenReturn(java.util.Optional.of(8.1f));
 
-        Map<String, Object> result = starService.getStarById("nm123");
+        SingleStarDTO result = starService.getStarById("nm123");
 
-        assertNotNull(
-            result,
-            "Phase 4 expected: getStarById() should return non-null star data"
-        );
+        assertNotNull(result);
+        assertEquals("nm123", result.getId());
+        assertEquals("Star Name", result.getName());
+        assertEquals(1, result.getMovies().size());
+        assertEquals("tt1", result.getMovies().get(0).getId());
+        verify(starRepository).findStarRowsById("nm123");
+    }
 
-        assertTrue(
-            result.containsKey("name"),
-            "Phase 4 expected: star data should contain 'name' field"
-        );
+    @Test
+    void getStarById_returnsNull_whenStarMissing() {
+        setupService();
+        when(starRepositoryProvider.getIfAvailable()).thenReturn(starRepository);
+        when(starRepository.findStarRowsById("nm404")).thenReturn(List.of());
 
-        assertTrue(
-            result.containsKey("movies"),
-            "Phase 4 expected: star data should contain related 'movies'"
-        );
+        SingleStarDTO result = starService.getStarById("nm404");
+
+        assertNull(result);
+        verify(starRepository).findStarRowsById("nm404");
     }
 }

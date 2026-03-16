@@ -3,18 +3,54 @@ package com.example.movies_backend.dto;
 import java.util.List;
 
 public class SingleMovieDTO {
+    public static class StarSummaryDTO {
+        private String id;
+        private String name;
+
+        public StarSummaryDTO() {
+        }
+
+        public StarSummaryDTO(String id, String name) {
+            this.id = id;
+            this.name = name;
+        }
+
+        public String getId() {
+            return id;
+        }
+
+        public void setId(String id) {
+            this.id = id;
+        }
+
+        public String getName() {
+            return name;
+        }
+
+        public void setName(String name) {
+            this.name = name;
+        }
+    }
+
     private String id;
     private String title;
     private Integer year;
     private String director;
     private Float rating;
     private List<String> genres;
-    private List<String> stars;
+    private List<StarSummaryDTO> stars;
 
     public SingleMovieDTO() {
     }
 
-    public SingleMovieDTO(String id, String title, Integer year, String director, Float rating, List<String> genres, List<String> stars) {
+    public SingleMovieDTO(
+            String id,
+            String title,
+            Integer year,
+            String director,
+            Float rating,
+            List<String> genres,
+            List<StarSummaryDTO> stars) {
         this.id = id;
         this.title = title;
         this.year = year;
@@ -72,11 +108,11 @@ public class SingleMovieDTO {
         this.genres = genres;
     }
 
-    public List<String> getStars() {
+    public List<StarSummaryDTO> getStars() {
         return stars;
     }
 
-    public void setStars(List<String> stars) {
+    public void setStars(List<StarSummaryDTO> stars) {
         this.stars = stars;
     }
 }

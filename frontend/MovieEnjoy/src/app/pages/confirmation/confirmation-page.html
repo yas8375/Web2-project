@@ -2,5 +2,11 @@
   <h1>Confirmation</h1>
   <p>{{ success ? 'Payment successful' : 'Payment failed' }}</p>
   <p>{{ message }}</p>
+  <p *ngIf="orderId">Order ID: {{ orderId }}</p>
+  <ul *ngIf="items?.length">
+    <li *ngFor="let item of items">
+      {{ item?.title ?? item?.movieId ?? 'Item' }} (x{{ item?.quantity ?? 1 }})
+    </li>
+  </ul>
   <a routerLink="/movies">Back to Movies</a>
 </section>

@@ -1,28 +1,26 @@
 package com.example.movies_backend.controller;
 
-import static org.mockito.Mockito.verify;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
-
 import org.junit.jupiter.api.Test;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.argThat;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.webmvc.test.autoconfigure.WebMvcTest;
 import org.springframework.http.MediaType;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
+import com.example.movies_backend.dto.CheckoutRequestDTO;
+import com.example.movies_backend.dto.CheckoutResponseDTO;
 import com.example.movies_backend.service.CheckoutService;
 
 /**
- * Web-layer unit tests for CheckoutController (Spring Boot 4).
- *
- * Focus:
- * - Controller HTTP contract (status code + JSON payload)
- * - Delegation to CheckoutService with fields parsed from request body
- *
- * Note:
- * This controller is currently a Phase 3 placeholder and returns 501.
- * Some tests are written for Phase 4 expected behavior and intentionally FAIL.
+ * Web-layer unit tests for CheckoutController.
  */
 @WebMvcTest(CheckoutController.class)
 class CheckoutControllerTest {
@@ -34,51 +32,10 @@ class CheckoutControllerTest {
   @MockitoBean
   private CheckoutService checkoutService;
 
-  /**
-   * Phase 3 current behavior:
-   * POST /api/checkout returns 501 NOT_IMPLEMENTED (placeholder),
-   * but controller should still call checkoutService.checkout(...) with parsed fields.
-   * This test should PASS now.
-   */
   @Test
-  void checkout_shouldReturn501_inPhase3_andCallService() throws Exception {
-
-    mockMvc.perform(
-            post("/api/checkout")
-                .contentType(MediaType.APPLICATION_JSON)
-                .content("""
-                    {
-                      "Rick",
-        "Carter",
-        "6831232434544301",
-        "2006/06/08"
-                    }
-                    """)
-        )
-        .andExpect(status().isNotImplemented()) // 501
-        .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
-        .andExpect(jsonPath("$.page").value("checkout"))
-        .andExpect(jsonPath("$.endpoint").value("POST /api/checkout"))
-        .andExpect(jsonPath("$.message").exists());
-
-    // Verify delegation to service contract
-    verify(checkoutService).checkout(
-        "Aleen",
-        "Test",
-        "4111111111111111",
-        "12/30"
-    );
-  }
-
-  /**
-   * Phase 4 expected behavior:
-   * POST /api/checkout should return 200 OK (or 201) with a checkout result.
-   *
-   * Current Phase 3 behavior:
-   * Returns 501 -> so this test FAILS intentionally until implementation exists.
-   */
-  @Test
-  void checkout_shouldReturn200_phase4Expected() throws Exception {
+  void checkout_shouldReturn200_andCallService_whenRequestIsValid() throws Exception {
+    when(checkoutService.checkout(any(CheckoutRequestDTO.class), any()))
+        .thenReturn(new CheckoutResponseDTO(true, "Checkout complete", "order-123", null));
 
     mockMvc.perform(
             post("/api/checkout")
@@ -88,10 +45,46 @@ class CheckoutControllerTest {
                       "firstName":"Aleen",
                       "lastName":"Test",
                       "cardNumber":"4111111111111111",
+                      "expiration":"2030-12-01"
+                    }
+                    """)
+        )
+        .andExpect(status().isOk())
+        .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
+        .andExpect(jsonPath("$.success").value(true))
+        .andExpect(jsonPath("$.message").value("Checkout complete"))
+        .andExpect(jsonPath("$.orderId").value("order-123"));
+
+    verify(checkoutService).checkout(
+        argThat(request ->
+            request != null
+                && "Aleen".equals(request.getFirstName())
+                && "Test".equals(request.getLastName())
+                && "4111111111111111".equals(request.getCardNumber())
+                && "2030-12-01".equals(request.getExpiration())),
+        any());
+  }
+
+  @Test
+  void checkout_shouldReturn400_whenServiceRejectsRequest() throws Exception {
+    when(checkoutService.checkout(any(CheckoutRequestDTO.class), any()))
+        .thenReturn(new CheckoutResponseDTO(false, "Invalid card number"));
+
+    mockMvc.perform(
+            post("/api/checkout")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content("""
+                    {
+                      "firstName":"",
+                      "lastName":"",
+                      "cardNumber":"bad",
                       "expiration":"12/30"
                     }
                     """)
         )
-        .andExpect(status().isOk()); // will fail now (actual is 501)
+        .andExpect(status().isBadRequest())
+        .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
+        .andExpect(jsonPath("$.success").value(false))
+        .andExpect(jsonPath("$.message").value("Invalid card number"));
   }
 }

@@ -2,28 +2,21 @@ package com.example.movies_backend.service;
 
 import java.util.Map;
 
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertNull;
+import jakarta.servlet.http.HttpSession;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.ObjectProvider;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 class CartServiceTest {
 
-    /**
-     * Phase 3 Current Behavior:
-     * getCart() is a placeholder and returns null.
-     */
-    @Test
-    void getCart_returnsNull_inPhase3() {
-        CartService cartService = new CartService();
-
-        Map<String, Object> cart = cartService.getCart();
-
-        assertNull(
-            cart,
-            "Phase 3: getCart() is a placeholder and should return null"
-        );
-    }
-
+    @SuppressWarnings("unchecked")
+private CartService createCartService() {
+    ObjectProvider<MovieService> movieServiceProvider = mock(ObjectProvider.class);
+    when(movieServiceProvider.getIfAvailable()).thenReturn(null);
+    return new CartService(movieServiceProvider);
+}
     /**
      * Phase 4 Expected Behavior:
      * getCart() should return a non-null cart object.
@@ -31,15 +24,14 @@ class CartServiceTest {
      */
     //@Disabled("Phase 4: getCart() should return cart data after implementation")
     @Test
-    void getCart_shouldReturnCartObject_inPhase4() {
-        CartService cartService = new CartService();
+    void getCart_shouldReturnCartObject() {
 
-        Map<String, Object> cart = cartService.getCart();
+CartService cartService = createCartService();
+        HttpSession session = mock(HttpSession.class);
 
-        assertNotNull(
-            cart,
-            "Phase 4 expected: getCart() should return non-null cart"
-        );
+        Map<String, Object> cart = cartService.getCart(session);
+
+        assertNotNull(cart);
     }
 
     /**
@@ -47,18 +39,18 @@ class CartServiceTest {
      * addToCart should return operation result map.
      */
     //@Disabled("Phase 4: addToCart() not implemented yet")
-    @Test
-    void addToCart_shouldReturnResultMap_inPhase4() {
-        CartService cartService = new CartService();
+   @Test
+    void addToCart_shouldReturnResultMap() {
+
+        CartService cartService = createCartService();
+        HttpSession session = mock(HttpSession.class);
 
         Map<String, Object> result =
-            cartService.addToCart("tt123", 2);
+                cartService.addToCart("tt123", 2, session);
 
-        assertNotNull(
-            result,
-            "Phase 4 expected: addToCart() should return operation result map"
-        );
+        assertNotNull(result);
     }
+
 
     /**
      * Phase 4 Expected Behavior:
@@ -66,16 +58,15 @@ class CartServiceTest {
      */
     //@Disabled("Phase 4: updateCartItem() not implemented yet")
     @Test
-    void updateCartItem_shouldReturnResultMap_inPhase4() {
-        CartService cartService = new CartService();
+    void updateCartItem_shouldReturnResultMap() {
+
+        CartService cartService = createCartService();
+        HttpSession session = mock(HttpSession.class);
 
         Map<String, Object> result =
-            cartService.updateCartItem("tt123", 5);
+                cartService.updateCartItem("tt123", 5, session);
 
-        assertNotNull(
-            result,
-            "Phase 4 expected: updateCartItem() should return operation result map"
-        );
+        assertNotNull(result);
     }
 
     /**
@@ -84,15 +75,14 @@ class CartServiceTest {
      */
     //@Disabled("Phase 4: removeCartItem() not implemented yet")
     @Test
-    void removeCartItem_shouldReturnResultMap_inPhase4() {
-        CartService cartService = new CartService();
+    void removeCartItem_shouldReturnResultMap() {
+
+        CartService cartService = createCartService();
+        HttpSession session = mock(HttpSession.class);
 
         Map<String, Object> result =
-            cartService.removeCartItem("tt123");
+                cartService.removeCartItem("tt123", session);
 
-        assertNotNull(
-            result,
-            "Phase 4 expected: removeCartItem() should return operation result map"
-        );
+        assertNotNull(result);
     }
 }

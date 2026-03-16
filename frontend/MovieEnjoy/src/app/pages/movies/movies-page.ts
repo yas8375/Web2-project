@@ -1,12 +1,14 @@
 import { ChangeDetectorRef, Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { Movie, MovieService } from '../../movie.service';
+import { HttpClient } from '@angular/common/http';
+import { environment } from '../../../environments/environment.development';
 
 @Component({
   selector: 'app-movies-page',
   standalone: true,
-  imports: [CommonModule],
+  imports: [CommonModule, RouterLink],
   templateUrl: './movies-page.html',
 })
 export class MoviesPageComponent implements OnInit {
@@ -22,6 +24,8 @@ export class MoviesPageComponent implements OnInit {
     private movieService: MovieService,
     private route: ActivatedRoute,
     private cdr: ChangeDetectorRef,
+    private http: HttpClient,
+    private router: Router
   ) {}
 
   ngOnInit(): void {
@@ -56,7 +60,19 @@ export class MoviesPageComponent implements OnInit {
     });
   }
 
-  addToCart(movieId: string): void {
-    console.log('Add to cart', movieId);
-  }
+ addToCart(movieId: string): void {
+  this.http.post(
+    `${environment.apiBaseUrl}/api/cart/items`,
+    { movieId, quantity: 1 },
+    { withCredentials: true }
+  ).subscribe({
+    next: () => {
+      this.router.navigate(['/cart']);
+    },
+    error: (err) => {
+      this.errorMessage = err?.error?.message ?? 'Failed to add movie to cart';
+      this.cdr.detectChanges();
+    }
+  });
+}
 }
