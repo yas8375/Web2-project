@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { HttpClient } from '@angular/common/http';
@@ -22,7 +22,7 @@ export class CheckoutPageComponent {
   message = '';
   isSubmitting = false;
 
-  constructor(private http: HttpClient, private router: Router) {}
+  constructor(private http: HttpClient, private router: Router, private cdr: ChangeDetectorRef) {}
 
   isValidCardNumber(cardNumber: string): boolean {
     // For this project, correctness is validated by backend lookup in `creditcards` table.
@@ -62,6 +62,14 @@ export class CheckoutPageComponent {
       .pipe(timeout(10000))
       .subscribe({
       next: (res) => {
+        // في حال أرجع الباك إند 200 OK لكن العملية فشلت
+        if (res && res.success === false) {
+          this.message = res.message || 'Checkout failed';
+          this.isSubmitting = false;
+          this.cdr.detectChanges();
+          return;
+        }
+
         const confirmationState = {
           success: res?.success ?? true,
           message: res?.message ?? 'Checkout complete',
@@ -91,6 +99,7 @@ export class CheckoutPageComponent {
           this.message = err?.error?.message ?? 'Request failed';
         }
         this.isSubmitting = false;
+        this.cdr.detectChanges(); // إجبار تحديث الواجهة لإيقاف التعليق وعرض الرسالة
       }
     });
   }
