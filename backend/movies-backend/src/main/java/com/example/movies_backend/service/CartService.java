@@ -8,7 +8,7 @@ import java.util.Map;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.stereotype.Service;
 
-import com.example.movies_backend.model.Movie;
+import com.example.movies_backend.dto.SingleMovieDTO;
 
 import jakarta.servlet.http.HttpSession;
 
@@ -60,8 +60,7 @@ public class CartService {
             item.put("quantity", quantity);
 
             if (movieService != null) {
-                Movie movie = movieService.getMovieById(movieId);
-                if (movie != null) {
+SingleMovieDTO movie = movieService.getMovieById(movieId);                if (movie != null) {
                     item.put("title", movie.getTitle());
                     item.put("year", movie.getYear());
                     item.put("director", movie.getDirector());
