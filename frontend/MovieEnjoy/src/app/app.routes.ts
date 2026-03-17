@@ -11,7 +11,8 @@ import { CheckoutPageComponent } from './pages/checkout/checkout-page';
 import { ConfirmationPageComponent } from './pages/confirmation/confirmation-page';
 
 export const routes: Routes = [
-  { path: '', pathMatch: 'full', redirectTo: 'main' },
+  // Default landing page: login first.
+  { path: '', pathMatch: 'full', redirectTo: 'login' },
   { path: 'main', component: MainPageComponent },
   { path: 'login', component: LoginPageComponent },
   { path: 'movies', component: MoviesPageComponent },
@@ -22,5 +23,5 @@ export const routes: Routes = [
   { path: 'cart', component: CartPageComponent },
   { path: 'checkout', component: CheckoutPageComponent },
   { path: 'confirmation', component: ConfirmationPageComponent },
-  { path: '**', redirectTo: 'main' }
+  { path: '**', redirectTo: 'login' }
 ];
