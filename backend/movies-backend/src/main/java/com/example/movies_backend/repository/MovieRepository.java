@@ -165,7 +165,6 @@ public interface MovieRepository extends JpaRepository<Movie, String> {
     List<Object[]> findStarsByMovieIds(@Param("movieIds") List<String> movieIds);
 
     @Query(value = """
-    @Query(value = """
             SELECT m.*
             FROM movies m
             WHERE m.id = :movieId
