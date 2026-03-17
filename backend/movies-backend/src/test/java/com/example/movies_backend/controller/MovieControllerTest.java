@@ -14,8 +14,8 @@ import org.springframework.boot.webmvc.test.autoconfigure.WebMvcTest;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
 
+import com.example.movies_backend.dto.MovieListItemDTO;
 import com.example.movies_backend.dto.SingleMovieDTO;
-import com.example.movies_backend.model.Movie;
 import com.example.movies_backend.service.MovieService;
 
 @WebMvcTest(MovieController.class)
@@ -29,10 +29,10 @@ class MovieControllerTest {
 
     @Test
     void getMovies_shouldReturnMovieList() throws Exception {
-        when(movieService.searchMovies(null, null, null, null, "title", "asc", 1, 50))
+        when(movieService.searchMovies(null, null, null, null, null, null, "title", "asc", 1, 50))
                 .thenReturn(List.of(
-                        new Movie("tt1", "Alpha", 2000, "Director A"),
-                        new Movie("tt2", "Beta", 2001, "Director B")));
+                        new MovieListItemDTO("tt1", "Alpha", 2000, "Director A", null, List.of(), List.of()),
+                        new MovieListItemDTO("tt2", "Beta", 2001, "Director B", null, List.of(), List.of())));
 
         mockMvc.perform(get("/api/movies"))
                 .andExpect(status().isOk())
