@@ -3,6 +3,9 @@ package com.example.movies_backend.service;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -11,7 +14,9 @@ import org.springframework.stereotype.Service;
 import com.example.movies_backend.dto.CheckoutRequestDTO;
 import com.example.movies_backend.dto.CheckoutResponseDTO;
 import com.example.movies_backend.model.CreditCard;
+import com.example.movies_backend.model.Sale;
 import com.example.movies_backend.repository.CreditCardRepository;
+import com.example.movies_backend.repository.SaleRepository;
 
 import jakarta.servlet.http.HttpSession;
 
@@ -21,20 +26,23 @@ public class CheckoutService {
     @Autowired
     private CreditCardRepository creditCardRepository;
 
-    /**
-     * Logic:
-     * Validates checkout/payment payload against credit cards table.
-     *
-     * Params:
-     * firstName: card holder first name.
-     * lastName: card holder last name.
-     * cardNumber: credit card number.
-     * expiration: credit card expiration.
-     *
-     * Return:
-     * Checkout result.
-     */
+    @Autowired
+    private SaleRepository saleRepository;
+
+    @Autowired
+    private CartService cartService;
+
     public CheckoutResponseDTO checkout(CheckoutRequestDTO request, HttpSession session) {
+
+        // ✅ تحقق من تسجيل الدخول
+        Object sessionCustomer = session.getAttribute("customerId");
+        if (!(sessionCustomer instanceof Number)) {
+            return new CheckoutResponseDTO(false, "User not logged in");
+        }
+        Integer customerId = ((Number) sessionCustomer).intValue();
+
+        // ----------------------------
+
         if (request == null) {
             return new CheckoutResponseDTO(false, "Request body is required");
         }
@@ -69,7 +77,8 @@ public class CheckoutService {
             return new CheckoutResponseDTO(false, "Card number not found");
         }
 
-        if (!card.getFirstName().equalsIgnoreCase(firstName) || !card.getLastName().equalsIgnoreCase(lastName)) {
+        if (!card.getFirstName().equalsIgnoreCase(firstName) ||
+            !card.getLastName().equalsIgnoreCase(lastName)) {
             return new CheckoutResponseDTO(false, "Cardholder name does not match");
         }
 
@@ -77,7 +86,41 @@ public class CheckoutService {
             return new CheckoutResponseDTO(false, "Expiration date does not match");
         }
 
+        Map<String, Object> cartSummary = cartService.getCart(session);
+        @SuppressWarnings("unchecked")
+        List<Map<String, Object>> items =
+                (List<Map<String, Object>>) cartSummary.getOrDefault("items", new ArrayList<>());
+
+        if (items.isEmpty()) {
+            return new CheckoutResponseDTO(false, "Cart is empty");
+        }
+
+        LocalDate saleDate = LocalDate.now();
+        List<Map<String, Object>> purchasedItems = new ArrayList<>();
+
+        for (Map<String, Object> item : items) {
+            String movieId = item.get("movieId") == null ? null : item.get("movieId").toString();
+
+            int quantity = 1;
+            Object quantityObj = item.get("quantity");
+            if (quantityObj instanceof Number) {
+                quantity = ((Number) quantityObj).intValue();
+            }
+
+            if (movieId == null || movieId.isBlank()) {
+                continue;
+            }
+
+            for (int i = 0; i < Math.max(quantity, 1); i++) {
+                saleRepository.save(new Sale(null, customerId, movieId, saleDate));
+            }
+
+            purchasedItems.add(item);
+        }
+
+        cartService.clearCart(session);
+
         String orderId = UUID.randomUUID().toString();
-        return new CheckoutResponseDTO(true, "Checkout complete", orderId, null);
+        return new CheckoutResponseDTO(true, "Checkout complete", orderId, purchasedItems);
     }
 }

@@ -41,7 +41,7 @@ export class LoginPageComponent {
     this.http.post(`${environment.apiBaseUrl}/api/login`, {
       email: this.email,
       password: this.password
-    }).subscribe({
+    }, { withCredentials: true }).subscribe({
       next: () => {
         this.loading = false;
         this.message = 'Login successful.';

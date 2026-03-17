@@ -34,6 +34,10 @@ public class CartService {
 
         return (Map<String, Integer>) cartObj;
     }
+
+    public void clearCart(HttpSession session) {
+        session.removeAttribute(CART_SESSION_KEY);
+    }
     /**
      * Logic:
      * Returns current shopping cart data for active session/user.

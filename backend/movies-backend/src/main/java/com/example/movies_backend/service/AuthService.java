@@ -40,4 +40,12 @@ public class AuthService {
         // Current DB stores plain-text passwords (per provided dataset).
         return password.equals(customer.get().getPassword());
     }
+
+    public Integer getCustomerIdByEmail(String email) {
+        if (email == null || email.isBlank()) {
+            return null;
+        }
+        Optional<Customer> customer = customerRepository.findFirstByEmail(email.trim());
+        return customer.map(Customer::getId).orElse(null);
+    }
 }
