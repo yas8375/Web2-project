@@ -8,6 +8,19 @@ export interface Movie {
   title: string;
   year: number;
   director: string;
+  rating: number | null;
+  genres: GenreLink[];
+  stars: StarLink[];
+}
+
+export interface GenreLink {
+  id: number;
+  name: string;
+}
+
+export interface StarLink {
+  id: string;
+  name: string;
 }
 
 export interface MovieSearchParams {
@@ -15,6 +28,8 @@ export interface MovieSearchParams {
   year?: string;
   director?: string;
   star?: string;
+  genre?: string;
+  letter?: string;
   page?: number;
   size?: number;
   sort?: string;
@@ -42,6 +57,12 @@ export class MovieService {
     }
     if (safeParams.star) {
       httpParams = httpParams.set('star', safeParams.star);
+    }
+    if (safeParams.genre) {
+      httpParams = httpParams.set('genre', safeParams.genre);
+    }
+    if (safeParams.letter) {
+      httpParams = httpParams.set('letter', safeParams.letter);
     }
 
     httpParams = httpParams.set('page', String(safeParams.page ?? 1));

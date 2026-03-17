@@ -1,0 +1,14 @@
+# LIKE predicate usage
+
+Substring matching is implemented in:
+
+- `backend/movies-backend/src/main/java/com/example/movies_backend/repository/MovieRepository.java`
+
+The `searchMovies` query uses `LIKE` with wildcards to match partial input:
+
+- `LOWER(m.title) LIKE LOWER(CONCAT('%', :title, '%'))`
+- `LOWER(m.director) LIKE LOWER(CONCAT('%', :director, '%'))`
+- `LOWER(s.name) LIKE LOWER(CONCAT('%', :star, '%'))`
+- `LOWER(g.name) LIKE LOWER(CONCAT('%', :genre, '%'))`
+
+These patterns allow substring search (for example, `%term%` matches both "Terminal" and "Terminator").

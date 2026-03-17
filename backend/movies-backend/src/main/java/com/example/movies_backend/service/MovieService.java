@@ -1,14 +1,22 @@
 package com.example.movies_backend.service;
 
+import java.util.ArrayList;
 import java.util.Comparator;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 import java.util.stream.Stream;
 
 import org.springframework.beans.factory.ObjectProvider;
+import org.springframework.dao.DataAccessException;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
+import com.example.movies_backend.dto.GenreDTO;
+import com.example.movies_backend.dto.MovieListItemDTO;
+import com.example.movies_backend.dto.StarDTO;
 import com.example.movies_backend.model.Movie;
 import com.example.movies_backend.repository.MovieRepository;
 
@@ -66,11 +74,13 @@ public class MovieService {
         return movieRepository.findAll(PageRequest.of(safePage - 1, safeSize)).getContent();
     }
 
-    public List<Movie> searchMovies(
+    public List<MovieListItemDTO> searchMovies(
             String title,
             Integer year,
             String director,
             String star,
+            String genre,
+            String letter,
             String sort,
             String order,
             Integer page,
@@ -81,17 +91,69 @@ public class MovieService {
         String safeTitle = trimToNull(title);
         String safeDirector = trimToNull(director);
         String safeStar = trimToNull(star);
+        String safeGenre = trimToNull(genre);
+        String safeLetter = trimToNull(letter);
 
         MovieRepository movieRepository = movieRepositoryProvider.getIfAvailable();
-        List<Movie> base = movieRepository == null
-                ? filterMockMovies(safeTitle, year, safeDirector, safeStar)
-                : movieRepository.searchMovies(safeTitle, year, safeDirector, safeStar);
+        if (movieRepository == null) {
+            List<Movie> base = filterMockMovies(safeTitle, year, safeDirector, safeStar, safeGenre, safeLetter);
+            List<MovieListItemDTO> mapped = buildMovieListItems(base, null);
+            List<MovieListItemDTO> sorted = mapped.stream()
+                    .sorted(buildListComparator(sort, order))
+                    .toList();
+            return paginateList(sorted, safePage, safeSize);
+        }
 
-        List<Movie> sorted = base.stream()
-                .sorted(buildComparator(sort, order))
-                .toList();
+        String safeSort = sort == null ? "title" : sort.toLowerCase(Locale.ROOT);
+        String safeOrder = order == null ? "asc" : order.toLowerCase(Locale.ROOT);
 
-        return paginate(sorted, safePage, safeSize);
+        PageRequest pageRequest;
+        if ("rating".equals(safeSort)) {
+            pageRequest = PageRequest.of(safePage - 1, safeSize);
+            try {
+                List<Movie> pageMovies = "desc".equals(safeOrder)
+                        ? movieRepository.searchMoviesByRatingDesc(
+                                safeTitle,
+                                year,
+                                safeDirector,
+                                safeStar,
+                                safeGenre,
+                                safeLetter,
+                                pageRequest).getContent()
+                        : movieRepository.searchMoviesByRating(
+                                safeTitle,
+                                year,
+                                safeDirector,
+                                safeStar,
+                                safeGenre,
+                                safeLetter,
+                                pageRequest).getContent();
+                List<MovieListItemDTO> mapped = buildMovieListItems(pageMovies, movieRepository);
+                return mapped.stream()
+                        .sorted(buildListComparator("rating", safeOrder))
+                        .toList();
+            } catch (DataAccessException ex) {
+                return List.of();
+            }
+        }
+
+        Sort sortSpec = "desc".equals(safeOrder)
+                ? Sort.by(Sort.Order.desc("title"))
+                : Sort.by(Sort.Order.asc("title"));
+        pageRequest = PageRequest.of(safePage - 1, safeSize, sortSpec);
+        try {
+            List<Movie> pageMovies = movieRepository.searchMoviesByTitle(
+                    safeTitle,
+                    year,
+                    safeDirector,
+                    safeStar,
+                    safeGenre,
+                    safeLetter,
+                    pageRequest).getContent();
+            return buildMovieListItems(pageMovies, movieRepository);
+        } catch (DataAccessException ex) {
+            return List.of();
+        }
     }
 
     /**
@@ -140,12 +202,22 @@ public class MovieService {
                 "Thriller");
     }
 
-    private List<Movie> filterMockMovies(String title, Integer year, String director, String star) {
+    private List<Movie> filterMockMovies(
+            String title,
+            Integer year,
+            String director,
+            String star,
+            String genre,
+            String letter) {
         Stream<Movie> stream = MOCK_MOVIES.stream();
 
         if (title != null) {
             String lowerTitle = title.toLowerCase(Locale.ROOT);
             stream = stream.filter(movie -> movie.getTitle().toLowerCase(Locale.ROOT).contains(lowerTitle));
+        }
+        if (letter != null) {
+            String lowerLetter = letter.toLowerCase(Locale.ROOT);
+            stream = stream.filter(movie -> movie.getTitle().toLowerCase(Locale.ROOT).startsWith(lowerLetter));
         }
         if (year != null) {
             stream = stream.filter(movie -> year.equals(movie.getYear()));
@@ -154,27 +226,11 @@ public class MovieService {
             String lowerDirector = director.toLowerCase(Locale.ROOT);
             stream = stream.filter(movie -> movie.getDirector().toLowerCase(Locale.ROOT).contains(lowerDirector));
         }
-        if (star != null) {
+        if (star != null || genre != null) {
             return List.of();
         }
 
         return stream.toList();
-    }
-
-    private Comparator<Movie> buildComparator(String sort, String order) {
-        String safeSort = sort == null ? "title" : sort.toLowerCase(Locale.ROOT);
-        String safeOrder = order == null ? "asc" : order.toLowerCase(Locale.ROOT);
-
-        Comparator<Movie> comparator = switch (safeSort) {
-            case "year" -> Comparator.comparing(Movie::getYear, Comparator.nullsLast(Integer::compareTo));
-            case "director" -> Comparator.comparing(Movie::getDirector, Comparator.nullsLast(String.CASE_INSENSITIVE_ORDER));
-            default -> Comparator.comparing(Movie::getTitle, Comparator.nullsLast(String.CASE_INSENSITIVE_ORDER));
-        };
-
-        if ("desc".equals(safeOrder)) {
-            return comparator.reversed();
-        }
-        return comparator;
     }
 
     private String trimToNull(String value) {
@@ -192,5 +248,107 @@ public class MovieService {
         }
         int to = Math.min(from + size, movies.size());
         return movies.subList(from, to);
+    }
+
+    private List<MovieListItemDTO> paginateList(List<MovieListItemDTO> movies, int page, int size) {
+        int from = (page - 1) * size;
+        if (from >= movies.size()) {
+            return List.of();
+        }
+        int to = Math.min(from + size, movies.size());
+        return movies.subList(from, to);
+    }
+
+    private Comparator<MovieListItemDTO> buildListComparator(String sort, String order) {
+        String safeSort = sort == null ? "title" : sort.toLowerCase(Locale.ROOT);
+        String safeOrder = order == null ? "asc" : order.toLowerCase(Locale.ROOT);
+
+        Comparator<MovieListItemDTO> comparator = switch (safeSort) {
+            case "rating" -> Comparator.comparing(
+                    MovieListItemDTO::getRating,
+                    Comparator.nullsLast(Float::compareTo));
+            case "year" -> Comparator.comparing(MovieListItemDTO::getYear, Comparator.nullsLast(Integer::compareTo));
+            case "director" -> Comparator.comparing(MovieListItemDTO::getDirector, Comparator.nullsLast(String.CASE_INSENSITIVE_ORDER));
+            default -> Comparator.comparing(MovieListItemDTO::getTitle, Comparator.nullsLast(String.CASE_INSENSITIVE_ORDER));
+        };
+
+        if ("desc".equals(safeOrder)) {
+            return comparator.reversed();
+        }
+        return comparator;
+    }
+
+    private List<MovieListItemDTO> buildMovieListItems(List<Movie> movies, MovieRepository movieRepository) {
+        if (movies.isEmpty()) {
+            return List.of();
+        }
+
+        Map<String, Float> ratingById = new HashMap<>();
+        Map<String, List<GenreDTO>> genresById = new HashMap<>();
+        Map<String, List<StarDTO>> starsById = new HashMap<>();
+
+        if (movieRepository != null) {
+            List<String> movieIds = movies.stream().map(Movie::getId).toList();
+
+            try {
+                for (Object[] row : movieRepository.findRatingsByMovieIds(movieIds)) {
+                    ratingById.put((String) row[0], row[1] == null ? null : ((Number) row[1]).floatValue());
+                }
+            } catch (DataAccessException ignored) {
+                ratingById.clear();
+            }
+
+            try {
+                for (Object[] row : movieRepository.findGenresByMovieIds(movieIds)) {
+                    String movieId = (String) row[0];
+                    GenreDTO genre = new GenreDTO(((Number) row[1]).intValue(), (String) row[2]);
+                    genresById.computeIfAbsent(movieId, key -> new ArrayList<>()).add(genre);
+                }
+            } catch (DataAccessException ignored) {
+                genresById.clear();
+            }
+
+            try {
+                for (Object[] row : movieRepository.findStarsByMovieIds(movieIds)) {
+                    String movieId = (String) row[0];
+                    StarDTO star = new StarDTO((String) row[1], (String) row[2]);
+                    starsById.computeIfAbsent(movieId, key -> new ArrayList<>()).add(star);
+                }
+            } catch (DataAccessException ignored) {
+                starsById.clear();
+            }
+        }
+
+        List<MovieListItemDTO> result = new ArrayList<>();
+        for (Movie movie : movies) {
+            result.add(new MovieListItemDTO(
+                    movie.getId(),
+                    movie.getTitle(),
+                    movie.getYear(),
+                    movie.getDirector(),
+                    ratingById.get(movie.getId()),
+                    genresById.getOrDefault(movie.getId(), List.of()),
+                    starsById.getOrDefault(movie.getId(), List.of())));
+        }
+        return result;
+    }
+
+    public List<GenreDTO> getAllGenres() {
+        MovieRepository movieRepository = movieRepositoryProvider.getIfAvailable();
+        if (movieRepository == null) {
+            return List.of();
+        }
+        return movieRepository.findAllGenres()
+                .stream()
+                .map(row -> new GenreDTO(((Number) row[0]).intValue(), (String) row[1]))
+                .toList();
+    }
+
+    public List<String> getTitleLetters() {
+        MovieRepository movieRepository = movieRepositoryProvider.getIfAvailable();
+        if (movieRepository == null) {
+            return List.of();
+        }
+        return movieRepository.findTitleLetters();
     }
 }
