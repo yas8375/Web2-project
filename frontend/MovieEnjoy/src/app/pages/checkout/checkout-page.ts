@@ -73,7 +73,6 @@ export class CheckoutPageComponent {
         const confirmationState = {
           success: res?.success ?? true,
           message: res?.message ?? 'Checkout complete',
-          orderId: res?.orderId,
           items: res?.items
         };
 
