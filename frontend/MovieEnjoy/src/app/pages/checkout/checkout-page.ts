@@ -1,4 +1,5 @@
 import { Component } from '@angular/core';
+import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { HttpClient } from '@angular/common/http';
 import { Router } from '@angular/router';
@@ -8,7 +9,7 @@ import { environment } from '../../../environments/environment';
 @Component({
   selector: 'app-checkout-page',
   standalone: true,
-  imports: [FormsModule],
+  imports: [CommonModule, FormsModule],
   templateUrl: './checkout-page.html'
 })
 export class CheckoutPageComponent {

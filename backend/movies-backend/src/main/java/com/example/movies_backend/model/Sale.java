@@ -18,13 +18,13 @@ public class Sale {
     @Column(name = "id", nullable = false)
     private Integer id;
 
-    @Column(name = "customerId", nullable = false)
+    @Column(name = "customerid", nullable = false)
     private Integer customerId;
 
-    @Column(name = "movieId", nullable = false, length = 10)
+    @Column(name = "movieid", nullable = false, length = 10)
     private String movieId;
 
-    @Column(name = "saleDate", nullable = false)
+    @Column(name = "saledate", nullable = false)
     private LocalDate saleDate;
 
     public Sale() {}

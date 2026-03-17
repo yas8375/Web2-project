@@ -13,9 +13,11 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.example.movies_backend.service.AuthService;
 
+import jakarta.servlet.http.HttpSession;
+
 @RestController
 @RequestMapping("/api")
-@CrossOrigin(originPatterns = {"http://localhost:*", "http://127.0.0.1:*"})
+@CrossOrigin(originPatterns = {"http://localhost:*", "http://127.0.0.1:*"}, allowCredentials = "true")
 public class AuthController {
 
     @Autowired
@@ -33,7 +35,7 @@ public class AuthController {
      * 400 Bad Request if email/password missing.
      */
     @PostMapping("/login")
-    public ResponseEntity<?> login(@RequestBody Map<String, String> body) {
+    public ResponseEntity<?> login(@RequestBody Map<String, String> body, HttpSession session) {
         String email = body == null ? null : body.get("email");
         String password = body == null ? null : body.get("password");
 
@@ -46,6 +48,11 @@ public class AuthController {
         if (!ok) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
                     .body(Map.of("message", "Invalid email or password."));
+        }
+
+        Integer customerId = authService.getCustomerIdByEmail(email);
+        if (customerId != null) {
+            session.setAttribute("customerId", customerId);
         }
 
         return ResponseEntity.ok(Map.of("message", "Login successful"));
