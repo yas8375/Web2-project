@@ -1,5 +1,6 @@
 <section>
   <h1>Movie Details</h1>
+  <p *ngIf="loading">Loading movie...</p>
   <p class="error" *ngIf="errorMessage">{{ errorMessage }}</p>
 
   <div *ngIf="movie" class="card">
@@ -7,7 +8,26 @@
     <p>ID: {{ movie.id }}</p>
     <p>Year: {{ movie.year }}</p>
     <p>Director: {{ movie.director }}</p>
+    <p>Rating: {{ movie.rating ?? 'N/A' }}</p>
+
+    <p>
+      <strong>Genres:</strong>
+      <span *ngIf="movie.genres.length === 0"> None</span>
+      <span *ngFor="let genre of movie.genres; let last = last">
+        {{ genre }}<span *ngIf="!last">, </span>
+      </span>
+    </p>
+
+    <p>
+      <strong>Stars:</strong>
+      <span *ngIf="stars.length === 0"> None</span>
+      <span *ngFor="let star of stars; let last = last">
+        <a [routerLink]="['/stars', star.id]">{{ star.name }}</a><span *ngIf="!last">, </span>
+      </span>
+    </p>
+
+    <button type="button" (click)="addToCart(movie.id)">Add to cart</button>
   </div>
 
-  <a routerLink="/movies">Back to list</a>
+  <button type="button" routerLink="/movies">Back to list</button>
 </section>

@@ -11,11 +11,12 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.example.movies_backend.dto.SingleStarDTO;
 import com.example.movies_backend.service.StarService;
 
 @RestController
 @RequestMapping("/api")
-@CrossOrigin(origins = "http://localhost:4200")
+@CrossOrigin(originPatterns = {"http://localhost:*", "http://127.0.0.1:*"})
 public class StarController {
 
     @Autowired
@@ -33,14 +34,13 @@ public class StarController {
      */
     @GetMapping("/stars/{starId}")
     public ResponseEntity<?> getStarById(@PathVariable String starId) {
-        // Service Contract:
-        starService.getStarById(starId);
-
-        return ResponseEntity.status(HttpStatus.NOT_IMPLEMENTED)
-                .body(Map.of(
-                        "page", "star-details",
-                        "endpoint", "GET /api/stars/{starId}",
-                        "starId", starId,
-                        "message", "You are on Star Details page. Star details implementation is planned for next phase."));
+        SingleStarDTO star = starService.getStarById(starId);
+        if (star == null) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                    .body(Map.of(
+                            "message", "Star not found",
+                            "starId", starId));
+        }
+        return ResponseEntity.ok(star);
     }
 }

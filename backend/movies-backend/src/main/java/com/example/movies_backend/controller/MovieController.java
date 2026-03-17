@@ -14,11 +14,12 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.example.movies_backend.dto.MovieListItemDTO;
+import com.example.movies_backend.dto.SingleMovieDTO;
 import com.example.movies_backend.service.MovieService;
 
 @RestController
 @RequestMapping("/api")
-@CrossOrigin(origins = "http://localhost:4200")
+@CrossOrigin(originPatterns = {"http://localhost:*", "http://127.0.0.1:*"})
 public class MovieController {
 
     @Autowired
@@ -73,12 +74,14 @@ public class MovieController {
      */
     @GetMapping("/movies/{movieId}")
     public ResponseEntity<?> getMovieById(@PathVariable String movieId) {
-        return ResponseEntity.status(HttpStatus.NOT_IMPLEMENTED)
-                .body(Map.of(
-                        "page", "movie-details",
-                        "endpoint", "GET /api/movies/{movieId}",
-                        "movieId", movieId,
-                        "message", "You are on Movie Details page. Single movie implementation is planned for next phase."));
+        SingleMovieDTO movie = movieService.getMovieById(movieId);
+        if (movie == null) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                    .body(Map.of(
+                            "message", "Movie not found",
+                            "movieId", movieId));
+        }
+        return ResponseEntity.ok(movie);
     }
 
     /**
