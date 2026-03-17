@@ -1,15 +1,15 @@
 package com.example.movies_backend.dto;
 
-public class GenreDTO {
-    private int id;
+public class StarDTO {
+    private String id;
     private String name;
 
-    public GenreDTO(int id, String name) {
+    public StarDTO(String id, String name) {
         this.id = id;
         this.name = name;
     }
 
-    public int getId() {
+    public String getId() {
         return id;
     }
 

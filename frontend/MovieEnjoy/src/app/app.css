@@ -45,7 +45,90 @@ th, td {
   text-align: left;
 }
 
+.movie-table {
+  table-layout: fixed;
+}
+
+.movie-table th,
+.movie-table td {
+  vertical-align: top;
+  word-break: break-word;
+}
+
+.movie-table th:nth-child(1),
+.movie-table td:nth-child(1) {
+  width: 90px;
+}
+
+.movie-table th:nth-child(2),
+.movie-table td:nth-child(2) {
+  width: 170px;
+}
+
+.movie-table th:nth-child(3),
+.movie-table td:nth-child(3) {
+  width: 70px;
+}
+
+.movie-table th:nth-child(4),
+.movie-table td:nth-child(4) {
+  width: 140px;
+}
+
+.movie-table th:nth-child(5),
+.movie-table td:nth-child(5) {
+  width: 180px;
+}
+
+.movie-table th:nth-child(6),
+.movie-table td:nth-child(6) {
+  width: 260px;
+}
+
+.movie-table th:nth-child(7),
+.movie-table td:nth-child(7) {
+  width: 70px;
+}
+
+.movie-table th:nth-child(8),
+.movie-table td:nth-child(8) {
+  width: 70px;
+}
+
 input, button, select {
   margin: 4px;
   padding: 8px;
+}
+
+.movie-controls {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px;
+  margin: 8px 0 12px;
+}
+
+.movie-controls label {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.title-letters {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.title-letters a {
+  display: inline-block;
+  padding: 6px 10px;
+  border: 1px solid #ddd;
+  border-radius: 6px;
+  text-decoration: none;
+  color: inherit;
+}
+
+ul {
+  padding-left: 18px;
 }

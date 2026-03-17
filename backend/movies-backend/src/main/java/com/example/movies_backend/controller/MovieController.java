@@ -13,8 +13,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.example.movies_backend.dto.MovieListItemDTO;
 import com.example.movies_backend.dto.SingleMovieDTO;
-import com.example.movies_backend.model.Movie;
 import com.example.movies_backend.service.MovieService;
 
 @RestController
@@ -36,7 +36,7 @@ public class MovieController {
      * HTTP 200 with movies list in JSON format.
      */
     @GetMapping("/movies")
-    public ResponseEntity<List<Movie>> getMovies(
+    public ResponseEntity<List<MovieListItemDTO>> getMovies(
             @RequestParam(required = false) String title,
             @RequestParam(required = false) Integer year,
             @RequestParam(required = false) String director,
@@ -48,7 +48,17 @@ public class MovieController {
             @RequestParam(defaultValue = "1") Integer page,
             @RequestParam(defaultValue = "50") Integer size) {
 
-        List<Movie> movies = movieService.searchMovies(title, year, director, star, sort, order, page, size);
+        List<MovieListItemDTO> movies = movieService.searchMovies(
+                title,
+                year,
+                director,
+                star,
+                genre,
+                letter,
+                sort,
+                order,
+                page,
+                size);
         return ResponseEntity.ok(movies);
     }
 
@@ -82,15 +92,11 @@ public class MovieController {
      * None.
      *
      * Return:
-     * HTTP 501 Not Implemented for Phase 2 (contract only).
+     * HTTP 200 with genres list.
      */
     @GetMapping("/genres")
     public ResponseEntity<?> getGenres() {
-        return ResponseEntity.status(HttpStatus.NOT_IMPLEMENTED)
-                .body(Map.of(
-                        "page", "browse-genres",
-                        "endpoint", "GET /api/genres",
-                        "message", "You are on Browse by Genres page. Genres list implementation is planned for next phase."));
+        return ResponseEntity.ok(movieService.getAllGenres());
     }
 
     /**
@@ -101,14 +107,10 @@ public class MovieController {
      * None.
      *
      * Return:
-     * HTTP 501 Not Implemented for Phase 2 (contract only).
+     * HTTP 200 with title letters list.
      */
     @GetMapping("/titles")
     public ResponseEntity<?> getTitles() {
-        return ResponseEntity.status(HttpStatus.NOT_IMPLEMENTED)
-                .body(Map.of(
-                        "page", "browse-titles",
-                        "endpoint", "GET /api/titles",
-                        "message", "You are on Browse by Title page. Title browsing implementation is planned for next phase."));
+        return ResponseEntity.ok(movieService.getTitleLetters());
     }
 }

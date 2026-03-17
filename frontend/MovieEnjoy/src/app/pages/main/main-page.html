@@ -1,6 +1,7 @@
 <section>
   <h1>Main Page</h1>
   <p>Browse movies from database.</p>
+  <p class="error" *ngIf="errorMessage">{{ errorMessage }}</p>
   <div>
     <h2>Search</h2>
     <input #titleInput type="text" placeholder="Title" />
@@ -14,7 +15,24 @@
       Search Movies
     </button>
   </div>
+
   <div>
-    <button type="button" (click)="browseMovies()">Browse Movies</button>
+    <h2>Browse by Genre</h2>
+    <p *ngIf="genresLoading">Loading genres...</p>
+    <ul *ngIf="!genresLoading && genres.length > 0">
+      <li *ngFor="let g of genres">
+        <a [routerLink]="['/movies']" [queryParams]="{ genre: g.name }">{{ g.name }}</a>
+      </li>
+    </ul>
+    <p *ngIf="!genresLoading && genres.length === 0">No genres available.</p>
+  </div>
+
+  <div>
+    <h2>Browse by Title</h2>
+    <p *ngIf="lettersLoading">Loading titles...</p>
+    <div class="title-letters" *ngIf="!lettersLoading && letters.length > 0">
+      <a *ngFor="let letter of letters" [routerLink]="['/movies']" [queryParams]="{ letter: letter }">{{ letter }}</a>
+    </div>
+    <p *ngIf="!lettersLoading && letters.length === 0">No titles available.</p>
   </div>
 </section>
