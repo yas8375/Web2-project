@@ -112,15 +112,23 @@ export class MoviesPageComponent implements OnInit {
     this.loadMovies();
   }
 
- addToCart(movieId: string): void {
+addToCart(movieId: string): void {
+  this.errorMessage = '';
+
   this.http.post(
     `${environment.apiBaseUrl}/api/cart/items`,
     { movieId, quantity: 1 },
     { withCredentials: true }
   ).subscribe({
     next: () => {
-      this.router.navigate(['/cart']);
-    },
+  this.errorMessage = 'Movie added to cart successfully';
+  this.cdr.detectChanges();
+
+  setTimeout(() => {
+    this.errorMessage = '';
+    this.cdr.detectChanges();
+  }, 2500); // 2.5 seconds
+},
     error: (err) => {
       this.errorMessage = err?.error?.message ?? 'Failed to add movie to cart';
       this.cdr.detectChanges();

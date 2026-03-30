@@ -1,8 +1,9 @@
 import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { HttpClient } from '@angular/common/http';
-import { RouterLink } from '@angular/router';
+import { Router, RouterLink } from '@angular/router';
 import { environment } from '../../../environments/environment';
+
 
 @Component({
   selector: 'app-cart-page',
@@ -14,9 +15,12 @@ export class CartPageComponent {
   response: any;
   errorMessage = '';
 
-  constructor(private http: HttpClient) {
-    this.loadCart();
-  }
+  constructor(
+  private http: HttpClient,
+  private router: Router
+) {
+  this.loadCart();
+}
 
   loadCart(): void {
     this.http.get(`${environment.apiBaseUrl}/api/cart`, {
@@ -47,4 +51,15 @@ export class CartPageComponent {
       error: (err) => this.errorMessage = err?.error?.message ?? 'Failed to remove item'
     });
   }
+
+  proceedToCheckout(): void {
+  this.errorMessage = '';
+
+  if (!this.response || this.response.totalItems === 0) {
+    this.errorMessage = 'Add a movie before checkout.';
+    return;
+  }
+
+  this.router.navigate(['/checkout']);
+}
 }
