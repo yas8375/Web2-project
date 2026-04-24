@@ -55,17 +55,26 @@ public class CartController {
      * Return:
      * HTTP 501 Not Implemented for Phase 2 (contract only).
      */
-     @PostMapping("/cart/items")
-    public ResponseEntity<?> addToCart(
-            @RequestBody CartItemRequestDTO request,
-            HttpSession session) {
+    @PostMapping("/cart/items")
+public ResponseEntity<?> addToCart(
+        @RequestBody CartItemRequestDTO request,
+        HttpSession session) {
 
-        return ResponseEntity.ok(
-                cartService.addToCart(
-                        request.getMovieId(),
-                        request.getQuantity(),
-                        session));
+    Object customerId = session.getAttribute("customerId");
+
+    if (customerId == null) {
+        return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
+                .body(Map.of(
+                        "success", false,
+                        "message", "You must log in before adding movies to the cart"));
     }
+
+    return ResponseEntity.ok(
+            cartService.addToCart(
+                    request.getMovieId(),
+                    request.getQuantity(),
+                    session));
+}
 
     /**
      * Logic:
