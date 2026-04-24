@@ -1,39 +1,62 @@
-<section>
-  <h1>Shopping Cart</h1>
+<section class="cart-page">
+  
+  <div class="cart-container">
 
-  <button (click)="loadCart()">Refresh</button>
+    <h1 class="cart-title">Shopping Cart</h1>
+    <p class="alert error" *ngIf="errorMessage">{{ errorMessage }}</p>
+<p class="alert success" *ngIf="successMessage">{{ successMessage }}</p>
 
-  <p class="error" *ngIf="errorMessage">{{ errorMessage }}</p>
+    <button type="button" class="refresh-btn" (click)="loadCart()">Refresh</button>
 
-  <table *ngIf="response?.items?.length > 0">
-    <thead>
-      <tr>
-        <th>Title</th>
-        <th>Year</th>
-        <th>Director</th>
-        <th>Quantity</th>
-        <th>Actions</th>
-      </tr>
-    </thead>
+    <div class="cart-card">
 
-    <tbody>
-      <tr *ngFor="let item of response.items">
-        <td>{{ item.title }}</td>
-        <td>{{ item.year }}</td>
-        <td>{{ item.director }}</td>
-        <td>{{ item.quantity }}</td>
-        <td>
-          <button (click)="updateQuantity(item.movieId, item.quantity + 1)">+</button>
-          <button (click)="updateQuantity(item.movieId, item.quantity - 1)">-</button>
-          <button (click)="removeItem(item.movieId)">Remove</button>
-        </td>
-      </tr>
-    </tbody>
-  </table>
+      <div *ngIf="response?.items?.length > 0; else emptyCart">
+        <div
+  class="cart-item"
+  *ngFor="let item of response.items; let last = last"
+  [class.no-border]="last"
+>
 
-  <p *ngIf="response && response.totalItems === 0">Your cart is empty.</p>
+          <div class="movie-cover">
+            {{ item.title?.charAt(0) || 'M' }}
+          </div>
 
-  <p *ngIf="response">Total Items: {{ response.totalItems }}</p>
+          <div class="movie-details">
+            <h5>{{ item.title }}</h5>
 
-<button (click)="proceedToCheckout()">Proceed to Checkout</button>
+            <p class="movie-director">{{ item.director }}</p>
+            <p class="movie-year">{{ item.year }}</p>
+
+            <div class="quantity-box">
+              <button type="button" (click)="updateQuantity(item.movieId, item.quantity - 1)">−</button>
+              <span>{{ item.quantity }}</span>
+              <button type="button" (click)="updateQuantity(item.movieId, item.quantity + 1)">+</button>
+            </div>
+          </div>
+
+          <button type="button" class="delete-btn" (click)="removeItem(item.movieId)">
+            🗑 Remove
+          </button>
+
+        </div>
+
+        <div class="cart-summary">
+          <div class="summary-row">
+            <span>Total Movies</span>
+            <strong>{{ response?.totalItems || 0 }}</strong>
+          </div>
+
+          <button class="checkout-btn" (click)="proceedToCheckout()">
+            Proceed to Checkout
+          </button>
+        </div>
+      </div>
+
+      <ng-template #emptyCart>
+        <p class="empty-cart">Your cart is empty.</p>
+      </ng-template>
+
+    </div>
+
+  </div>
 </section>
