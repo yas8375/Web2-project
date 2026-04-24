@@ -101,19 +101,13 @@ public class CheckoutService {
         for (Map<String, Object> item : items) {
             String movieId = item.get("movieId") == null ? null : item.get("movieId").toString();
 
-            int quantity = 1;
-            Object quantityObj = item.get("quantity");
-            if (quantityObj instanceof Number) {
-                quantity = ((Number) quantityObj).intValue();
-            }
-
             if (movieId == null || movieId.isBlank()) {
                 continue;
             }
 
-            for (int i = 0; i < Math.max(quantity, 1); i++) {
-                saleRepository.save(new Sale(null, customerId, movieId, saleDate));
-            }
+            // Persist one sale row per cart line item (not per quantity),
+            // matching the expected single-record checkout behavior.
+            saleRepository.save(new Sale(null, customerId, movieId, saleDate));
 
             purchasedItems.add(item);
         }
