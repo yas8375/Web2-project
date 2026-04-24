@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { ChangeDetectorRef, Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { HttpClient } from '@angular/common/http';
 import { Router, RouterLink } from '@angular/router';
@@ -9,18 +9,25 @@ import { environment } from '../../../environments/environment';
   selector: 'app-cart-page',
   standalone: true,
   imports: [CommonModule, RouterLink],
-  templateUrl: './cart-page.html'
+  templateUrl: './cart-page.html',
+  styleUrl: './cart-page.css'
 })
 export class CartPageComponent {
   response: any;
   errorMessage = '';
+  successMessage = '';
+  private successTimer: any;
 
   constructor(
   private http: HttpClient,
-  private router: Router
+  private router: Router,
+  private cdr: ChangeDetectorRef,
+
 ) {
   this.loadCart();
 }
+
+
 
   loadCart(): void {
     this.http.get(`${environment.apiBaseUrl}/api/cart`, {
@@ -32,25 +39,54 @@ export class CartPageComponent {
   }
 
   updateQuantity(movieId: string, quantity: number): void {
-    this.http.put(
-      `${environment.apiBaseUrl}/api/cart/items/${movieId}`,
-      { quantity },
-      { withCredentials: true }
-    ).subscribe({
-      next: () => this.loadCart(),
-      error: (err) => this.errorMessage = err?.error?.message ?? 'Failed to update cart item'
-    });
+this.errorMessage = '';
+this.successMessage = 'Quantity updated';
+ this.cdr.detectChanges();
+setTimeout(() => {
+    this.successMessage = '';
+    this.cdr.detectChanges();
+  }, 2500);
+ 
+  const item = this.response.items.find((i: any) => i.movieId === movieId);
+  if (item) {
+    item.quantity = quantity;
   }
 
+  this.http.put(
+    `${environment.apiBaseUrl}/api/cart/items/${movieId}`,
+    { quantity },
+    { withCredentials: true }
+  ).subscribe({
+    error: () => {
+      this.loadCart(); // fallback لو فشل
+    }
+  });
+}
+
   removeItem(movieId: string): void {
-    this.http.delete(
-      `${environment.apiBaseUrl}/api/cart/items/${movieId}`,
-      { withCredentials: true }
-    ).subscribe({
-      next: () => this.loadCart(),
-      error: (err) => this.errorMessage = err?.error?.message ?? 'Failed to remove item'
-    });
-  }
+this.errorMessage = '';
+this.successMessage = 'Movie removed from cart.';
+ this.cdr.detectChanges();
+setTimeout(() => {
+    this.successMessage = '';
+    this.cdr.detectChanges();
+  }, 2500);
+
+  this.response.items = this.response.items.filter(
+    (i: any) => i.movieId !== movieId
+  );
+
+  this.response.totalItems--;
+
+  this.http.delete(
+    `${environment.apiBaseUrl}/api/cart/items/${movieId}`,
+    { withCredentials: true }
+  ).subscribe({
+    error: () => {
+      this.loadCart(); // fallback
+    }
+  });
+}
 
   proceedToCheckout(): void {
   this.errorMessage = '';
@@ -62,4 +98,6 @@ export class CartPageComponent {
 
   this.router.navigate(['/checkout']);
 }
+
+
 }
