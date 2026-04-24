@@ -1,11 +1,86 @@
-<section>
-  <h1>Checkout</h1>
-  <form (ngSubmit)="submit()" class="card">
-    <input name="firstName" [(ngModel)]="form.firstName" placeholder="First name" required />
-    <input name="lastName" [(ngModel)]="form.lastName" placeholder="Last name" required />
-    <input name="cardNumber" [(ngModel)]="form.cardNumber" placeholder="Card number" required />
-    <input name="expiration" [(ngModel)]="form.expiration" placeholder="YYYY-MM-DD" required />
-    <button type="submit" [disabled]="isSubmitting">{{ isSubmitting ? 'Processing...' : 'Pay' }}</button>
-  </form>
-  <p *ngIf="message">{{ message }}</p>
+<section class="checkout-theme py-4 py-md-5">
+  <div class="container-fluid px-2 px-sm-3 px-lg-4">
+    <div class="row justify-content-center">
+      <div class="col-12 col-md-9 col-lg-7 col-xl-6">
+        <div class="checkout-shell px-3 px-sm-4 px-lg-4 py-3 py-sm-3 py-lg-4">
+          <div class="mb-4">
+            <span class="checkout-kicker">Secure Payment</span>
+            <h1 class="checkout-title mt-3 mb-2">Checkout</h1>
+            <p class="checkout-subtitle mb-0">Complete your order details to finish your purchase.</p>
+          </div>
+
+          <form (ngSubmit)="submit()" class="row g-3 g-md-4" #checkoutForm="ngForm" novalidate>
+            <div class="col-12 col-md-6">
+              <label class="form-label" for="firstName">First Name</label>
+              <input
+                id="firstName"
+                class="form-control"
+                name="firstName"
+                [(ngModel)]="form.firstName"
+                placeholder="Enter first name"
+                required
+              >
+            </div>
+
+            <div class="col-12 col-md-6">
+              <label class="form-label" for="lastName">Last Name</label>
+              <input
+                id="lastName"
+                class="form-control"
+                name="lastName"
+                [(ngModel)]="form.lastName"
+                placeholder="Enter last name"
+                required
+              >
+            </div>
+
+            <div class="col-12">
+              <label class="form-label" for="cardNumber">Card Number</label>
+              <input
+                id="cardNumber"
+                class="form-control"
+                name="cardNumber"
+                [(ngModel)]="form.cardNumber"
+                placeholder="1234 5678 9012 3456"
+                inputmode="numeric"
+                required
+              >
+            </div>
+
+            <div class="col-12 col-md-6">
+              <label class="form-label" for="expiration">Expiration Date</label>
+              <input
+                id="expiration"
+                class="form-control"
+                name="expiration"
+                [(ngModel)]="form.expiration"
+                placeholder="YYYY-MM-DD"
+                required
+              >
+              <div class="form-text text-light-emphasis">Accepts <code>YYYY-MM-DD</code> or <code>YYYY/MM/DD</code>.</div>
+            </div>
+
+            <div class="col-12 col-md-6 d-flex align-items-end">
+              <button
+                type="submit"
+                class="btn checkout-btn w-100"
+                [disabled]="isSubmitting || checkoutForm.invalid"
+              >
+                Pay Now
+              </button>
+            </div>
+          </form>
+
+          <div *ngIf="isSubmitting" class="loading-indicator mt-3" aria-live="polite">
+            <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
+            <span>Checking payment details...</span>
+          </div>
+
+          <div *ngIf="message" class="alert mt-4 mb-0" [class.alert-danger]="!message.toLowerCase().includes('complete')" [class.alert-success]="message.toLowerCase().includes('complete')" role="alert">
+            {{ message }}
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
 </section>

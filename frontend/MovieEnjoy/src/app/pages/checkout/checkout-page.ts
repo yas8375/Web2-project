@@ -10,7 +10,8 @@ import { environment } from '../../../environments/environment';
   selector: 'app-checkout-page',
   standalone: true,
   imports: [CommonModule, FormsModule],
-  templateUrl: './checkout-page.html'
+  templateUrl: './checkout-page.html',
+  styleUrl: './checkout-page.css'
 })
 export class CheckoutPageComponent {
   form = {
@@ -33,13 +34,24 @@ export class CheckoutPageComponent {
 
   isValidExpiration(expiration: string): boolean {
     // Expected format: YYYY-MM-DD (also accept YYYY/MM/DD because seed data uses slashes)
+    // Validate it as a real calendar date only (no "expired" logic by design).
     const raw = (expiration ?? '').trim();
-    if (!/^\d{4}[-/]\d{2}[-/]\d{2}$/.test(raw)) return false;
+    const match = raw.match(/^(\d{4})[-/](\d{2})[-/](\d{2})$/);
+    if (!match) return false;
 
-    const normalized = raw.replaceAll('/', '-');
-    const date = new Date(`${normalized}T00:00:00`);
+    const year = Number(match[1]);
+    const month = Number(match[2]);
+    const day = Number(match[3]);
+    if (!Number.isInteger(year) || !Number.isInteger(month) || !Number.isInteger(day)) return false;
+    if (month < 1 || month > 12) return false;
+    if (day < 1 || day > 31) return false;
+
+    const date = new Date(Date.UTC(year, month - 1, day));
     if (Number.isNaN(date.getTime())) return false;
-    return true;
+
+    return date.getUTCFullYear() === year
+      && date.getUTCMonth() === month - 1
+      && date.getUTCDate() === day;
   }
 
   submit(): void {
@@ -52,7 +64,7 @@ export class CheckoutPageComponent {
       return;
     }
     if (!this.isValidExpiration(this.form.expiration)) {
-      this.message = 'Invalid expiration date';
+      this.message = 'Invalid date';
       this.isSubmitting = false;
       return;
     }
@@ -64,7 +76,7 @@ export class CheckoutPageComponent {
       next: (res) => {
         // في حال أرجع الباك إند 200 OK لكن العملية فشلت
         if (res && res.success === false) {
-          this.message = res.message || 'Checkout failed';
+          this.message = 'Invalid date';
           this.isSubmitting = false;
           this.cdr.detectChanges();
           return;
