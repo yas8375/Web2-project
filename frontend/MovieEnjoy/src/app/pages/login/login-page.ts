@@ -17,7 +17,7 @@ export class LoginPageComponent {
   password = '';
   loading = false;
   message = '';
-  messageType: 'success' | 'danger' | 'info' = 'info';
+  messageType: 'success' | 'error' | 'info' = 'info';
 
   constructor(private http: HttpClient, private router: Router) {}
 
@@ -36,7 +36,7 @@ export class LoginPageComponent {
   onLogin(): void {
     if (!this.isAllowedEmail() || !this.isStrongPassword()) {
       this.message = 'Please enter a valid email and password.';
-      this.messageType = 'danger';
+      this.messageType = 'error';
       return;
     }
 
@@ -56,7 +56,7 @@ export class LoginPageComponent {
       error: (err) => {
         this.loading = false;
         this.message = err?.error?.message ?? 'Login failed';
-        this.messageType = 'danger';
+        this.messageType = 'error';
       }
     });
   }
