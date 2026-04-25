@@ -1,12 +1,35 @@
-<section>
-  <h1>Confirmation</h1>
-  <p>{{ success ? 'Payment successful' : 'Payment failed' }}</p>
-  <p>{{ message }}</p>
-  <p *ngIf="orderId">Order ID: {{ orderId }}</p>
-  <ul *ngIf="items?.length">
-    <li *ngFor="let item of items">
-      {{ item?.title ?? item?.movieId ?? 'Item' }} (x{{ item?.quantity ?? 1 }})
-    </li>
-  </ul>
-  <a routerLink="/movies">Back to Movies</a>
+<section class="confirm-theme py-4 py-md-5">
+  <div class="container-fluid px-2 px-sm-3 px-lg-4">
+    <div class="row justify-content-center">
+      <div class="col-12 col-md-10 col-lg-8 col-xl-7">
+        <div class="confirm-shell px-3 px-sm-4 px-lg-4 py-3 py-sm-3 py-lg-4">
+          <div class="d-flex flex-wrap align-items-center justify-content-between gap-3 mb-3">
+            <span class="confirm-kicker">Order Confirmation</span>
+            <span class="status-pill" [class.status-ok]="success" [class.status-fail]="!success">
+              {{ success ? 'Payment successful' : 'Payment failed' }}
+            </span>
+          </div>
+
+          <h1 class="confirm-title mb-2">Confirmation</h1>
+          <p class="confirm-message mb-3">{{ message }}</p>
+
+          <div *ngIf="items.length; else emptyItems" class="summary-wrap mb-4">
+            <h2 class="items-title mb-3">Order Summary</h2>
+            <ul class="summary-list">
+              <li *ngFor="let item of items" class="summary-item">
+                <span>{{ item.title }}</span>
+                <span class="summary-qty">x{{ item.quantity }}</span>
+              </li>
+            </ul>
+          </div>
+
+          <ng-template #emptyItems>
+            <p class="empty-note mb-4">Your order was completed. No item details were returned.</p>
+          </ng-template>
+
+          <a routerLink="/movies" class="btn back-btn w-100">Back to Movies</a>
+        </div>
+      </div>
+    </div>
+  </div>
 </section>
