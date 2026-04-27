@@ -1,37 +1,80 @@
 <section class="signup-page">
   <div class="signup-card">
     <h1 class="signup-title">Create your account</h1>
-    <p class="signup-subtitle">Join EnjoyMovie and save your details for a faster movie experience.</p>
+    <p class="signup-subtitle">
+      Join EnjoyMovie and save your details for a faster movie experience.
+    </p>
 
     <form class="row g-3" (ngSubmit)="onSignup()">
       <div class="col-12 col-md-6">
         <label class="form-label signup-label">First name</label>
-        <input class="form-control signup-input" type="text" name="firstName" [(ngModel)]="firstName" placeholder="Amelie" required>
+        <input
+          class="form-control signup-input"
+          type="text"
+          name="firstName"
+          [(ngModel)]="firstName"
+          placeholder="Amelie"
+          required
+        />
       </div>
 
       <div class="col-12 col-md-6">
         <label class="form-label signup-label">Last name</label>
-        <input class="form-control signup-input" type="text" name="lastName" [(ngModel)]="lastName" placeholder="Laurent" required>
+        <input
+          class="form-control signup-input"
+          type="text"
+          name="lastName"
+          [(ngModel)]="lastName"
+          placeholder="Laurent"
+          required
+        />
       </div>
 
       <div class="col-12">
         <label class="form-label signup-label">Address</label>
-        <input class="form-control signup-input" type="text" name="address" [(ngModel)]="address" placeholder="123 Main St, City" required>
+        <input
+          class="form-control signup-input"
+          type="text"
+          name="address"
+          [(ngModel)]="address"
+          placeholder="123 Main St, City"
+          required
+        />
       </div>
 
       <div class="col-12 col-md-6">
         <label class="form-label signup-label">Credit Card ID</label>
-        <input class="form-control signup-input" type="text" name="creditCardId" [(ngModel)]="creditCardId" placeholder="1234123412341234" required>
+        <input
+          class="form-control signup-input"
+          type="text"
+          name="creditCardId"
+          [(ngModel)]="creditCardId"
+          placeholder="1234123412341234"
+          required
+        />
       </div>
 
       <div class="col-12 col-md-6">
         <label class="form-label signup-label">Expiration</label>
-        <input class="form-control signup-input" type="date" name="expiration" [(ngModel)]="expiration" required>
+        <input
+          class="form-control signup-input"
+          type="date"
+          name="expiration"
+          [(ngModel)]="expiration"
+          required
+        />
       </div>
 
       <div class="col-12">
         <label class="form-label signup-label">Email</label>
-        <input class="form-control signup-input" type="email" name="email" [(ngModel)]="email" placeholder="you@example.com" required>
+        <input
+          class="form-control signup-input"
+          type="email"
+          name="email"
+          [(ngModel)]="email"
+          placeholder="you@example.com"
+          required
+        />
       </div>
 
       <div class="col-12">
@@ -44,8 +87,12 @@
             [(ngModel)]="password"
             placeholder="Enter password"
             required
+          />
+          <button
+            class="btn btn-outline-light eye-button"
+            type="button"
+            (click)="showPassword = !showPassword"
           >
-          <button class="btn btn-outline-light eye-button" type="button" (click)="showPassword = !showPassword">
             {{ showPassword ? 'Hide' : 'Show' }}
           </button>
         </div>
@@ -61,19 +108,33 @@
             [(ngModel)]="confirmPassword"
             placeholder="Confirm password"
             required
+          />
+          <button
+            class="btn btn-outline-light eye-button"
+            type="button"
+            (click)="showConfirmPassword = !showConfirmPassword"
           >
-          <button class="btn btn-outline-light eye-button" type="button" (click)="showConfirmPassword = !showConfirmPassword">
             {{ showConfirmPassword ? 'Hide' : 'Show' }}
           </button>
         </div>
       </div>
 
       <div class="col-12" *ngIf="message">
-        <div class="alert mb-0" [class.alert-success]="success" [class.alert-danger]="!success">{{ message }}</div>
+        <div
+          class="alert mb-0"
+          [class.alert-success]="success"
+          [class.alert-danger]="!success"
+        >
+          {{ message }}
+        </div>
       </div>
 
       <div class="col-12 pt-2">
-        <button class="btn signup-button w-100" type="submit" [disabled]="loading">
+        <button
+          class="btn signup-button w-100"
+          type="submit"
+          [disabled]="loading"
+        >
           {{ loading ? 'Saving...' : 'Sign Up' }}
         </button>
       </div>

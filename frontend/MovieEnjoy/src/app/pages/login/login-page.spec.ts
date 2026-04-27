@@ -1,12 +1,14 @@
-﻿import { TestBed } from '@angular/core/testing';
 import { HttpClientTestingModule } from '@angular/common/http/testing';
+import { TestBed } from '@angular/core/testing';
+import { provideRouter } from '@angular/router';
 
 import { LoginPageComponent } from './login-page';
 
 describe('Login Phase 3 Expectations', () => {
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [LoginPageComponent, HttpClientTestingModule]
+      imports: [LoginPageComponent, HttpClientTestingModule],
+      providers: [provideRouter([])],
     }).compileComponents();
   });
 

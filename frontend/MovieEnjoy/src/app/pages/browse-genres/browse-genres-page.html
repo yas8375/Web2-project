@@ -3,7 +3,9 @@
   <p class="error" *ngIf="errorMessage">{{ errorMessage }}</p>
   <ul *ngIf="genres.length > 0">
     <li *ngFor="let g of genres">
-      <a [routerLink]="['/movies']" [queryParams]="{ genre: g.name }">{{ g.name }}</a>
+      <a [routerLink]="['/movies']" [queryParams]="{ genre: g.name }"
+        >{{ g.name }}</a
+      >
     </li>
   </ul>
   <p *ngIf="!errorMessage && genres.length === 0">No genres available.</p>

@@ -1,6 +1,10 @@
 import { HttpClientTestingModule } from '@angular/common/http/testing';
 import { TestBed } from '@angular/core/testing';
-import { ActivatedRoute, convertToParamMap, provideRouter } from '@angular/router';
+import {
+  ActivatedRoute,
+  convertToParamMap,
+  provideRouter,
+} from '@angular/router';
 import { of } from 'rxjs';
 
 import { MovieService } from '../../movie.service';
@@ -20,13 +24,23 @@ describe('StarDetailsPageComponent', () => {
                 id: 'nm1',
                 name: 'Star One',
                 birthYear: 1970,
-                movies: [{ id: 'tt1', title: 'Movie One', year: 2000, director: 'Director One', rating: 8.1 }],
+                movies: [
+                  {
+                    id: 'tt1',
+                    title: 'Movie One',
+                    year: 2000,
+                    director: 'Director One',
+                    rating: 8.1,
+                  },
+                ],
               }),
           },
         },
         {
           provide: ActivatedRoute,
-          useValue: { snapshot: { paramMap: convertToParamMap({ starId: 'nm1' }) } },
+          useValue: {
+            snapshot: { paramMap: convertToParamMap({ starId: 'nm1' }) },
+          },
         },
       ],
     }).compileComponents();
@@ -58,6 +72,9 @@ describe('StarDetailsPageComponent', () => {
 
     component.sortMovies('desc');
 
-    expect(component.movies.map((movie) => movie.title)).toEqual(['Bravo', 'Alpha']);
+    expect(component.movies.map((movie) => movie.title)).toEqual([
+      'Bravo',
+      'Alpha',
+    ]);
   });
 });

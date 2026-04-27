@@ -113,6 +113,8 @@ export class MovieService {
   }
 
   getStarById(starId: string): Observable<SingleStar> {
-    return this.http.get<SingleStar>(`${environment.apiBaseUrl}/api/stars/${starId}`);
+    return this.http.get<SingleStar>(
+      `${environment.apiBaseUrl}/api/stars/${starId}`,
+    );
   }
 }

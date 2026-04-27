@@ -6,14 +6,16 @@ test('full journey succeeds from login to checkout confirmation (expected to fai
   test.fail(true, 'Checkout confirmation flow is planned for the next phase.');
 
   await page.goto('/login');
-  await page.getByPlaceholder('Email').fill('user@example.com');
+  await page.getByPlaceholder('name@example.com').fill('user@example.com');
   await page.getByPlaceholder('Password').fill('password123');
   await page.getByRole('button', { name: 'Login' }).click();
 
   await page.getByRole('link', { name: 'Cart' }).click();
   await expect(page).toHaveURL(/\/cart$/);
 
-  await page.getByRole('link', { name: 'Proceed to Checkout' }).click();
+  await page
+    .getByRole('link', { name: 'Proceed to Checkout' })
+    .click({ timeout: 1000 });
   await expect(page).toHaveURL(/\/checkout$/);
 
   await page.getByPlaceholder('First name').fill('Raghad');

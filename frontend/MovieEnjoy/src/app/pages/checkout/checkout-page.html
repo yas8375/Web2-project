@@ -6,10 +6,17 @@
           <div class="mb-4">
             <span class="checkout-kicker">Secure Payment</span>
             <h1 class="checkout-title mt-3 mb-2">Checkout</h1>
-            <p class="checkout-subtitle mb-0">Complete your order details to finish your purchase.</p>
+            <p class="checkout-subtitle mb-0">
+              Complete your order details to finish your purchase.
+            </p>
           </div>
 
-          <form (ngSubmit)="submit()" class="row g-3 g-md-4" #checkoutForm="ngForm" novalidate>
+          <form
+            (ngSubmit)="submit()"
+            class="row g-3 g-md-4"
+            #checkoutForm="ngForm"
+            novalidate
+          >
             <div class="col-12 col-md-6">
               <label class="form-label" for="firstName">First Name</label>
               <input
@@ -19,7 +26,7 @@
                 [(ngModel)]="form.firstName"
                 placeholder="Enter first name"
                 required
-              >
+              />
             </div>
 
             <div class="col-12 col-md-6">
@@ -31,7 +38,7 @@
                 [(ngModel)]="form.lastName"
                 placeholder="Enter last name"
                 required
-              >
+              />
             </div>
 
             <div class="col-12">
@@ -44,7 +51,7 @@
                 placeholder="1234 5678 9012 3456"
                 inputmode="numeric"
                 required
-              >
+              />
             </div>
 
             <div class="col-12 col-md-6">
@@ -56,8 +63,10 @@
                 [(ngModel)]="form.expiration"
                 placeholder="YYYY-MM-DD"
                 required
-              >
-              <div class="form-text text-light-emphasis">Accepts <code>YYYY-MM-DD</code> or <code>YYYY/MM/DD</code>.</div>
+              />
+              <div class="form-text text-light-emphasis">
+                Accepts <code>YYYY-MM-DD</code> or <code>YYYY/MM/DD</code>.
+              </div>
             </div>
 
             <div class="col-12 col-md-6 d-flex align-items-end">
@@ -71,12 +80,26 @@
             </div>
           </form>
 
-          <div *ngIf="isSubmitting" class="loading-indicator mt-3" aria-live="polite">
-            <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
+          <div
+            *ngIf="isSubmitting"
+            class="loading-indicator mt-3"
+            aria-live="polite"
+          >
+            <span
+              class="spinner-border spinner-border-sm"
+              role="status"
+              aria-hidden="true"
+            ></span>
             <span>Checking payment details...</span>
           </div>
 
-          <div *ngIf="message" class="alert mt-4 mb-0" [class.alert-danger]="!message.toLowerCase().includes('complete')" [class.alert-success]="message.toLowerCase().includes('complete')" role="alert">
+          <div
+            *ngIf="message"
+            class="alert mt-4 mb-0"
+            [class.alert-danger]="!message.toLowerCase().includes('complete')"
+            [class.alert-success]="message.toLowerCase().includes('complete')"
+            role="alert"
+          >
             {{ message }}
           </div>
         </div>

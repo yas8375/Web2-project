@@ -10,14 +10,46 @@ import { environment } from '../../../environments/environment';
   standalone: true,
   imports: [CommonModule, RouterLink, FormsModule],
   templateUrl: './main-page.html',
-  styleUrl: './main-page.css'
+  styleUrl: './main-page.css',
 })
 export class MainPageComponent implements OnInit {
   private readonly browseTokens = [
-    '0', '1', '2', '3', '4', '5', '6', '7', '8', '9',
-    'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J',
-    'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T',
-    'U', 'V', 'W', 'X', 'Y', 'Z'
+    '0',
+    '1',
+    '2',
+    '3',
+    '4',
+    '5',
+    '6',
+    '7',
+    '8',
+    '9',
+    'A',
+    'B',
+    'C',
+    'D',
+    'E',
+    'F',
+    'G',
+    'H',
+    'I',
+    'J',
+    'K',
+    'L',
+    'M',
+    'N',
+    'O',
+    'P',
+    'Q',
+    'R',
+    'S',
+    'T',
+    'U',
+    'V',
+    'W',
+    'X',
+    'Y',
+    'Z',
   ];
 
   genres: Array<{ id: number; name: string }> = [];
@@ -31,7 +63,7 @@ export class MainPageComponent implements OnInit {
   constructor(
     private router: Router,
     private http: HttpClient,
-    private cdr: ChangeDetectorRef
+    private cdr: ChangeDetectorRef,
   ) {}
 
   ngOnInit(): void {
@@ -66,6 +98,15 @@ export class MainPageComponent implements OnInit {
     this.router.navigate(['/movies'], { queryParams });
   }
 
+  searchByTitle(): void {
+    this.searchMovies();
+  }
+
+  browseByGenre(genre?: string): void {
+    const queryParams = genre ? { genre } : undefined;
+    this.router.navigate(['/movies'], { queryParams });
+  }
+
   clearSearch(): void {
     this.title = '';
     this.year = '';
@@ -81,7 +122,7 @@ export class MainPageComponent implements OnInit {
     this.genresLoading = true;
     this.http.get(`${environment.apiBaseUrl}/api/genres`).subscribe({
       next: (data: any) => {
-        this.genres = Array.isArray(data) ? data : [];
+        this.genres = this.normalizeGenres(data);
         this.genresLoading = false;
         this.cdr.detectChanges();
       },
@@ -89,8 +130,25 @@ export class MainPageComponent implements OnInit {
         this.errorMessage = err?.error?.message ?? 'Failed to load genres';
         this.genresLoading = false;
         this.cdr.detectChanges();
-      }
+      },
     });
   }
 
+  private normalizeGenres(data: unknown): Array<{ id: number; name: string }> {
+    if (!Array.isArray(data)) return [];
+
+    return data
+      .map((item: any, index) => {
+        if (typeof item === 'string') {
+          return { id: index + 1, name: item };
+        }
+
+        if (item && typeof item.name === 'string') {
+          return { id: Number(item.id ?? index + 1), name: item.name };
+        }
+
+        return null;
+      })
+      .filter((item): item is { id: number; name: string } => item !== null);
+  }
 }

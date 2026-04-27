@@ -1,8 +1,10 @@
-﻿import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { HttpClientTestingModule } from '@angular/common/http/testing';
+import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { provideRouter } from '@angular/router';
 import { Observable, of } from 'rxjs';
 
-import { MoviesPageComponent } from './movies-page';
 import { Movie, MovieService } from '../../movie.service';
+import { MoviesPageComponent } from './movies-page';
 
 describe('MoviesPage Phase 3 Expectations', () => {
   let fixture: ComponentFixture<MoviesPageComponent>;
@@ -10,15 +12,18 @@ describe('MoviesPage Phase 3 Expectations', () => {
 
   let getMoviesImpl: () => Observable<Movie[]>;
   const movieServiceStub: Pick<MovieService, 'getMovies'> = {
-    getMovies: () => getMoviesImpl()
+    getMovies: () => getMoviesImpl(),
   };
 
   beforeEach(async () => {
     getMoviesImpl = () => of([]);
 
     await TestBed.configureTestingModule({
-      imports: [MoviesPageComponent],
-      providers: [{ provide: MovieService, useValue: movieServiceStub }]
+      imports: [MoviesPageComponent, HttpClientTestingModule],
+      providers: [
+        provideRouter([]),
+        { provide: MovieService, useValue: movieServiceStub },
+      ],
     }).compileComponents();
 
     fixture = TestBed.createComponent(MoviesPageComponent);

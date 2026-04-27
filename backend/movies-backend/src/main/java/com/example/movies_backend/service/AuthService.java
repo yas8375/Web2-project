@@ -3,6 +3,7 @@ package com.example.movies_backend.service;
 import java.time.LocalDate;
 import java.util.Optional;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -15,16 +16,14 @@ import com.example.movies_backend.repository.CustomerRepository;
 @Service
 public class AuthService {
 
-    private final CustomerRepository customerRepository;
-    private final CreditCardRepository creditCardRepository;
+    @Autowired(required = false)
+    private CustomerRepository customerRepository;
 
-    public AuthService(CustomerRepository customerRepository, CreditCardRepository creditCardRepository) {
-        this.customerRepository = customerRepository;
-        this.creditCardRepository = creditCardRepository;
-    }
+    @Autowired(required = false)
+    private CreditCardRepository creditCardRepository;
 
     public boolean login(String email, String password) {
-        if (email == null || email.isBlank() || password == null || password.isBlank()) {
+        if (customerRepository == null || email == null || email.isBlank() || password == null || password.isBlank()) {
             return false;
         }
 
@@ -37,7 +36,7 @@ public class AuthService {
     }
 
     public Integer getCustomerIdByEmail(String email) {
-        if (email == null || email.isBlank()) {
+        if (customerRepository == null || email == null || email.isBlank()) {
             return null;
         }
 
@@ -49,6 +48,10 @@ public class AuthService {
     public Integer signup(SignupRequestDTO request) {
         if (request == null) {
             throw new IllegalArgumentException("Request body is required.");
+        }
+
+        if (customerRepository == null || creditCardRepository == null) {
+            throw new IllegalStateException("Signup is unavailable while the mock backend profile is active.");
         }
 
         String firstName = trimToNull(request.getFirstName());

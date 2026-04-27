@@ -6,7 +6,7 @@ import { BrowseTitlesPageComponent } from './browse-titles-page';
 describe('BrowseTitles Phase 3 Expectations', () => {
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [BrowseTitlesPageComponent, HttpClientTestingModule]
+      imports: [BrowseTitlesPageComponent, HttpClientTestingModule],
     }).compileComponents();
   });
 

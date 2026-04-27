@@ -6,7 +6,7 @@ import { BrowseGenresPageComponent } from './browse-genres-page';
 describe('BrowseGenres Phase 3 Expectations', () => {
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [BrowseGenresPageComponent, HttpClientTestingModule]
+      imports: [BrowseGenresPageComponent, HttpClientTestingModule],
     }).compileComponents();
   });
 

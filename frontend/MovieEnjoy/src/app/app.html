@@ -20,8 +20,20 @@
             <a class="nav-link app-nav-link" routerLink="/main">Home</a>
             <a class="nav-link app-nav-link" routerLink="/movies">Movies</a>
             <a class="nav-link app-nav-link" routerLink="/cart">Cart</a>
-            <a class="nav-link app-nav-link" routerLink="/login" *ngIf="!isLoggedIn">Login</a>
-            <button class="nav-link app-nav-link app-nav-button" type="button" *ngIf="isLoggedIn" (click)="logout()">Logout</button>
+            <a
+              class="nav-link app-nav-link"
+              routerLink="/login"
+              *ngIf="!isLoggedIn"
+              >Login</a
+            >
+            <button
+              class="nav-link app-nav-link app-nav-button"
+              type="button"
+              *ngIf="isLoggedIn"
+              (click)="logout()"
+            >
+              Logout
+            </button>
           </div>
         </div>
       </div>

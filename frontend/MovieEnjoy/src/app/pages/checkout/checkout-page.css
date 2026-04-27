@@ -7,15 +7,31 @@
   padding-inline: 0;
   color: #eaf3ff;
   background:
-    radial-gradient(circle at 12% 10%, rgba(39, 121, 204, 0.24), transparent 38%),
-    radial-gradient(circle at 88% 85%, rgba(131, 59, 157, 0.2), transparent 35%),
+    radial-gradient(
+      circle at 12% 10%,
+      rgba(39, 121, 204, 0.24),
+      transparent 38%
+    ),
+    radial-gradient(
+      circle at 88% 85%,
+      rgba(131, 59, 157, 0.2),
+      transparent 35%
+    ),
     linear-gradient(160deg, #0a1c48 0%, #0a2359 58%, #0b1a40 100%);
 }
 
 .checkout-shell {
   background:
-    radial-gradient(circle at 15% 18%, rgba(50, 114, 184, 0.24), transparent 40%),
-    radial-gradient(circle at 82% 78%, rgba(137, 56, 140, 0.2), transparent 42%),
+    radial-gradient(
+      circle at 15% 18%,
+      rgba(50, 114, 184, 0.24),
+      transparent 40%
+    ),
+    radial-gradient(
+      circle at 82% 78%,
+      rgba(137, 56, 140, 0.2),
+      transparent 42%
+    ),
     linear-gradient(165deg, #0b245b 0%, #0a2b68 56%, #0b214f 100%);
   border: 1px solid rgba(127, 166, 225, 0.2);
   border-radius: 24px;

@@ -2,10 +2,12 @@ import { expect, test } from '@playwright/test';
 
 test('top navigation routes to core pages without blank screen', async ({ page }) => {
   const navChecks = [
-    { link: 'Home', url: /\/main$/, heading: 'Main Page' },
-    { link: 'Movies', url: /\/movies$/, heading: 'Movie List' },
-    { link: 'Genres', url: /\/browse\/genres$/, heading: 'Browse by Genres' },
-    { link: 'Titles', url: /\/browse\/titles$/, heading: 'Browse by Title' },
+    {
+      link: 'Home',
+      url: /\/main$/,
+      heading: 'Find Something Worth Watching',
+    },
+    { link: 'Movies', url: /\/movies$/, heading: 'Movie Catalog' },
     { link: 'Cart', url: /\/cart$/, heading: 'Shopping Cart' },
     { link: 'Login', url: /\/login$/, heading: 'Login' },
   ];
@@ -17,4 +19,12 @@ test('top navigation routes to core pages without blank screen', async ({ page }
     await expect(page).toHaveURL(check.url);
     await expect(page.getByRole('heading', { name: check.heading })).toBeVisible();
   }
+
+  await page.goto('/browse/genres');
+  await expect(page).toHaveURL(/\/browse\/genres$/);
+  await expect(page.getByRole('heading', { name: 'Browse by Genres' })).toBeVisible();
+
+  await page.goto('/browse/titles');
+  await expect(page).toHaveURL(/\/browse\/titles$/);
+  await expect(page.getByRole('heading', { name: 'Browse by Title' })).toBeVisible();
 });

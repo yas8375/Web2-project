@@ -8,7 +8,12 @@ describe('Checkout Phase 3 Expectations', () => {
   beforeEach(async () => {
     await TestBed.configureTestingModule({
       imports: [CheckoutPageComponent, HttpClientTestingModule],
-      providers: [{ provide: Router, useValue: { navigate: () => Promise.resolve(true) } }]
+      providers: [
+        {
+          provide: Router,
+          useValue: { navigate: () => Promise.resolve(true) },
+        },
+      ],
     }).compileComponents();
   });
 

@@ -7,18 +7,23 @@ import { RouterLink } from '@angular/router';
   standalone: true,
   imports: [CommonModule, RouterLink],
   templateUrl: './confirmation-page.html',
-  styleUrl: './confirmation-page.css'
+  styleUrl: './confirmation-page.css',
 })
 export class ConfirmationPageComponent {
   private readonly state: any = this.readConfirmationState();
 
   success = this.state?.success ?? false;
+  orderId = this.resolveOrderId(this.state?.orderId);
   message = this.resolveMessage(this.state?.message);
   items = this.normalizeItems(this.state?.items);
 
   private readConfirmationState(): any {
     const hs = history.state ?? {};
-    if (hs && (hs.success !== undefined || hs.message || hs.orderId || hs.items)) return hs;
+    if (
+      hs &&
+      (hs.success !== undefined || hs.message || hs.orderId || hs.items)
+    )
+      return hs;
 
     try {
       const raw = sessionStorage.getItem('checkout_confirmation');
@@ -30,13 +35,22 @@ export class ConfirmationPageComponent {
   }
 
   private resolveMessage(value: unknown): string {
-    if (typeof value === 'string' && value.trim().length > 0) return value.trim();
+    if (typeof value === 'string' && value.trim().length > 0)
+      return value.trim();
     return this.success
       ? 'Your payment was completed successfully.'
       : 'Payment was not completed. Please try again.';
   }
 
-  private normalizeItems(value: unknown): Array<{ title: string; quantity: number }> {
+  private resolveOrderId(value: unknown): string {
+    if (typeof value === 'string' && value.trim().length > 0)
+      return value.trim();
+    return 'pending';
+  }
+
+  private normalizeItems(
+    value: unknown,
+  ): Array<{ title: string; quantity: number }> {
     if (!Array.isArray(value)) return [];
     return value.map((item: any, index: number) => {
       const rawTitle = typeof item?.title === 'string' ? item.title.trim() : '';
@@ -44,10 +58,15 @@ export class ConfirmationPageComponent {
       const title =
         rawTitle.length > 0
           ? rawTitle
-          : (movieId !== undefined && movieId !== null ? `Movie #${movieId}` : `Item ${index + 1}`);
+          : movieId !== undefined && movieId !== null
+            ? `Movie #${movieId}`
+            : `Item ${index + 1}`;
 
       const quantityValue = Number(item?.quantity);
-      const quantity = Number.isFinite(quantityValue) && quantityValue > 0 ? Math.floor(quantityValue) : 1;
+      const quantity =
+        Number.isFinite(quantityValue) && quantityValue > 0
+          ? Math.floor(quantityValue)
+          : 1;
 
       return { title, quantity };
     });

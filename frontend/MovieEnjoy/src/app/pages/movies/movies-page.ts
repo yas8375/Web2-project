@@ -1,4 +1,10 @@
-import { ChangeDetectorRef, Component, DestroyRef, OnInit, inject } from '@angular/core';
+import {
+  ChangeDetectorRef,
+  Component,
+  DestroyRef,
+  OnInit,
+  inject,
+} from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
@@ -19,10 +25,42 @@ import { CartStateService } from '../../cart-state.service';
 export class MoviesPageComponent implements OnInit {
   private readonly destroyRef = inject(DestroyRef);
   private readonly browseTokens = [
-    '0', '1', '2', '3', '4', '5', '6', '7', '8', '9',
-    'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J',
-    'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T',
-    'U', 'V', 'W', 'X', 'Y', 'Z'
+    '0',
+    '1',
+    '2',
+    '3',
+    '4',
+    '5',
+    '6',
+    '7',
+    '8',
+    '9',
+    'A',
+    'B',
+    'C',
+    'D',
+    'E',
+    'F',
+    'G',
+    'H',
+    'I',
+    'J',
+    'K',
+    'L',
+    'M',
+    'N',
+    'O',
+    'P',
+    'Q',
+    'R',
+    'S',
+    'T',
+    'U',
+    'V',
+    'W',
+    'X',
+    'Y',
+    'Z',
   ];
 
   movies: Movie[] = [];
@@ -49,7 +87,7 @@ export class MoviesPageComponent implements OnInit {
     private http: HttpClient,
     private router: Router,
     private authState: AuthStateService,
-    private cartState: CartStateService
+    private cartState: CartStateService,
   ) {}
 
   ngOnInit(): void {
@@ -71,7 +109,8 @@ export class MoviesPageComponent implements OnInit {
         const orderParam = (params.get('order') ?? 'asc').trim();
 
         this.page = Number.isFinite(pageParam) && pageParam > 0 ? pageParam : 1;
-        this.size = Number.isFinite(sizeParam) && sizeParam > 0 ? sizeParam : 50;
+        this.size =
+          Number.isFinite(sizeParam) && sizeParam > 0 ? sizeParam : 50;
         this.sort = sortParam || 'title';
         this.order = orderParam === 'desc' ? 'desc' : 'asc';
 
@@ -83,29 +122,31 @@ export class MoviesPageComponent implements OnInit {
     this.loading = true;
     this.errorMessage = '';
     this.successMessage = '';
-    this.movieService.getMovies({
-      title: this.title || undefined,
-      year: this.year || undefined,
-      director: this.director || undefined,
-      star: this.star || undefined,
-      genre: this.genre || undefined,
-      letter: this.letter || undefined,
-      page: this.page,
-      size: this.size,
-      sort: this.sort,
-      order: this.order,
-    }).subscribe({
-      next: (data) => {
-        this.movies = Array.isArray(data) ? data : [];
-        this.loading = false;
-        this.cdr.detectChanges();
-      },
-      error: () => {
-        this.errorMessage = 'Failed to load movies';
-        this.loading = false;
-        this.cdr.detectChanges();
-      },
-    });
+    this.movieService
+      .getMovies({
+        title: this.title || undefined,
+        year: this.year || undefined,
+        director: this.director || undefined,
+        star: this.star || undefined,
+        genre: this.genre || undefined,
+        letter: this.letter || undefined,
+        page: this.page,
+        size: this.size,
+        sort: this.sort,
+        order: this.order,
+      })
+      .subscribe({
+        next: (data) => {
+          this.movies = Array.isArray(data) ? data : [];
+          this.loading = false;
+          this.cdr.detectChanges();
+        },
+        error: () => {
+          this.errorMessage = 'Failed to load movies';
+          this.loading = false;
+          this.cdr.detectChanges();
+        },
+      });
   }
 
   nextPage(): void {
@@ -132,7 +173,10 @@ export class MoviesPageComponent implements OnInit {
   }
 
   onOrderChange(value: string): void {
-    this.updateQueryParams({ order: value === 'desc' ? 'desc' : 'asc', page: 1 });
+    this.updateQueryParams({
+      order: value === 'desc' ? 'desc' : 'asc',
+      page: 1,
+    });
   }
 
   searchMovies(): void {
@@ -186,42 +230,45 @@ export class MoviesPageComponent implements OnInit {
       this.router.navigate(['/login'], {
         queryParams: {
           returnUrl: this.router.url,
-          message: 'Please sign in before adding movies to the cart.'
-        }
+          message: 'Please sign in before adding movies to the cart.',
+        },
       });
       return;
     }
 
-    this.http.post(
-      `${environment.apiBaseUrl}/api/cart/items`,
-      { movieId, quantity: 1 },
-      { withCredentials: true }
-    ).subscribe({
-      next: () => {
-        this.cartState.notifyChanged();
-        this.successMessage = 'Movie added to cart successfully.';
-        this.cdr.detectChanges();
-
-        setTimeout(() => {
-          this.successMessage = '';
+    this.http
+      .post(
+        `${environment.apiBaseUrl}/api/cart/items`,
+        { movieId, quantity: 1 },
+        { withCredentials: true },
+      )
+      .subscribe({
+        next: () => {
+          this.cartState.notifyChanged();
+          this.successMessage = 'Movie added to cart successfully.';
           this.cdr.detectChanges();
-        }, 2500);
-      },
-      error: (err) => {
-        if (err?.status === 401) {
-          this.router.navigate(['/login'], {
-            queryParams: {
-              returnUrl: this.router.url,
-              message: 'Please sign in before adding movies to the cart.'
-            }
-          });
-          return;
-        }
 
-        this.errorMessage = err?.error?.message ?? 'Failed to add movie to cart';
-        this.cdr.detectChanges();
-      }
-    });
+          setTimeout(() => {
+            this.successMessage = '';
+            this.cdr.detectChanges();
+          }, 2500);
+        },
+        error: (err) => {
+          if (err?.status === 401) {
+            this.router.navigate(['/login'], {
+              queryParams: {
+                returnUrl: this.router.url,
+                message: 'Please sign in before adding movies to the cart.',
+              },
+            });
+            return;
+          }
+
+          this.errorMessage =
+            err?.error?.message ?? 'Failed to add movie to cart';
+          this.cdr.detectChanges();
+        },
+      });
   }
 
   get currentPage(): number {
@@ -233,7 +280,14 @@ export class MoviesPageComponent implements OnInit {
   }
 
   get hasActiveFilters(): boolean {
-    return Boolean(this.title || this.year || this.director || this.star || this.genre || this.letter);
+    return Boolean(
+      this.title ||
+      this.year ||
+      this.director ||
+      this.star ||
+      this.genre ||
+      this.letter,
+    );
   }
 
   get displayedGenres(): string[] {
@@ -262,23 +316,34 @@ export class MoviesPageComponent implements OnInit {
       .map((word) => word.trim())
       .filter(Boolean);
 
-    return words.slice(0, 2).map((word) => word[0]?.toUpperCase() ?? '').join('') || '?';
+    return (
+      words
+        .slice(0, 2)
+        .map((word) => word[0]?.toUpperCase() ?? '')
+        .join('') || '?'
+    );
   }
 
   private loadGenres(): void {
-    this.http.get<Array<{ id: number; name: string }>>(`${environment.apiBaseUrl}/api/genres`).subscribe({
-      next: (data) => {
-        this.genres = Array.isArray(data) ? data : [];
-        this.cdr.detectChanges();
-      },
-      error: () => {
-        this.genres = [];
-        this.cdr.detectChanges();
-      }
-    });
+    this.http
+      .get<
+        Array<{ id: number; name: string }>
+      >(`${environment.apiBaseUrl}/api/genres`)
+      .subscribe({
+        next: (data) => {
+          this.genres = Array.isArray(data) ? data : [];
+          this.cdr.detectChanges();
+        },
+        error: () => {
+          this.genres = [];
+          this.cdr.detectChanges();
+        },
+      });
   }
 
-  private updateQueryParams(updates: Record<string, string | number | null>): void {
+  private updateQueryParams(
+    updates: Record<string, string | number | null>,
+  ): void {
     const queryParams: Record<string, string | number> = {
       title: this.title,
       year: this.year,

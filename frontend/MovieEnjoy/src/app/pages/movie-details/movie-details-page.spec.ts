@@ -1,6 +1,10 @@
 import { HttpClientTestingModule } from '@angular/common/http/testing';
 import { TestBed } from '@angular/core/testing';
-import { ActivatedRoute, convertToParamMap, provideRouter } from '@angular/router';
+import {
+  ActivatedRoute,
+  convertToParamMap,
+  provideRouter,
+} from '@angular/router';
 import { of } from 'rxjs';
 
 import { MovieDetailsPageComponent } from './movie-details-page';
@@ -29,7 +33,9 @@ describe('MovieDetailsPageComponent', () => {
         },
         {
           provide: ActivatedRoute,
-          useValue: { snapshot: { paramMap: convertToParamMap({ movieId: 'tt1' }) } },
+          useValue: {
+            snapshot: { paramMap: convertToParamMap({ movieId: 'tt1' }) },
+          },
         },
       ],
     }).compileComponents();

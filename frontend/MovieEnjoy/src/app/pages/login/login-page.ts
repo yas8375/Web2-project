@@ -9,9 +9,9 @@ import { AuthStateService } from '../../auth-state.service';
 @Component({
   selector: 'app-login-page',
   standalone: true,
-imports: [CommonModule, FormsModule, RouterLink],
+  imports: [CommonModule, FormsModule, RouterLink],
   templateUrl: './login-page.html',
-  styleUrl: './login-page.css'
+  styleUrl: './login-page.css',
 })
 export class LoginPageComponent {
   email = '';
@@ -25,10 +25,11 @@ export class LoginPageComponent {
     private http: HttpClient,
     private router: Router,
     private route: ActivatedRoute,
-    private authState: AuthStateService
+    private authState: AuthStateService,
   ) {
     this.message = this.route.snapshot.queryParamMap.get('message') ?? '';
-    this.returnUrl = this.route.snapshot.queryParamMap.get('returnUrl') ?? '/main';
+    this.returnUrl =
+      this.route.snapshot.queryParamMap.get('returnUrl') ?? '/main';
   }
 
   isAllowedEmail(email: string = this.email): boolean {
@@ -52,22 +53,28 @@ export class LoginPageComponent {
 
     this.loading = true;
     this.message = '';
-    this.http.post(`${environment.apiBaseUrl}/api/login`, {
-      email: this.email,
-      password: this.password
-    }, { withCredentials: true }).subscribe({
-      next: () => {
-        this.loading = false;
-        this.message = 'Login successful.';
-        this.messageType = 'success';
-        this.authState.setLoggedIn(this.email);
-        this.router.navigateByUrl(this.returnUrl);
-      },
-      error: (err) => {
-        this.loading = false;
-        this.message = err?.error?.message ?? 'Login failed';
-        this.messageType = 'error';
-      }
-    });
+    this.http
+      .post(
+        `${environment.apiBaseUrl}/api/login`,
+        {
+          email: this.email,
+          password: this.password,
+        },
+        { withCredentials: true },
+      )
+      .subscribe({
+        next: () => {
+          this.loading = false;
+          this.message = 'Login successful.';
+          this.messageType = 'success';
+          this.authState.setLoggedIn(this.email);
+          this.router.navigateByUrl(this.returnUrl);
+        },
+        error: (err) => {
+          this.loading = false;
+          this.message = err?.error?.message ?? 'Login failed';
+          this.messageType = 'error';
+        },
+      });
   }
 }
