@@ -1,9 +1,11 @@
-import { ChangeDetectorRef, Component } from '@angular/core';
+import { ChangeDetectorRef, Component, DestroyRef, OnInit, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { HttpClient } from '@angular/common/http';
-import { Router, RouterLink } from '@angular/router';
+import { NavigationEnd, Router, RouterLink } from '@angular/router';
+import { filter } from 'rxjs/operators';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { environment } from '../../../environments/environment';
-
+import { CartStateService } from '../../cart-state.service';
 
 @Component({
   selector: 'app-cart-page',
@@ -12,92 +14,101 @@ import { environment } from '../../../environments/environment';
   templateUrl: './cart-page.html',
   styleUrl: './cart-page.css'
 })
-export class CartPageComponent {
+export class CartPageComponent implements OnInit {
+  private readonly destroyRef = inject(DestroyRef);
+
   response: any;
   errorMessage = '';
   successMessage = '';
-  private successTimer: any;
 
   constructor(
-  private http: HttpClient,
-  private router: Router,
-  private cdr: ChangeDetectorRef,
+    private http: HttpClient,
+    private router: Router,
+    private cdr: ChangeDetectorRef,
+    private cartState: CartStateService
+  ) {}
 
-) {
-  this.loadCart();
-}
+  ngOnInit(): void {
+    this.loadCart();
 
+    this.cartState.changes$
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe(() => this.loadCart());
 
+    this.router.events
+      .pipe(
+        filter((event) => event instanceof NavigationEnd),
+        takeUntilDestroyed(this.destroyRef)
+      )
+      .subscribe((event) => {
+        const navigation = event as NavigationEnd;
+        if (navigation.urlAfterRedirects.startsWith('/cart')) {
+          this.loadCart();
+        }
+      });
+  }
 
   loadCart(): void {
     this.http.get(`${environment.apiBaseUrl}/api/cart`, {
       withCredentials: true
     }).subscribe({
-      next: (data) => this.response = data,
-      error: (err) => this.errorMessage = err?.error?.message ?? 'Failed to load cart'
+      next: (data) => {
+        this.response = data;
+        this.cdr.detectChanges();
+      },
+      error: (err) => {
+        this.errorMessage = err?.error?.message ?? 'Failed to load cart';
+        this.cdr.detectChanges();
+      }
     });
   }
 
   updateQuantity(movieId: string, quantity: number): void {
-this.errorMessage = '';
-this.successMessage = 'Quantity updated';
- this.cdr.detectChanges();
-setTimeout(() => {
-    this.successMessage = '';
+    this.errorMessage = '';
+    this.successMessage = 'Quantity updated';
     this.cdr.detectChanges();
-  }, 2500);
- 
-  const item = this.response.items.find((i: any) => i.movieId === movieId);
-  if (item) {
-    item.quantity = quantity;
-  }
 
-  this.http.put(
-    `${environment.apiBaseUrl}/api/cart/items/${movieId}`,
-    { quantity },
-    { withCredentials: true }
-  ).subscribe({
-    error: () => {
-      this.loadCart(); // fallback لو فشل
+    setTimeout(() => {
+      this.successMessage = '';
+      this.cdr.detectChanges();
+    }, 2500);
+
+    const item = this.response?.items?.find((entry: any) => entry.movieId === movieId);
+    if (item) {
+      item.quantity = quantity;
     }
-  });
-}
+
+    this.http.put(
+      `${environment.apiBaseUrl}/api/cart/items/${movieId}`,
+      { quantity },
+      { withCredentials: true }
+    ).subscribe({
+      next: () => {
+        this.loadCart();
+      },
+      error: (err) => {
+        this.errorMessage = err?.error?.message ?? 'Failed to update quantity';
+        this.cdr.detectChanges();
+      }
+    });
+  }
 
   removeItem(movieId: string): void {
-this.errorMessage = '';
-this.successMessage = 'Movie removed from cart.';
- this.cdr.detectChanges();
-setTimeout(() => {
-    this.successMessage = '';
-    this.cdr.detectChanges();
-  }, 2500);
-
-  this.response.items = this.response.items.filter(
-    (i: any) => i.movieId !== movieId
-  );
-
-  this.response.totalItems--;
-
-  this.http.delete(
-    `${environment.apiBaseUrl}/api/cart/items/${movieId}`,
-    { withCredentials: true }
-  ).subscribe({
-    error: () => {
-      this.loadCart(); // fallback
-    }
-  });
-}
-
-  proceedToCheckout(): void {
-  this.errorMessage = '';
-
-  if (!this.response || this.response.totalItems === 0) {
-    this.errorMessage = 'Add a movie before checkout.';
-    return;
+    this.http.delete(
+      `${environment.apiBaseUrl}/api/cart/items/${movieId}`,
+      { withCredentials: true }
+    ).subscribe({
+      next: () => {
+        this.loadCart();
+      },
+      error: (err) => {
+        this.errorMessage = err?.error?.message ?? 'Failed to remove item';
+        this.cdr.detectChanges();
+      }
+    });
   }
 
-  this.router.navigate(['/checkout']);
-}
-
-
+  proceedToCheckout(): void {
+    this.router.navigate(['/checkout']);
+  }
 }

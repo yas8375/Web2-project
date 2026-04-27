@@ -3,7 +3,9 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { HttpClient } from '@angular/common/http';
 import { environment } from '../../../environments/environment';
-import { Router } from '@angular/router';
+import { Router, RouterLink } from '@angular/router';
+import { ActivatedRoute } from '@angular/router';
+import { AuthStateService } from '../../auth-state.service';
 
 @Component({
   selector: 'app-login-page',
@@ -19,7 +21,15 @@ export class LoginPageComponent {
   message = '';
   messageType: 'success' | 'error' | 'info' = 'info';
 
-  constructor(private http: HttpClient, private router: Router) {}
+  constructor(
+    private http: HttpClient,
+    private router: Router,
+    private route: ActivatedRoute,
+    private authState: AuthStateService
+  ) {
+    this.message = this.route.snapshot.queryParamMap.get('message') ?? '';
+    this.returnUrl = this.route.snapshot.queryParamMap.get('returnUrl') ?? '/main';
+  }
 
   isAllowedEmail(email: string = this.email): boolean {
     const value = (email ?? '').trim();

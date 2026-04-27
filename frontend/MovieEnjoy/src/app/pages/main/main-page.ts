@@ -1,5 +1,6 @@
 import { ChangeDetectorRef, Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { FormsModule } from '@angular/forms';
 import { Router, RouterLink } from '@angular/router';
 import { HttpClient } from '@angular/common/http';
 import { environment } from '../../../environments/environment';
@@ -7,15 +8,25 @@ import { environment } from '../../../environments/environment';
 @Component({
   selector: 'app-main-page',
   standalone: true,
-  imports: [CommonModule, RouterLink],
-  templateUrl: './main-page.html'
+  imports: [CommonModule, RouterLink, FormsModule],
+  templateUrl: './main-page.html',
+  styleUrl: './main-page.css'
 })
 export class MainPageComponent implements OnInit {
+  private readonly browseTokens = [
+    '0', '1', '2', '3', '4', '5', '6', '7', '8', '9',
+    'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J',
+    'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T',
+    'U', 'V', 'W', 'X', 'Y', 'Z'
+  ];
+
   genres: Array<{ id: number; name: string }> = [];
-  letters: string[] = [];
   genresLoading = false;
-  lettersLoading = false;
   errorMessage = '';
+  title = '';
+  year = '';
+  director = '';
+  star = '';
 
   constructor(
     private router: Router,
@@ -25,20 +36,19 @@ export class MainPageComponent implements OnInit {
 
   ngOnInit(): void {
     this.loadGenres();
-    this.loadTitles();
   }
 
   browseMovies(): void {
     this.router.navigate(['/movies']);
   }
 
-  searchMovies(title: string, year: string, director: string, star: string): void {
+  searchMovies(): void {
     const queryParams: Record<string, string> = {};
 
-    const safeTitle = title.trim();
-    const safeYear = year.trim();
-    const safeDirector = director.trim();
-    const safeStar = star.trim();
+    const safeTitle = this.title.trim();
+    const safeYear = this.year.trim();
+    const safeDirector = this.director.trim();
+    const safeStar = this.star.trim();
 
     if (safeTitle) {
       queryParams['title'] = safeTitle;
@@ -54,6 +64,17 @@ export class MainPageComponent implements OnInit {
     }
 
     this.router.navigate(['/movies'], { queryParams });
+  }
+
+  clearSearch(): void {
+    this.title = '';
+    this.year = '';
+    this.director = '';
+    this.star = '';
+  }
+
+  get letters(): string[] {
+    return this.browseTokens;
   }
 
   private loadGenres(): void {
@@ -72,19 +93,4 @@ export class MainPageComponent implements OnInit {
     });
   }
 
-  private loadTitles(): void {
-    this.lettersLoading = true;
-    this.http.get(`${environment.apiBaseUrl}/api/titles`).subscribe({
-      next: (data: any) => {
-        this.letters = Array.isArray(data) ? data : [];
-        this.lettersLoading = false;
-        this.cdr.detectChanges();
-      },
-      error: (err) => {
-        this.errorMessage = err?.error?.message ?? 'Failed to load titles';
-        this.lettersLoading = false;
-        this.cdr.detectChanges();
-      }
-    });
-  }
 }
