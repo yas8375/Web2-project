@@ -1,7 +1,6 @@
 package com.example.movies_backend.service;
 
 import java.time.LocalDate;
-import java.time.format.DateTimeParseException;
 import java.util.Optional;
 
 import org.springframework.stereotype.Service;
@@ -24,17 +23,6 @@ public class AuthService {
         this.creditCardRepository = creditCardRepository;
     }
 
-    /**
-     * Logic:
-     * Validates customer login credentials.
-     *
-     * Params:
-     * email: customer email.
-     * password: customer plain-text password from request.
-     *
-     * Return:
-     * true/false login status (planned for next phase).
-     */
     public boolean login(String email, String password) {
         if (email == null || email.isBlank() || password == null || password.isBlank()) {
             return false;
@@ -45,7 +33,6 @@ public class AuthService {
             return false;
         }
 
-        // Current DB stores plain-text passwords (per provided dataset).
         return password.equals(customer.get().getPassword());
     }
 
@@ -53,6 +40,7 @@ public class AuthService {
         if (email == null || email.isBlank()) {
             return null;
         }
+
         Optional<Customer> customer = customerRepository.findFirstByEmail(email.trim());
         return customer.map(Customer::getId).orElse(null);
     }
@@ -66,20 +54,26 @@ public class AuthService {
         String firstName = trimToNull(request.getFirstName());
         String lastName = trimToNull(request.getLastName());
         String address = trimToNull(request.getAddress());
+        String creditCardId = trimToNull(request.getCreditCardId());
+        String expiration = trimToNull(request.getExpiration());
         String email = trimToNull(request.getEmail());
         String password = trimToNull(request.getPassword());
         String confirmPassword = trimToNull(request.getConfirmPassword());
-        String normalizedCardId = normalizeCardId(request.getCreditCardId());
 
         if (firstName == null || lastName == null || address == null) {
             throw new IllegalArgumentException("First name, last name, and address are required.");
         }
 
-        if (normalizedCardId == null || !normalizedCardId.matches("\\d{16}")) {
-            throw new IllegalArgumentException("Credit card ID must be 16 digits.");
+        if (creditCardId == null || !creditCardId.replaceAll("[\\s-]+", "").matches("^\\d{1,20}$")) {
+            throw new IllegalArgumentException("A valid credit card number is required.");
         }
 
-        LocalDate expirationDate = parseExpiration(request.getExpiration());
+        LocalDate expirationDate;
+        try {
+            expirationDate = LocalDate.parse(expiration);
+        } catch (Exception ex) {
+            throw new IllegalArgumentException("Expiration date must use YYYY-MM-DD.");
+        }
 
         if (email == null || !email.matches("^[^@\\s]+@[^@\\s]+\\.[^@\\s]+$")) {
             throw new IllegalArgumentException("A valid email address is required.");
@@ -97,15 +91,16 @@ public class AuthService {
             throw new IllegalArgumentException("Passwords do not match.");
         }
 
-        CreditCard creditCard = creditCardRepository.findByNormalizedId(normalizedCardId).orElse(null);
-        if (creditCard == null) {
-            creditCard = new CreditCard(normalizedCardId, firstName, lastName, expirationDate);
-        } else if (!creditCard.getFirstName().equalsIgnoreCase(firstName)
-                || !creditCard.getLastName().equalsIgnoreCase(lastName)
-                || !creditCard.getExpiration().equals(expirationDate)) {
-            throw new IllegalArgumentException("Credit card information does not match the existing card record.");
+        String normalizedCardId = creditCardId.replaceAll("[\\s-]+", "");
+        if (creditCardRepository.findByNormalizedId(normalizedCardId).isPresent()) {
+            throw new IllegalArgumentException("Credit card already exists.");
         }
 
+        CreditCard creditCard = new CreditCard(
+                normalizedCardId,
+                firstName,
+                lastName,
+                expirationDate);
         creditCardRepository.save(creditCard);
 
         Customer customer = new Customer(
@@ -118,27 +113,6 @@ public class AuthService {
                 password);
 
         return customerRepository.save(customer).getId();
-    }
-
-    private LocalDate parseExpiration(String rawValue) {
-        String expiration = trimToNull(rawValue);
-        if (expiration == null) {
-            throw new IllegalArgumentException("Expiration date is required.");
-        }
-
-        try {
-            return LocalDate.parse(expiration);
-        } catch (DateTimeParseException ex) {
-            throw new IllegalArgumentException("Expiration date must use YYYY-MM-DD format.");
-        }
-    }
-
-    private String normalizeCardId(String rawValue) {
-        String value = trimToNull(rawValue);
-        if (value == null) {
-            return null;
-        }
-        return value.replaceAll("[\\s-]+", "");
     }
 
     private String trimToNull(String value) {

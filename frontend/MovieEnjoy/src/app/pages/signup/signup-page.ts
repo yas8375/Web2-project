@@ -36,14 +36,15 @@ export class SignupPageComponent {
 
     this.loading = true;
     this.message = '';
+
     this.http.post(
       `${environment.apiBaseUrl}/api/signup`,
       {
         firstName: this.firstName.trim(),
         lastName: this.lastName.trim(),
         address: this.address.trim(),
-        creditCardId: this.creditCardId.trim(),
-        expiration: this.expiration,
+        creditCardId: this.creditCardId.replace(/[\s-]+/g, ''),
+        expiration: this.expiration.trim(),
         email: this.email.trim(),
         password: this.password,
         confirmPassword: this.confirmPassword
@@ -74,15 +75,16 @@ export class SignupPageComponent {
       return false;
     }
 
-    if (!/^\d{16}$/.test(this.creditCardId.trim())) {
+    const normalizedCardId = this.creditCardId.replace(/[\s-]+/g, '');
+    if (!/^\d{1,20}$/.test(normalizedCardId)) {
       this.success = false;
-      this.message = 'Credit card ID must be 16 digits.';
+      this.message = 'Please enter a valid card number.';
       return false;
     }
 
-    if (!this.expiration) {
+    if (!/^\d{4}-\d{2}-\d{2}$/.test(this.expiration.trim())) {
       this.success = false;
-      this.message = 'Please choose the card expiration date.';
+      this.message = 'Please enter the expiration date as YYYY-MM-DD.';
       return false;
     }
 

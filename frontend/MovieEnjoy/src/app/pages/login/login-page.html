@@ -42,6 +42,11 @@
         </button>
       </form>
 
+      <p class="login-footer mb-0 mt-4">
+        Need an account?
+        <a routerLink="/signup">Sign up</a>
+      </p>
+
       <div *ngIf="message" class="alert mt-4 mb-0" [ngClass]="messageType" role="alert">
         {{ message }}
       </div>
