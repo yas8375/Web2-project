@@ -1,12 +1,34 @@
-<header class="topbar">
-  <a routerLink="/main">Home</a>
-  <a routerLink="/movies">Movies</a>
-  <a routerLink="/browse/genres">Genres</a>
-  <a routerLink="/browse/titles">Titles</a>
-  <a routerLink="/cart">Cart</a>
-  <a routerLink="/login">Login</a>
-</header>
+<div class="app-shell">
+  <header class="container-fluid px-3 px-lg-4 pt-3 pt-lg-4">
+    <nav class="navbar navbar-expand-lg app-navbar">
+      <div class="container-fluid px-2 px-md-3">
+        <a class="navbar-brand app-brand" routerLink="/main">EnjoyMovie</a>
+        <button
+          class="navbar-toggler app-navbar-toggler"
+          type="button"
+          data-bs-toggle="collapse"
+          data-bs-target="#appNav"
+          aria-controls="appNav"
+          aria-expanded="false"
+          aria-label="Toggle navigation"
+        >
+          <span class="navbar-toggler-icon"></span>
+        </button>
 
-<main class="app-main">
-  <router-outlet></router-outlet>
-</main>
+        <div class="collapse navbar-collapse" id="appNav">
+          <div class="navbar-nav ms-auto gap-lg-2">
+            <a class="nav-link app-nav-link" routerLink="/main">Home</a>
+            <a class="nav-link app-nav-link" routerLink="/movies">Movies</a>
+            <a class="nav-link app-nav-link" routerLink="/cart">Cart</a>
+            <a class="nav-link app-nav-link" routerLink="/login" *ngIf="!isLoggedIn">Login</a>
+            <button class="nav-link app-nav-link app-nav-button" type="button" *ngIf="isLoggedIn" (click)="logout()">Logout</button>
+          </div>
+        </div>
+      </div>
+    </nav>
+  </header>
+
+  <main class="app-main container-fluid px-3 px-lg-4 pb-4 pb-lg-5">
+    <router-outlet></router-outlet>
+  </main>
+</div>

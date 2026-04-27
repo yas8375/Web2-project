@@ -4,10 +4,7 @@
 
 .checkout-theme {
   min-height: calc(100vh - 110px);
-  margin-inline: -20px;
-  margin-top: -20px;
-  margin-bottom: -20px;
-  padding-inline: 20px;
+  padding-inline: 0;
   color: #eaf3ff;
   background:
     radial-gradient(circle at 12% 10%, rgba(39, 121, 204, 0.24), transparent 38%),

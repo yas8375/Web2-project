@@ -10,4 +10,5 @@ import com.example.movies_backend.model.Customer;
 @Repository
 public interface CustomerRepository extends JpaRepository<Customer, Integer> {
     Optional<Customer> findFirstByEmail(String email);
+    boolean existsByEmailIgnoreCase(String email);
 }

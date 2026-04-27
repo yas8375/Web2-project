@@ -1,6 +1,7 @@
 import { Routes } from '@angular/router';
 import { MainPageComponent } from './pages/main/main-page';
 import { LoginPageComponent } from './pages/login/login-page';
+import { SignupPageComponent } from './pages/signup/signup-page';
 import { MoviesPageComponent } from './pages/movies/movies-page';
 import { MovieDetailsPageComponent } from './pages/movie-details/movie-details-page';
 import { StarDetailsPageComponent } from './pages/star-details/star-details-page';
@@ -15,6 +16,7 @@ export const routes: Routes = [
   { path: '', pathMatch: 'full', redirectTo: 'login' },
   { path: 'main', component: MainPageComponent },
   { path: 'login', component: LoginPageComponent },
+  { path: 'signup', component: SignupPageComponent },
   { path: 'movies', component: MoviesPageComponent },
   { path: 'movies/:movieId', component: MovieDetailsPageComponent },
   { path: 'stars/:starId', component: StarDetailsPageComponent },

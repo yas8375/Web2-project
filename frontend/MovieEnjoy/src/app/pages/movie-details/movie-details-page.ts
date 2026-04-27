@@ -5,6 +5,8 @@ import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 
 import { environment } from '../../../environments/environment.development';
 import { MovieService, SingleMovie, StarSummary } from '../../movie.service';
+import { AuthStateService } from '../../auth-state.service';
+import { CartStateService } from '../../cart-state.service';
 
 @Component({
   selector: 'app-movie-details-page',
@@ -23,7 +25,9 @@ export class MovieDetailsPageComponent implements OnInit {
     private movieService: MovieService,
     private http: HttpClient,
     private router: Router,
-    private cdr: ChangeDetectorRef
+    private cdr: ChangeDetectorRef,
+    private authState: AuthStateService,
+    private cartState: CartStateService
   ) {}
 
   ngOnInit(): void {
@@ -50,13 +54,36 @@ export class MovieDetailsPageComponent implements OnInit {
   }
 
   addToCart(movieId: string): void {
+    if (!this.authState.isLoggedIn()) {
+      this.router.navigate(['/login'], {
+        queryParams: {
+          returnUrl: this.router.url,
+          message: 'Please sign in before adding movies to the cart.'
+        }
+      });
+      return;
+    }
+
     this.http.post(
       `${environment.apiBaseUrl}/api/cart/items`,
       { movieId, quantity: 1 },
       { withCredentials: true }
     ).subscribe({
-      next: () => this.router.navigate(['/cart']),
+      next: () => {
+        this.cartState.notifyChanged();
+        this.router.navigate(['/cart']);
+      },
       error: (err) => {
+        if (err?.status === 401) {
+          this.router.navigate(['/login'], {
+            queryParams: {
+              returnUrl: this.router.url,
+              message: 'Please sign in before adding movies to the cart.'
+            }
+          });
+          return;
+        }
+
         this.errorMessage = err?.error?.message ?? 'Failed to add movie to cart';
         this.cdr.detectChanges();
       }
