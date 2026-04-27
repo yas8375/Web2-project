@@ -1,38 +1,98 @@
-<section>
-  <h1>Main Page</h1>
-  <p>Browse movies from database.</p>
-  <p class="error" *ngIf="errorMessage">{{ errorMessage }}</p>
-  <div>
-    <h2>Search</h2>
-    <input #titleInput type="text" placeholder="Title" />
-    <input #yearInput type="text" placeholder="Year" />
-    <input #directorInput type="text" placeholder="Director" />
-    <input #starInput type="text" placeholder="Star name" />
-    <button
-      type="button"
-      (click)="searchMovies(titleInput.value, yearInput.value, directorInput.value, starInput.value)"
-    >
-      Search Movies
-    </button>
-  </div>
+<section class="main-page">
+  <div class="home-hero">
+    <div class="home-hero__inner">
+      <h1 class="home-title">Find Something Worth Watching</h1>
+      <p class="home-subtitle">Start with a quick title search, or browse by genre and title token.</p>
 
-  <div>
-    <h2>Browse by Genre</h2>
-    <p *ngIf="genresLoading">Loading genres...</p>
-    <ul *ngIf="!genresLoading && genres.length > 0">
-      <li *ngFor="let g of genres">
-        <a [routerLink]="['/movies']" [queryParams]="{ genre: g.name }">{{ g.name }}</a>
-      </li>
-    </ul>
-    <p *ngIf="!genresLoading && genres.length === 0">No genres available.</p>
-  </div>
+      <div class="search-card">
+        <p class="error mb-3" *ngIf="errorMessage">{{ errorMessage }}</p>
 
-  <div>
-    <h2>Browse by Title</h2>
-    <p *ngIf="lettersLoading">Loading titles...</p>
-    <div class="title-letters" *ngIf="!lettersLoading && letters.length > 0">
-      <a *ngFor="let letter of letters" [routerLink]="['/movies']" [queryParams]="{ letter: letter }">{{ letter }}</a>
+        <div class="row g-3">
+          <div class="col-12 col-lg-4">
+            <label class="form-label search-label">Title</label>
+            <input
+              class="form-control search-input"
+              type="text"
+              [(ngModel)]="title"
+              placeholder="Type a movie title"
+              (keyup.enter)="searchMovies()"
+            >
+          </div>
+          <div class="col-6 col-lg-2">
+            <label class="form-label search-label">Year</label>
+            <input
+              class="form-control search-input"
+              type="text"
+              [(ngModel)]="year"
+              placeholder="Year"
+              (keyup.enter)="searchMovies()"
+            >
+          </div>
+          <div class="col-6 col-lg-3">
+            <label class="form-label search-label">Director</label>
+            <input
+              class="form-control search-input"
+              type="text"
+              [(ngModel)]="director"
+              placeholder="Director"
+              (keyup.enter)="searchMovies()"
+            >
+          </div>
+          <div class="col-12 col-lg-3">
+            <label class="form-label search-label">Star</label>
+            <input
+              class="form-control search-input"
+              type="text"
+              [(ngModel)]="star"
+              placeholder="Star name"
+              (keyup.enter)="searchMovies()"
+            >
+          </div>
+        </div>
+
+        <div class="d-flex flex-wrap gap-2 mt-3">
+          <button class="btn btn-info search-button" type="button" (click)="searchMovies()">Start Search</button>
+          <button class="btn btn-outline-light" type="button" (click)="clearSearch()">Clear</button>
+        </div>
+
+        <p class="search-hint mb-0 mt-3">Use the home page for quick access. Detailed filters stay in the movies page.</p>
+      </div>
     </div>
-    <p *ngIf="!lettersLoading && letters.length === 0">No titles available.</p>
+  </div>
+
+  <div class="browse-surface">
+    <div class="browse-section">
+      <h2 class="browse-heading">Browse by Genre</h2>
+      <div class="browse-divider"></div>
+      <p class="browse-copy">Open the catalog with a genre already selected.</p>
+      <p class="text-soft mb-3" *ngIf="genresLoading">Loading genres...</p>
+      <div class="chip-row" *ngIf="!genresLoading && genres.length > 0">
+        <a
+          class="browse-chip"
+          *ngFor="let g of genres"
+          [routerLink]="['/movies']"
+          [queryParams]="{ genre: g.name }"
+        >
+          {{ g.name }}
+        </a>
+      </div>
+      <p class="text-soft mb-0" *ngIf="!genresLoading && genres.length === 0">No genres available.</p>
+    </div>
+
+    <div class="browse-section">
+      <h2 class="browse-heading">Browse by Title</h2>
+      <div class="browse-divider"></div>
+      <p class="browse-copy">Jump into the catalog using fixed title tokens from 0 to 9 and A to Z.</p>
+      <div class="letter-grid">
+        <a
+          class="letter-chip"
+          *ngFor="let letter of letters"
+          [routerLink]="['/movies']"
+          [queryParams]="{ letter: letter }"
+        >
+          {{ letter }}
+        </a>
+      </div>
+    </div>
   </div>
 </section>

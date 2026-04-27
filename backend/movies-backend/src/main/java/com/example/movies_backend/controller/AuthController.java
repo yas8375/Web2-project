@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.example.movies_backend.dto.SignupRequestDTO;
 import com.example.movies_backend.service.AuthService;
 
 import jakarta.servlet.http.HttpSession;
@@ -56,5 +57,24 @@ public class AuthController {
         }
 
         return ResponseEntity.ok(Map.of("message", "Login successful"));
+    }
+
+    @PostMapping("/signup")
+    public ResponseEntity<?> signup(@RequestBody SignupRequestDTO request, HttpSession session) {
+        try {
+            Integer customerId = authService.signup(request);
+            session.setAttribute("customerId", customerId);
+            return ResponseEntity.status(HttpStatus.CREATED)
+                    .body(Map.of("message", "Account created successfully.", "customerId", customerId));
+        } catch (IllegalArgumentException ex) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                    .body(Map.of("message", ex.getMessage()));
+        }
+    }
+
+    @PostMapping("/logout")
+    public ResponseEntity<?> logout(HttpSession session) {
+        session.invalidate();
+        return ResponseEntity.ok(Map.of("message", "Logout successful"));
     }
 }
