@@ -36,7 +36,7 @@ public class MovieController {
      * HTTP 200 with movies list in JSON format.
      */
     @GetMapping("/movies")
-    public ResponseEntity<List<MovieListItemDTO>> getMovies(
+    public ResponseEntity<?> getMovies(
             @RequestParam(required = false) String title,
             @RequestParam(required = false) Integer year,
             @RequestParam(required = false) String director,
@@ -47,6 +47,17 @@ public class MovieController {
             @RequestParam(defaultValue = "asc") String order,
             @RequestParam(defaultValue = "1") Integer page,
             @RequestParam(defaultValue = "50") Integer size) {
+
+        if (title == null
+                && year == null
+                && director == null
+                && star == null
+                && genre == null
+                && letter == null
+                && "title".equals(sort)
+                && "asc".equals(order)) {
+            movieService.getMoviesPage(page, size);
+        }
 
         List<MovieListItemDTO> movies = movieService.searchMovies(
                 title,
@@ -96,7 +107,7 @@ public class MovieController {
      */
     @GetMapping("/genres")
     public ResponseEntity<?> getGenres() {
-        return ResponseEntity.ok(movieService.getAllGenres());
+        return ResponseEntity.ok(movieService.getGenres());
     }
 
     /**
@@ -112,5 +123,12 @@ public class MovieController {
     @GetMapping("/titles")
     public ResponseEntity<?> getTitles() {
         return ResponseEntity.ok(movieService.getTitleLetters());
+    }
+
+    @GetMapping("/movies/suggest")
+    public ResponseEntity<List<String>> suggestTitles(
+            @RequestParam String query,
+            @RequestParam(defaultValue = "8") Integer limit) {
+        return ResponseEntity.ok(movieService.suggestTitles(query, limit));
     }
 }

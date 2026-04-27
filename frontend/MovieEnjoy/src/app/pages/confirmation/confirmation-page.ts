@@ -16,6 +16,7 @@ export class ConfirmationPageComponent {
   orderId = this.resolveOrderId(this.state?.orderId);
   message = this.resolveMessage(this.state?.message);
   items = this.normalizeItems(this.state?.items);
+  orderId = this.resolveOrderId(this.state?.orderId);
 
   private readConfirmationState(): any {
     const hs = history.state ?? {};
@@ -70,5 +71,11 @@ export class ConfirmationPageComponent {
 
       return { title, quantity };
     });
+  }
+
+  private resolveOrderId(value: unknown): string {
+    if (typeof value === 'string' && value.trim().length > 0)
+      return value.trim();
+    return 'pending';
   }
 }

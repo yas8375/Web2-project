@@ -1,8 +1,9 @@
-import { ChangeDetectorRef, Component, OnInit } from '@angular/core';
+import { ChangeDetectorRef, Component, OnDestroy, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Router, RouterLink } from '@angular/router';
 import { HttpClient } from '@angular/common/http';
+import { Subject, Subscription, debounceTime, distinctUntilChanged, switchMap, of } from 'rxjs';
 import { environment } from '../../../environments/environment';
 
 @Component({
@@ -12,7 +13,7 @@ import { environment } from '../../../environments/environment';
   templateUrl: './main-page.html',
   styleUrl: './main-page.css',
 })
-export class MainPageComponent implements OnInit {
+export class MainPageComponent implements OnInit, OnDestroy {
   private readonly browseTokens = [
     '0',
     '1',
@@ -59,6 +60,12 @@ export class MainPageComponent implements OnInit {
   year = '';
   director = '';
   star = '';
+  titleSuggestions: string[] = [];
+  showSuggestions = false;
+  activeSuggestionIndex = -1;
+
+  private readonly titleInput$ = new Subject<string>();
+  private titleInputSub?: Subscription;
 
   constructor(
     private router: Router,
@@ -68,6 +75,38 @@ export class MainPageComponent implements OnInit {
 
   ngOnInit(): void {
     this.loadGenres();
+    this.titleInputSub = this.titleInput$
+      .pipe(
+        debounceTime(180),
+        distinctUntilChanged(),
+        switchMap((raw) => {
+          const query = raw.trim();
+          if (query.length < 2) {
+            return of([] as string[]);
+          }
+          return this.http.get<string[]>(`${environment.apiBaseUrl}/api/movies/suggest`, {
+            params: { query, limit: '8' }
+          });
+        })
+      )
+      .subscribe({
+        next: (suggestions) => {
+          this.titleSuggestions = suggestions ?? [];
+          this.activeSuggestionIndex = this.titleSuggestions.length > 0 ? 0 : -1;
+          this.showSuggestions = this.titleSuggestions.length > 0;
+          this.cdr.detectChanges();
+        },
+        error: () => {
+          this.titleSuggestions = [];
+          this.activeSuggestionIndex = -1;
+          this.showSuggestions = false;
+          this.cdr.detectChanges();
+        }
+      });
+  }
+
+  ngOnDestroy(): void {
+    this.titleInputSub?.unsubscribe();
   }
 
   browseMovies(): void {
@@ -75,6 +114,10 @@ export class MainPageComponent implements OnInit {
   }
 
   searchMovies(): void {
+    this.showSuggestions = false;
+    this.titleSuggestions = [];
+    this.activeSuggestionIndex = -1;
+
     const queryParams: Record<string, string> = {};
 
     const safeTitle = this.title.trim();
@@ -112,6 +155,60 @@ export class MainPageComponent implements OnInit {
     this.year = '';
     this.director = '';
     this.star = '';
+    this.titleSuggestions = [];
+    this.showSuggestions = false;
+    this.activeSuggestionIndex = -1;
+  }
+
+  onTitleInput(value: string): void {
+    this.title = value;
+    this.titleInput$.next(value);
+  }
+
+  onTitleFocus(): void {
+    this.showSuggestions = this.titleSuggestions.length > 0;
+  }
+
+  onTitleBlur(): void {
+    // Delay hide to allow clicking an item in the dropdown.
+    setTimeout(() => {
+      this.showSuggestions = false;
+      this.cdr.detectChanges();
+    }, 120);
+  }
+
+  onTitleKeydown(event: KeyboardEvent): void {
+    if (!this.showSuggestions || this.titleSuggestions.length === 0) {
+      return;
+    }
+
+    if (event.key === 'ArrowDown') {
+      event.preventDefault();
+      this.activeSuggestionIndex = (this.activeSuggestionIndex + 1) % this.titleSuggestions.length;
+      return;
+    }
+
+    if (event.key === 'ArrowUp') {
+      event.preventDefault();
+      this.activeSuggestionIndex =
+        this.activeSuggestionIndex <= 0
+          ? this.titleSuggestions.length - 1
+          : this.activeSuggestionIndex - 1;
+      return;
+    }
+
+    if (event.key === 'Enter' && this.activeSuggestionIndex >= 0) {
+      event.preventDefault();
+      this.selectTitleSuggestion(this.titleSuggestions[this.activeSuggestionIndex]);
+    }
+  }
+
+  selectTitleSuggestion(suggestion: string): void {
+    this.title = suggestion;
+    this.showSuggestions = false;
+    this.titleSuggestions = [];
+    this.activeSuggestionIndex = -1;
+    this.searchMovies();
   }
 
   get letters(): string[] {

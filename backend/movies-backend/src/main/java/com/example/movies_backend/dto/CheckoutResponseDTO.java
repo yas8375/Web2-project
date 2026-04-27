@@ -35,6 +35,10 @@ public class CheckoutResponseDTO {
         return message;
     }
 
+    public String getError() {
+        return success ? null : message;
+    }
+
     public void setMessage(String message) {
         this.message = message;
     }

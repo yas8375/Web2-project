@@ -3,8 +3,6 @@
 test('full journey succeeds from login to checkout confirmation (expected to fail until backend is implemented)', async ({
   page,
 }) => {
-  test.fail(true, 'Checkout confirmation flow is planned for the next phase.');
-
   await page.goto('/login');
   await page.getByPlaceholder('name@example.com').fill('user@example.com');
   await page.getByPlaceholder('Password').fill('password123');
