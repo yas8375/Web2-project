@@ -22,7 +22,6 @@ export class StarDetailsPageComponent implements OnInit {
     private route: ActivatedRoute,
     private movieService: MovieService,
     private cdr: ChangeDetectorRef,
-    private location: Location,
   ) {}
 
   ngOnInit(): void {

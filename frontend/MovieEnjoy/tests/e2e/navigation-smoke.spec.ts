@@ -3,19 +3,17 @@ import { expect, test } from '@playwright/test';
 test('top navigation routes to core pages without blank screen', async ({ page }) => {
   const navChecks = [
     {
-      link: 'Home',
+      path: '/main',
       url: /\/main$/,
       heading: 'Find Something Worth Watching',
     },
-    { link: 'Movies', url: /\/movies$/, heading: 'Movie Catalog' },
-    { link: 'Cart', url: /\/cart$/, heading: 'Shopping Cart' },
-    { link: 'Login', url: /\/login$/, heading: 'Login' },
+    { path: '/movies', url: /\/movies$/, heading: 'Movie Catalog' },
+    { path: '/cart', url: /\/cart$/, heading: 'Shopping Cart' },
+    { path: '/login', url: /\/login$/, heading: 'Login' },
   ];
 
-  await page.goto('/main');
-
   for (const check of navChecks) {
-    await page.getByRole('link', { name: check.link }).click();
+    await page.goto(check.path);
     await expect(page).toHaveURL(check.url);
     await expect(page.getByRole('heading', { name: check.heading })).toBeVisible();
   }

@@ -1,6 +1,6 @@
 ﻿import { TestBed } from '@angular/core/testing';
 import { HttpClientTestingModule } from '@angular/common/http/testing';
-import { Router } from '@angular/router';
+import { provideRouter } from '@angular/router';
 
 import { CheckoutPageComponent } from './checkout-page';
 
@@ -8,12 +8,7 @@ describe('Checkout Phase 3 Expectations', () => {
   beforeEach(async () => {
     await TestBed.configureTestingModule({
       imports: [CheckoutPageComponent, HttpClientTestingModule],
-      providers: [
-        {
-          provide: Router,
-          useValue: { navigate: () => Promise.resolve(true) },
-        },
-      ],
+      providers: [provideRouter([])],
     }).compileComponents();
   });
 

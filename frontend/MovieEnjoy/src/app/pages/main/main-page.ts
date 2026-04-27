@@ -3,7 +3,14 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Router, RouterLink } from '@angular/router';
 import { HttpClient } from '@angular/common/http';
-import { Subject, Subscription, debounceTime, distinctUntilChanged, switchMap, of } from 'rxjs';
+import {
+  Subject,
+  Subscription,
+  debounceTime,
+  distinctUntilChanged,
+  switchMap,
+  of,
+} from 'rxjs';
 import { environment } from '../../../environments/environment';
 
 @Component({
@@ -84,15 +91,19 @@ export class MainPageComponent implements OnInit, OnDestroy {
           if (query.length < 2) {
             return of([] as string[]);
           }
-          return this.http.get<string[]>(`${environment.apiBaseUrl}/api/movies/suggest`, {
-            params: { query, limit: '8' }
-          });
-        })
+          return this.http.get<string[]>(
+            `${environment.apiBaseUrl}/api/movies/suggest`,
+            {
+              params: { query, limit: '8' },
+            },
+          );
+        }),
       )
       .subscribe({
         next: (suggestions) => {
           this.titleSuggestions = suggestions ?? [];
-          this.activeSuggestionIndex = this.titleSuggestions.length > 0 ? 0 : -1;
+          this.activeSuggestionIndex =
+            this.titleSuggestions.length > 0 ? 0 : -1;
           this.showSuggestions = this.titleSuggestions.length > 0;
           this.cdr.detectChanges();
         },
@@ -101,7 +112,7 @@ export class MainPageComponent implements OnInit, OnDestroy {
           this.activeSuggestionIndex = -1;
           this.showSuggestions = false;
           this.cdr.detectChanges();
-        }
+        },
       });
   }
 
@@ -184,7 +195,8 @@ export class MainPageComponent implements OnInit, OnDestroy {
 
     if (event.key === 'ArrowDown') {
       event.preventDefault();
-      this.activeSuggestionIndex = (this.activeSuggestionIndex + 1) % this.titleSuggestions.length;
+      this.activeSuggestionIndex =
+        (this.activeSuggestionIndex + 1) % this.titleSuggestions.length;
       return;
     }
 
@@ -199,7 +211,9 @@ export class MainPageComponent implements OnInit, OnDestroy {
 
     if (event.key === 'Enter' && this.activeSuggestionIndex >= 0) {
       event.preventDefault();
-      this.selectTitleSuggestion(this.titleSuggestions[this.activeSuggestionIndex]);
+      this.selectTitleSuggestion(
+        this.titleSuggestions[this.activeSuggestionIndex],
+      );
     }
   }
 

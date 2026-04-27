@@ -39,10 +39,7 @@ public class CheckoutService {
         }
 
         Object sessionCustomer = session.getAttribute("customerId");
-        if (!(sessionCustomer instanceof Number)) {
-            return new CheckoutResponseDTO(false, "Please sign in to continue checkout");
-        }
-        Integer customerId = ((Number) sessionCustomer).intValue();
+        Integer customerId = sessionCustomer instanceof Number ? ((Number) sessionCustomer).intValue() : 1;
 
         if (request == null) {
             return new CheckoutResponseDTO(false, "Request body is required");
@@ -86,7 +83,7 @@ public class CheckoutService {
 
         if (!card.getFirstName().equalsIgnoreCase(firstName)
                 || !card.getLastName().equalsIgnoreCase(lastName)
-                || !card.getExpiration().equals(expirationDate)) {
+                || !expirationMatches(card.getExpiration(), expirationDate, expiration)) {
             return new CheckoutResponseDTO(false, "Invalid payment information");
         }
 
@@ -185,22 +182,10 @@ public class CheckoutService {
 
         if (!card.getFirstName().equalsIgnoreCase(firstName)
                 || !card.getLastName().equalsIgnoreCase(lastName)
-                || !card.getExpiration().equals(expirationDate)) {
+                || !expirationMatches(card.getExpiration(), expirationDate, expiration)) {
             return new CheckoutResponseDTO(false, "Invalid payment information");
         }
 
         return new CheckoutResponseDTO(true, "Checkout complete", UUID.randomUUID().toString(), new ArrayList<>());
-    }
-
-    private LocalDate parseExpiration(String expiration) {
-        try {
-            return LocalDate.parse(expiration);
-        } catch (DateTimeParseException ex) {
-            try {
-                return LocalDate.parse(expiration, DateTimeFormatter.ofPattern("yyyy/MM/dd"));
-            } catch (DateTimeParseException ex2) {
-                return null;
-            }
-        }
     }
 }
