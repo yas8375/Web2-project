@@ -1,11 +1,10 @@
 <section class="star-page">
   <div class="star-hero">
     <div class="star-hero__inner">
-      <button class="back-link" type="button" (click)="goBack()">Back</button>
+      <a class="back-link" routerLink="/movies">&#8592; Back to Movies</a>
       <p class="eyebrow mb-2">Star Details</p>
       <h1 class="star-title">{{ star?.name || 'Loading star...' }}</h1>
       <div class="hero-meta" *ngIf="star">
-        <span>{{ star.id }}</span>
         <span>Birth Year: {{ star.birthYear ?? 'N/A' }}</span>
         <span>{{ movies.length }} movies</span>
       </div>
