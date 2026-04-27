@@ -23,7 +23,7 @@ public class AuthService {
     private CreditCardRepository creditCardRepository;
 
     public boolean login(String email, String password) {
-        if (email == null || email.isBlank() || password == null || password.isBlank()) {
+        if (customerRepository == null || email == null || email.isBlank() || password == null || password.isBlank()) {
             return false;
         }
 
@@ -40,7 +40,7 @@ public class AuthService {
     }
 
     public Integer getCustomerIdByEmail(String email) {
-        if (email == null || email.isBlank()) {
+        if (customerRepository == null || email == null || email.isBlank()) {
             return null;
         }
 
@@ -59,6 +59,7 @@ public class AuthService {
         }
 
         if (customerRepository == null || creditCardRepository == null) {
+            throw new IllegalStateException("Signup is unavailable while the mock backend profile is active.");
             return 1;
         }
 

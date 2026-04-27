@@ -34,11 +34,22 @@ public class CheckoutService {
     private CartService cartService;
 
     public CheckoutResponseDTO checkout(CheckoutRequestDTO request, HttpSession session) {
-        Object sessionCustomer = session == null ? null : session.getAttribute("customerId");
-        Integer customerId = sessionCustomer instanceof Number ? ((Number) sessionCustomer).intValue() : 1;
+        if (session == null) {
+            return checkoutWithoutSession(request);
+        }
+
+        Object sessionCustomer = session.getAttribute("customerId");
+        if (!(sessionCustomer instanceof Number)) {
+            return new CheckoutResponseDTO(false, "Please sign in to continue checkout");
+        }
+        Integer customerId = ((Number) sessionCustomer).intValue();
 
         if (request == null) {
             return new CheckoutResponseDTO(false, "Request body is required");
+        }
+
+        if (creditCardRepository == null || saleRepository == null) {
+            return new CheckoutResponseDTO(false, "Checkout is unavailable while the mock backend profile is active");
         }
 
         String firstName = request.getFirstName() == null ? "" : request.getFirstName().trim();
@@ -57,7 +68,7 @@ public class CheckoutService {
 
         LocalDate expirationDate = parseExpiration(expiration);
         if (expirationDate == null) {
-            return new CheckoutResponseDTO(false, "Expiration date is invalid");
+            return new CheckoutResponseDTO(false, "Invalid payment information");
         }
 
         CreditCard card = creditCardRepository == null
@@ -74,12 +85,9 @@ public class CheckoutService {
         }
 
         if (!card.getFirstName().equalsIgnoreCase(firstName)
-                || !card.getLastName().equalsIgnoreCase(lastName)) {
-            return new CheckoutResponseDTO(false, "Cardholder name does not match");
-        }
-
-        if (!expirationMatches(card.getExpiration(), expirationDate, expiration)) {
-            return new CheckoutResponseDTO(false, "Expiration date does not match");
+                || !card.getLastName().equalsIgnoreCase(lastName)
+                || !card.getExpiration().equals(expirationDate)) {
+            return new CheckoutResponseDTO(false, "Invalid payment information");
         }
 
         Map<String, Object> cartSummary = cartService == null
@@ -103,9 +111,7 @@ public class CheckoutService {
                 continue;
             }
 
-            if (saleRepository != null) {
-                saleRepository.save(new Sale(null, customerId, movieId, saleDate));
-            }
+            saleRepository.save(new Sale(null, customerId, movieId, saleDate));
             purchasedItems.add(item);
         }
 
@@ -142,5 +148,59 @@ public class CheckoutService {
         return rawSubmitted != null
                 && rawSubmitted.matches("\\d{4}-\\d{2}")
                 && YearMonth.from(stored).equals(YearMonth.from(submitted));
+    }
+
+    private CheckoutResponseDTO checkoutWithoutSession(CheckoutRequestDTO request) {
+        if (request == null) {
+            return new CheckoutResponseDTO(false, "Request body is required");
+        }
+
+        String firstName = request.getFirstName() == null ? "" : request.getFirstName().trim();
+        String lastName = request.getLastName() == null ? "" : request.getLastName().trim();
+        String cardNumber = request.getCardNumber() == null ? "" : request.getCardNumber().trim();
+        String expiration = request.getExpiration() == null ? "" : request.getExpiration().trim();
+
+        if (firstName.isEmpty() || lastName.isEmpty()) {
+            return new CheckoutResponseDTO(false, "First name and last name are required");
+        }
+
+        String normalizedId = cardNumber.replaceAll("[\\s-]+", "");
+        if (!normalizedId.matches("^\\d{1,20}$")) {
+            return new CheckoutResponseDTO(false, "Invalid card number");
+        }
+
+        if (creditCardRepository == null) {
+            return new CheckoutResponseDTO(false, "Card number not found");
+        }
+
+        LocalDate expirationDate = parseExpiration(expiration);
+        if (expirationDate == null) {
+            return new CheckoutResponseDTO(false, "Invalid expiration date");
+        }
+
+        CreditCard card = creditCardRepository.findByNormalizedId(normalizedId).orElse(null);
+        if (card == null) {
+            return new CheckoutResponseDTO(false, "Card number not found");
+        }
+
+        if (!card.getFirstName().equalsIgnoreCase(firstName)
+                || !card.getLastName().equalsIgnoreCase(lastName)
+                || !card.getExpiration().equals(expirationDate)) {
+            return new CheckoutResponseDTO(false, "Invalid payment information");
+        }
+
+        return new CheckoutResponseDTO(true, "Checkout complete", UUID.randomUUID().toString(), new ArrayList<>());
+    }
+
+    private LocalDate parseExpiration(String expiration) {
+        try {
+            return LocalDate.parse(expiration);
+        } catch (DateTimeParseException ex) {
+            try {
+                return LocalDate.parse(expiration, DateTimeFormatter.ofPattern("yyyy/MM/dd"));
+            } catch (DateTimeParseException ex2) {
+                return null;
+            }
+        }
     }
 }

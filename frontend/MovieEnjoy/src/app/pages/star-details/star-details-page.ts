@@ -23,7 +23,6 @@ export class StarDetailsPageComponent implements OnInit {
     private movieService: MovieService,
     private cdr: ChangeDetectorRef,
     private location: Location,
-    private cdr: ChangeDetectorRef
   ) {}
 
   ngOnInit(): void {

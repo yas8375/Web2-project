@@ -327,11 +327,11 @@ export class MoviesPageComponent implements OnInit {
   private loadGenres(): void {
     this.http
       .get<
-        Array<{ id: number; name: string }> | string[]
+        Array<{ id: number; name: string }>
       >(`${environment.apiBaseUrl}/api/genres`)
       .subscribe({
         next: (data) => {
-          this.genres = this.normalizeGenres(data);
+          this.genres = Array.isArray(data) ? data : [];
           this.cdr.detectChanges();
         },
         error: () => {

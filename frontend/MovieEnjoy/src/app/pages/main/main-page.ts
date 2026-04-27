@@ -233,12 +233,17 @@ export class MainPageComponent implements OnInit, OnDestroy {
 
   private normalizeGenres(data: unknown): Array<{ id: number; name: string }> {
     if (!Array.isArray(data)) return [];
+
     return data
       .map((item: any, index) => {
-        if (typeof item === 'string') return { id: index + 1, name: item };
+        if (typeof item === 'string') {
+          return { id: index + 1, name: item };
+        }
+
         if (item && typeof item.name === 'string') {
           return { id: Number(item.id ?? index + 1), name: item.name };
         }
+
         return null;
       })
       .filter((item): item is { id: number; name: string } => item !== null);

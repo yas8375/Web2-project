@@ -13,6 +13,7 @@ export class ConfirmationPageComponent {
   private readonly state: any = this.readConfirmationState();
 
   success = this.state?.success ?? false;
+  orderId = this.resolveOrderId(this.state?.orderId);
   message = this.resolveMessage(this.state?.message);
   items = this.normalizeItems(this.state?.items);
   orderId = this.resolveOrderId(this.state?.orderId);
@@ -40,6 +41,12 @@ export class ConfirmationPageComponent {
     return this.success
       ? 'Your payment was completed successfully.'
       : 'Payment was not completed. Please try again.';
+  }
+
+  private resolveOrderId(value: unknown): string {
+    if (typeof value === 'string' && value.trim().length > 0)
+      return value.trim();
+    return 'pending';
   }
 
   private normalizeItems(
