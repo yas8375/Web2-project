@@ -1,5 +1,8 @@
 ﻿import { TestBed } from '@angular/core/testing';
-import { HttpClientTestingModule, HttpTestingController } from '@angular/common/http/testing';
+import {
+  HttpClientTestingModule,
+  HttpTestingController,
+} from '@angular/common/http/testing';
 import { provideRouter } from '@angular/router';
 
 import { CartPageComponent } from './cart-page';
@@ -11,7 +14,7 @@ describe('Cart Phase 3 Expectations', () => {
   beforeEach(async () => {
     await TestBed.configureTestingModule({
       imports: [CartPageComponent, HttpClientTestingModule],
-      providers: [provideRouter([])]
+      providers: [provideRouter([])],
     }).compileComponents();
 
     httpMock = TestBed.inject(HttpTestingController);
@@ -24,6 +27,7 @@ describe('Cart Phase 3 Expectations', () => {
   it('should expose quantity update action (Phase 4 expectation)', () => {
     const fixture = TestBed.createComponent(CartPageComponent);
     const component = fixture.componentInstance as any;
+    fixture.detectChanges();
 
     const req = httpMock.expectOne(`${environment.apiBaseUrl}/api/cart`);
     req.flush({ items: [] });
@@ -34,6 +38,7 @@ describe('Cart Phase 3 Expectations', () => {
   it('should expose remove-item action (Phase 4 expectation)', () => {
     const fixture = TestBed.createComponent(CartPageComponent);
     const component = fixture.componentInstance as any;
+    fixture.detectChanges();
 
     const req = httpMock.expectOne(`${environment.apiBaseUrl}/api/cart`);
     req.flush({ items: [] });

@@ -1,4 +1,10 @@
-import { ChangeDetectorRef, Component, DestroyRef, OnInit, inject } from '@angular/core';
+import {
+  ChangeDetectorRef,
+  Component,
+  DestroyRef,
+  OnInit,
+  inject,
+} from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { HttpClient } from '@angular/common/http';
 import { NavigationEnd, Router, RouterLink } from '@angular/router';
@@ -12,7 +18,7 @@ import { CartStateService } from '../../cart-state.service';
   standalone: true,
   imports: [CommonModule, RouterLink],
   templateUrl: './cart-page.html',
-  styleUrl: './cart-page.css'
+  styleUrl: './cart-page.css',
 })
 export class CartPageComponent implements OnInit {
   private readonly destroyRef = inject(DestroyRef);
@@ -25,7 +31,7 @@ export class CartPageComponent implements OnInit {
     private http: HttpClient,
     private router: Router,
     private cdr: ChangeDetectorRef,
-    private cartState: CartStateService
+    private cartState: CartStateService,
   ) {}
 
   ngOnInit(): void {
@@ -38,7 +44,7 @@ export class CartPageComponent implements OnInit {
     this.router.events
       .pipe(
         filter((event) => event instanceof NavigationEnd),
-        takeUntilDestroyed(this.destroyRef)
+        takeUntilDestroyed(this.destroyRef),
       )
       .subscribe((event) => {
         const navigation = event as NavigationEnd;
@@ -49,18 +55,20 @@ export class CartPageComponent implements OnInit {
   }
 
   loadCart(): void {
-    this.http.get(`${environment.apiBaseUrl}/api/cart`, {
-      withCredentials: true
-    }).subscribe({
-      next: (data) => {
-        this.response = data;
-        this.cdr.detectChanges();
-      },
-      error: (err) => {
-        this.errorMessage = err?.error?.message ?? 'Failed to load cart';
-        this.cdr.detectChanges();
-      }
-    });
+    this.http
+      .get(`${environment.apiBaseUrl}/api/cart`, {
+        withCredentials: true,
+      })
+      .subscribe({
+        next: (data) => {
+          this.response = data;
+          this.cdr.detectChanges();
+        },
+        error: (err) => {
+          this.errorMessage = err?.error?.message ?? 'Failed to load cart';
+          this.cdr.detectChanges();
+        },
+      });
   }
 
   updateQuantity(movieId: string, quantity: number): void {
@@ -73,39 +81,45 @@ export class CartPageComponent implements OnInit {
       this.cdr.detectChanges();
     }, 2500);
 
-    const item = this.response?.items?.find((entry: any) => entry.movieId === movieId);
+    const item = this.response?.items?.find(
+      (entry: any) => entry.movieId === movieId,
+    );
     if (item) {
       item.quantity = quantity;
     }
 
-    this.http.put(
-      `${environment.apiBaseUrl}/api/cart/items/${movieId}`,
-      { quantity },
-      { withCredentials: true }
-    ).subscribe({
-      next: () => {
-        this.loadCart();
-      },
-      error: (err) => {
-        this.errorMessage = err?.error?.message ?? 'Failed to update quantity';
-        this.cdr.detectChanges();
-      }
-    });
+    this.http
+      .put(
+        `${environment.apiBaseUrl}/api/cart/items/${movieId}`,
+        { quantity },
+        { withCredentials: true },
+      )
+      .subscribe({
+        next: () => {
+          this.loadCart();
+        },
+        error: (err) => {
+          this.errorMessage =
+            err?.error?.message ?? 'Failed to update quantity';
+          this.cdr.detectChanges();
+        },
+      });
   }
 
   removeItem(movieId: string): void {
-    this.http.delete(
-      `${environment.apiBaseUrl}/api/cart/items/${movieId}`,
-      { withCredentials: true }
-    ).subscribe({
-      next: () => {
-        this.loadCart();
-      },
-      error: (err) => {
-        this.errorMessage = err?.error?.message ?? 'Failed to remove item';
-        this.cdr.detectChanges();
-      }
-    });
+    this.http
+      .delete(`${environment.apiBaseUrl}/api/cart/items/${movieId}`, {
+        withCredentials: true,
+      })
+      .subscribe({
+        next: () => {
+          this.loadCart();
+        },
+        error: (err) => {
+          this.errorMessage = err?.error?.message ?? 'Failed to remove item';
+          this.cdr.detectChanges();
+        },
+      });
   }
 
   proceedToCheckout(): void {

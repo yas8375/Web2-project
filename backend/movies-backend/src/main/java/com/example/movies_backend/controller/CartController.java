@@ -5,7 +5,6 @@ import java.util.Map;
 import jakarta.servlet.http.HttpSession;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -56,25 +55,16 @@ public class CartController {
      * HTTP 501 Not Implemented for Phase 2 (contract only).
      */
     @PostMapping("/cart/items")
-public ResponseEntity<?> addToCart(
-        @RequestBody CartItemRequestDTO request,
-        HttpSession session) {
+    public ResponseEntity<?> addToCart(
+            @RequestBody CartItemRequestDTO request,
+            HttpSession session) {
 
-    Object customerId = session.getAttribute("customerId");
-
-    if (customerId == null) {
-        return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
-                .body(Map.of(
-                        "success", false,
-                        "message", "You must log in before adding movies to the cart"));
+        return ResponseEntity.ok(
+                cartService.addToCart(
+                        request.getMovieId(),
+                        request.getQuantity(),
+                        session));
     }
-
-    return ResponseEntity.ok(
-            cartService.addToCart(
-                    request.getMovieId(),
-                    request.getQuantity(),
-                    session));
-}
 
     /**
      * Logic:

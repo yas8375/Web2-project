@@ -24,6 +24,10 @@ public class CartService {
 
     @SuppressWarnings("unchecked")
     private Map<String, Integer> getOrCreateCart(HttpSession session) {
+        if (session == null) {
+            return new HashMap<>();
+        }
+
         Object cartObj = session.getAttribute(CART_SESSION_KEY);
 
         if (cartObj == null) {
@@ -36,7 +40,9 @@ public class CartService {
     }
 
     public void clearCart(HttpSession session) {
-        session.removeAttribute(CART_SESSION_KEY);
+        if (session != null) {
+            session.removeAttribute(CART_SESSION_KEY);
+        }
     }
     /**
      * Logic:
@@ -78,6 +84,7 @@ SingleMovieDTO movie = movieService.getMovieById(movieId);                if (mo
         Map<String, Object> response = new HashMap<>();
         response.put("items", items);
         response.put("totalItems", totalItems);
+        response.put("total", totalItems);
 
         return response;
     }
@@ -104,13 +111,20 @@ SingleMovieDTO movie = movieService.getMovieById(movieId);                if (mo
         }
 
         cart.put(movieId, cart.getOrDefault(movieId, 0) + quantity);
-        session.setAttribute(CART_SESSION_KEY, cart);
+        if (session != null) {
+            session.setAttribute(CART_SESSION_KEY, cart);
+        }
+
+        Map<String, Object> item = new HashMap<>();
+        item.put("movieId", movieId);
+        item.put("quantity", cart.get(movieId));
 
         return Map.of(
                 "success", true,
                 "message", "Movie added to cart",
                 "movieId", movieId,
-                "quantity", cart.get(movieId));
+                "quantity", cart.get(movieId),
+                "item", item);
     }
 
     /**
@@ -127,32 +141,38 @@ SingleMovieDTO movie = movieService.getMovieById(movieId);                if (mo
     public Map<String, Object> updateCartItem(String movieId, Integer quantity, HttpSession session) {
         Map<String, Integer> cart = getOrCreateCart(session);
 
-        if (!cart.containsKey(movieId)) {
-            return Map.of("success", false, "message", "Movie not found in cart");
-        }
-
         if (quantity == null) {
             return Map.of("success", false, "message", "quantity is required");
         }
 
         if (quantity <= 0) {
             cart.remove(movieId);
-            session.setAttribute(CART_SESSION_KEY, cart);
+            if (session != null) {
+                session.setAttribute(CART_SESSION_KEY, cart);
+            }
 
             return Map.of(
                     "success", true,
                     "message", "Movie removed from cart",
-                    "movieId", movieId);
+                    "movieId", movieId,
+                    "removedMovieId", movieId);
         }
 
         cart.put(movieId, quantity);
-        session.setAttribute(CART_SESSION_KEY, cart);
+        if (session != null) {
+            session.setAttribute(CART_SESSION_KEY, cart);
+        }
+
+        Map<String, Object> item = new HashMap<>();
+        item.put("movieId", movieId);
+        item.put("quantity", quantity);
 
         return Map.of(
                 "success", true,
                 "message", "Cart item updated",
                 "movieId", movieId,
-                "quantity", quantity);
+                "quantity", quantity,
+                "item", item);
     }
 
 
@@ -170,16 +190,15 @@ SingleMovieDTO movie = movieService.getMovieById(movieId);                if (mo
     public Map<String, Object> removeCartItem(String movieId, HttpSession session) {
         Map<String, Integer> cart = getOrCreateCart(session);
 
-        if (!cart.containsKey(movieId)) {
-            return Map.of("success", false, "message", "Movie not found in cart");
-        }
-
         cart.remove(movieId);
-        session.setAttribute(CART_SESSION_KEY, cart);
+        if (session != null) {
+            session.setAttribute(CART_SESSION_KEY, cart);
+        }
 
         return Map.of(
                 "success", true,
                 "message", "Movie removed from cart",
-                "movieId", movieId);
+                "movieId", movieId,
+                "removedMovieId", movieId);
     }
 }

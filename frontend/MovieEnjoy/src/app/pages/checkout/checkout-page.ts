@@ -11,19 +11,23 @@ import { environment } from '../../../environments/environment';
   standalone: true,
   imports: [CommonModule, FormsModule],
   templateUrl: './checkout-page.html',
-  styleUrl: './checkout-page.css'
+  styleUrl: './checkout-page.css',
 })
 export class CheckoutPageComponent {
   form = {
     firstName: '',
     lastName: '',
     cardNumber: '',
-    expiration: ''
+    expiration: '',
   };
   message = '';
   isSubmitting = false;
 
-  constructor(private http: HttpClient, private router: Router, private cdr: ChangeDetectorRef) {}
+  constructor(
+    private http: HttpClient,
+    private router: Router,
+    private cdr: ChangeDetectorRef,
+  ) {}
 
   isValidCardNumber(cardNumber: string): boolean {
     // For this project, correctness is validated by backend lookup in `creditcards` table.
@@ -42,16 +46,23 @@ export class CheckoutPageComponent {
     const year = Number(match[1]);
     const month = Number(match[2]);
     const day = Number(match[3]);
-    if (!Number.isInteger(year) || !Number.isInteger(month) || !Number.isInteger(day)) return false;
+    if (
+      !Number.isInteger(year) ||
+      !Number.isInteger(month) ||
+      !Number.isInteger(day)
+    )
+      return false;
     if (month < 1 || month > 12) return false;
     if (day < 1 || day > 31) return false;
 
     const date = new Date(Date.UTC(year, month - 1, day));
     if (Number.isNaN(date.getTime())) return false;
 
-    return date.getUTCFullYear() === year
-      && date.getUTCMonth() === month - 1
-      && date.getUTCDate() === day;
+    return (
+      date.getUTCFullYear() === year &&
+      date.getUTCMonth() === month - 1 &&
+      date.getUTCDate() === day
+    );
   }
 
   submit(): void {
@@ -70,48 +81,56 @@ export class CheckoutPageComponent {
     }
 
     this.http
-      .post<any>(`${environment.apiBaseUrl}/api/checkout`, this.form, { withCredentials: true })
+      .post<any>(`${environment.apiBaseUrl}/api/checkout`, this.form, {
+        withCredentials: true,
+      })
       .pipe(timeout(10000))
       .subscribe({
-      next: (res) => {
-        // في حال أرجع الباك إند 200 OK لكن العملية فشلت
-        if (res && res.success === false) {
-          this.message = 'Invalid payment information';
+        next: (res) => {
+          // في حال أرجع الباك إند 200 OK لكن العملية فشلت
+          if (res && res.success === false) {
+            this.message = 'Invalid payment information';
+            this.isSubmitting = false;
+            this.cdr.detectChanges();
+            return;
+          }
+
+          const confirmationState = {
+            success: res?.success ?? true,
+            message: res?.message ?? 'Checkout complete',
+            items: res?.items,
+          };
+
+          // Preserve confirmation info across refresh/navigation.
+          try {
+            sessionStorage.setItem(
+              'checkout_confirmation',
+              JSON.stringify(confirmationState),
+            );
+          } catch {
+            // ignore storage failures
+          }
+
+          // Show message even if navigation fails.
+          this.message = confirmationState.message;
+          this.router
+            .navigate(['/confirmation'], { state: confirmationState })
+            .catch(() => {
+              this.message = `${confirmationState.message} (Could not navigate to confirmation page)`;
+            })
+            .finally(() => {
+              this.isSubmitting = false;
+            });
+        },
+        error: (err) => {
+          if (err?.name === 'TimeoutError') {
+            this.message = `Request timed out. Is the backend running at ${environment.apiBaseUrl}?`;
+          } else {
+            this.message = err?.error?.message ?? 'Invalid payment information';
+          }
           this.isSubmitting = false;
-          this.cdr.detectChanges();
-          return;
-        }
-
-        const confirmationState = {
-          success: res?.success ?? true,
-          message: res?.message ?? 'Checkout complete',
-          items: res?.items
-        };
-
-        // Preserve confirmation info across refresh/navigation.
-        try {
-          sessionStorage.setItem('checkout_confirmation', JSON.stringify(confirmationState));
-        } catch {
-          // ignore storage failures
-        }
-
-        // Show message even if navigation fails.
-        this.message = confirmationState.message;
-        this.router.navigate(['/confirmation'], { state: confirmationState }).catch(() => {
-          this.message = `${confirmationState.message} (Could not navigate to confirmation page)`;
-        }).finally(() => {
-          this.isSubmitting = false;
-        });
-      },
-      error: (err) => {
-        if (err?.name === 'TimeoutError') {
-          this.message = `Request timed out. Is the backend running at ${environment.apiBaseUrl}?`;
-        } else {
-          this.message = err?.error?.message ?? 'Invalid payment information';
-        }
-        this.isSubmitting = false;
-        this.cdr.detectChanges(); // إجبار تحديث الواجهة لإيقاف التعليق وعرض الرسالة
-      }
-    });
+          this.cdr.detectChanges(); // إجبار تحديث الواجهة لإيقاف التعليق وعرض الرسالة
+        },
+      });
   }
 }

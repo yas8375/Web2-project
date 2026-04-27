@@ -10,7 +10,7 @@ import { environment } from '../../../environments/environment';
   standalone: true,
   imports: [CommonModule, FormsModule, RouterLink],
   templateUrl: './signup-page.html',
-  styleUrl: './signup-page.css'
+  styleUrl: './signup-page.css',
 })
 export class SignupPageComponent {
   firstName = '';
@@ -27,7 +27,10 @@ export class SignupPageComponent {
   message = '';
   success = false;
 
-  constructor(private http: HttpClient, private router: Router) {}
+  constructor(
+    private http: HttpClient,
+    private router: Router,
+  ) {}
 
   onSignup(): void {
     if (!this.isFormValid()) {
@@ -37,39 +40,46 @@ export class SignupPageComponent {
     this.loading = true;
     this.message = '';
 
-    this.http.post(
-      `${environment.apiBaseUrl}/api/signup`,
-      {
-        firstName: this.firstName.trim(),
-        lastName: this.lastName.trim(),
-        address: this.address.trim(),
-        creditCardId: this.creditCardId.replace(/[\s-]+/g, ''),
-        expiration: this.expiration.trim(),
-        email: this.email.trim(),
-        password: this.password,
-        confirmPassword: this.confirmPassword
-      },
-      { withCredentials: true }
-    ).subscribe({
-      next: () => {
-        this.success = true;
-        this.loading = false;
-        this.message = 'Account created successfully. Redirecting to sign in...';
+    this.http
+      .post(
+        `${environment.apiBaseUrl}/api/signup`,
+        {
+          firstName: this.firstName.trim(),
+          lastName: this.lastName.trim(),
+          address: this.address.trim(),
+          creditCardId: this.creditCardId.replace(/[\s-]+/g, ''),
+          expiration: this.expiration.trim(),
+          email: this.email.trim(),
+          password: this.password,
+          confirmPassword: this.confirmPassword,
+        },
+        { withCredentials: true },
+      )
+      .subscribe({
+        next: () => {
+          this.success = true;
+          this.loading = false;
+          this.message =
+            'Account created successfully. Redirecting to sign in...';
 
-        setTimeout(() => {
-          this.router.navigate(['/login']);
-        }, 900);
-      },
-      error: (err) => {
-        this.success = false;
-        this.loading = false;
-        this.message = err?.error?.message ?? 'Signup failed';
-      }
-    });
+          setTimeout(() => {
+            this.router.navigate(['/login']);
+          }, 900);
+        },
+        error: (err) => {
+          this.success = false;
+          this.loading = false;
+          this.message = err?.error?.message ?? 'Signup failed';
+        },
+      });
   }
 
   private isFormValid(): boolean {
-    if (!this.firstName.trim() || !this.lastName.trim() || !this.address.trim()) {
+    if (
+      !this.firstName.trim() ||
+      !this.lastName.trim() ||
+      !this.address.trim()
+    ) {
       this.success = false;
       this.message = 'Please complete your personal information.';
       return false;

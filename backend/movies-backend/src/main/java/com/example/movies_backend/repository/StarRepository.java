@@ -11,7 +11,7 @@ import com.example.movies_backend.model.Star;
 @Repository
 public interface StarRepository extends JpaRepository<Star, String> {
     @Query(value = """
-            SELECT s.id || '|' || s.name || '|' || COALESCE(CAST(s.birthYear AS TEXT), '')
+            SELECT s.id || '|' || s.name || '|' || COALESCE(CAST(s.birthyear AS TEXT), '')
             FROM stars s
             WHERE s.id = :starId
             """, nativeQuery = true)

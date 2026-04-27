@@ -5,7 +5,9 @@ export class AuthStateService {
   private readonly customerEmailKey = 'customer_email';
 
   isLoggedIn(): boolean {
-    return (localStorage.getItem(this.customerEmailKey) ?? '').trim().length > 0;
+    return (
+      (localStorage.getItem(this.customerEmailKey) ?? '').trim().length > 0
+    );
   }
 
   setLoggedIn(email: string): void {

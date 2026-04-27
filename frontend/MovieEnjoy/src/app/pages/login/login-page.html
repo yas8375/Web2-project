@@ -17,7 +17,7 @@
             placeholder="name@example.com"
             autocomplete="email"
             required
-          >
+          />
           <div class="form-text">Example: jbrown@ics185.edu</div>
         </div>
 
@@ -32,12 +32,16 @@
             placeholder="Password"
             autocomplete="current-password"
             required
-          >
+          />
           <div class="form-text">Example: keyboard</div>
         </div>
 
         <button type="submit" class="login-btn" [disabled]="loading">
-          <span *ngIf="loading" class="spinner-border spinner-border-sm" aria-hidden="true"></span>
+          <span
+            *ngIf="loading"
+            class="spinner-border spinner-border-sm"
+            aria-hidden="true"
+          ></span>
           {{ loading ? 'Loading...' : 'Login' }}
         </button>
       </form>
@@ -47,7 +51,12 @@
         <a routerLink="/signup">Sign up</a>
       </p>
 
-      <div *ngIf="message" class="alert mt-4 mb-0" [ngClass]="messageType" role="alert">
+      <div
+        *ngIf="message"
+        class="alert mt-4 mb-0"
+        [ngClass]="messageType"
+        role="alert"
+      >
         {{ message }}
       </div>
     </div>

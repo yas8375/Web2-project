@@ -9,13 +9,15 @@ import { AuthStateService } from './auth-state.service';
   selector: 'app-root',
   imports: [CommonModule, RouterOutlet, RouterLink],
   templateUrl: './app.html',
-  styleUrl: './app.css'
+  styleUrl: './app.css',
 })
 export class App {
+  authReady = true;
+
   constructor(
     private http: HttpClient,
     private router: Router,
-    private authState: AuthStateService
+    private authState: AuthStateService,
   ) {}
 
   get isLoggedIn(): boolean {
@@ -23,15 +25,21 @@ export class App {
   }
 
   logout(): void {
-    this.http.post(`${environment.apiBaseUrl}/api/logout`, {}, { withCredentials: true }).subscribe({
-      next: () => {
-        this.authState.clear();
-        this.router.navigate(['/login']);
-      },
-      error: () => {
-        this.authState.clear();
-        this.router.navigate(['/login']);
-      }
-    });
+    this.http
+      .post(
+        `${environment.apiBaseUrl}/api/logout`,
+        {},
+        { withCredentials: true },
+      )
+      .subscribe({
+        next: () => {
+          this.authState.clear();
+          this.router.navigate(['/login']);
+        },
+        error: () => {
+          this.authState.clear();
+          this.router.navigate(['/login']);
+        },
+      });
   }
 }
