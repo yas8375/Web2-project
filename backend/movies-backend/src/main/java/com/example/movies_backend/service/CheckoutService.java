@@ -37,7 +37,7 @@ public class CheckoutService {
         // ✅ تحقق من تسجيل الدخول
         Object sessionCustomer = session.getAttribute("customerId");
         if (!(sessionCustomer instanceof Number)) {
-            return new CheckoutResponseDTO(false, "User not logged in");
+            return new CheckoutResponseDTO(false, "Please sign in to continue checkout");
         }
         Integer customerId = ((Number) sessionCustomer).intValue();
 
@@ -53,12 +53,12 @@ public class CheckoutService {
         String expiration = request.getExpiration() == null ? "" : request.getExpiration().trim();
 
         if (firstName.isEmpty() || lastName.isEmpty()) {
-            return new CheckoutResponseDTO(false, "First name and last name are required");
+            return new CheckoutResponseDTO(false, "Invalid payment information");
         }
 
         String normalizedId = cardNumber.replaceAll("[\\s-]+", "");
         if (!normalizedId.matches("^\\d{1,20}$")) {
-            return new CheckoutResponseDTO(false, "Invalid card number");
+            return new CheckoutResponseDTO(false, "Invalid payment information");
         }
 
         LocalDate expirationDate;
@@ -68,22 +68,22 @@ public class CheckoutService {
             try {
                 expirationDate = LocalDate.parse(expiration, DateTimeFormatter.ofPattern("yyyy/MM/dd"));
             } catch (DateTimeParseException ex2) {
-                return new CheckoutResponseDTO(false, "Invalid expiration date format (YYYY-MM-DD)");
+                return new CheckoutResponseDTO(false, "Invalid payment information");
             }
         }
 
         CreditCard card = creditCardRepository.findByNormalizedId(normalizedId).orElse(null);
         if (card == null) {
-            return new CheckoutResponseDTO(false, "Card number not found");
+            return new CheckoutResponseDTO(false, "Invalid payment information");
         }
 
         if (!card.getFirstName().equalsIgnoreCase(firstName) ||
             !card.getLastName().equalsIgnoreCase(lastName)) {
-            return new CheckoutResponseDTO(false, "Cardholder name does not match");
+            return new CheckoutResponseDTO(false, "Invalid payment information");
         }
 
         if (!card.getExpiration().equals(expirationDate)) {
-            return new CheckoutResponseDTO(false, "Expiration date does not match");
+            return new CheckoutResponseDTO(false, "Invalid payment information");
         }
 
         Map<String, Object> cartSummary = cartService.getCart(session);

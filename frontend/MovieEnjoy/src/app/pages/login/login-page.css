@@ -4,10 +4,7 @@
 
 .login-theme {
   min-height: calc(100vh - 110px);
-  margin-inline: -20px;
-  margin-top: -20px;
-  margin-bottom: -20px;
-  padding-inline: 20px;
+  padding: 24px 0 40px;
   color: #eaf3ff;
   background:
     radial-gradient(circle at 12% 10%, rgba(39, 121, 204, 0.24), transparent 38%),
@@ -25,6 +22,22 @@
   box-shadow: 0 24px 48px rgba(2, 10, 33, 0.45);
   max-width: 520px;
   margin-inline: auto;
+}
+
+.login-footer {
+  text-align: center;
+  color: rgba(226, 233, 255, 0.76);
+}
+
+.login-footer a {
+  color: #78deff;
+  font-weight: 700;
+  text-decoration: none;
+}
+
+.login-footer a:hover,
+.login-footer a:focus {
+  text-decoration: underline;
 }
 
 .login-kicker {

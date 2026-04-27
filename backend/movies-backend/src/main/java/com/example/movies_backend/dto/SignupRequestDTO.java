@@ -36,6 +36,14 @@ public class SignupRequestDTO {
         this.address = address;
     }
 
+    public String getEmail() {
+        return email;
+    }
+
+    public void setEmail(String email) {
+        this.email = email;
+    }
+
     public String getCreditCardId() {
         return creditCardId;
     }
@@ -50,14 +58,6 @@ public class SignupRequestDTO {
 
     public void setExpiration(String expiration) {
         this.expiration = expiration;
-    }
-
-    public String getEmail() {
-        return email;
-    }
-
-    public void setEmail(String email) {
-        this.email = email;
     }
 
     public String getPassword() {
