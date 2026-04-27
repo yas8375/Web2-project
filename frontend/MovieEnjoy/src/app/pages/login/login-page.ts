@@ -3,14 +3,13 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { HttpClient } from '@angular/common/http';
 import { environment } from '../../../environments/environment';
-import { Router, RouterLink } from '@angular/router';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { AuthStateService } from '../../auth-state.service';
 
 @Component({
   selector: 'app-login-page',
   standalone: true,
-  imports: [CommonModule, FormsModule],
+imports: [CommonModule, FormsModule, RouterLink],
   templateUrl: './login-page.html',
   styleUrl: './login-page.css'
 })
@@ -20,6 +19,7 @@ export class LoginPageComponent {
   loading = false;
   message = '';
   messageType: 'success' | 'error' | 'info' = 'info';
+  private readonly returnUrl: string;
 
   constructor(
     private http: HttpClient,
@@ -60,8 +60,8 @@ export class LoginPageComponent {
         this.loading = false;
         this.message = 'Login successful.';
         this.messageType = 'success';
-        localStorage.setItem('customer_email', this.email.trim());
-        this.router.navigate(['/main']);
+        this.authState.setLoggedIn(this.email);
+        this.router.navigateByUrl(this.returnUrl);
       },
       error: (err) => {
         this.loading = false;

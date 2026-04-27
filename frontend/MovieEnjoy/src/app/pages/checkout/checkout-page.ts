@@ -59,12 +59,12 @@ export class CheckoutPageComponent {
     this.isSubmitting = true;
 
     if (!this.isValidCardNumber(this.form.cardNumber)) {
-      this.message = 'Invalid card number';
+      this.message = 'Invalid payment information';
       this.isSubmitting = false;
       return;
     }
     if (!this.isValidExpiration(this.form.expiration)) {
-      this.message = 'Invalid date';
+      this.message = 'Invalid payment information';
       this.isSubmitting = false;
       return;
     }
@@ -76,7 +76,7 @@ export class CheckoutPageComponent {
       next: (res) => {
         // في حال أرجع الباك إند 200 OK لكن العملية فشلت
         if (res && res.success === false) {
-          this.message = 'Invalid date';
+          this.message = 'Invalid payment information';
           this.isSubmitting = false;
           this.cdr.detectChanges();
           return;
@@ -107,7 +107,7 @@ export class CheckoutPageComponent {
         if (err?.name === 'TimeoutError') {
           this.message = `Request timed out. Is the backend running at ${environment.apiBaseUrl}?`;
         } else {
-          this.message = err?.error?.message ?? 'Request failed';
+          this.message = err?.error?.message ?? 'Invalid payment information';
         }
         this.isSubmitting = false;
         this.cdr.detectChanges(); // إجبار تحديث الواجهة لإيقاف التعليق وعرض الرسالة
