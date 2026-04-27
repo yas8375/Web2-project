@@ -1,6 +1,5 @@
 import { ChangeDetectorRef, Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { Location } from '@angular/common';
 import { ActivatedRoute, RouterLink } from '@angular/router';
 
 import { MovieService, MovieSummary, SingleStar } from '../../movie.service';
@@ -22,8 +21,7 @@ export class StarDetailsPageComponent implements OnInit {
   constructor(
     private route: ActivatedRoute,
     private movieService: MovieService,
-    private cdr: ChangeDetectorRef,
-    private location: Location
+    private cdr: ChangeDetectorRef
   ) {}
 
   ngOnInit(): void {
@@ -62,9 +60,5 @@ export class StarDetailsPageComponent implements OnInit {
     if (direction === 'asc' || direction === 'desc') {
       this.sortMovies(direction);
     }
-  }
-
-  goBack(): void {
-    this.location.back();
   }
 }
