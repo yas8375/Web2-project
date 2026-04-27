@@ -9,7 +9,8 @@ import { MovieService, MovieSummary, SingleStar } from '../../movie.service';
   selector: 'app-star-details-page',
   standalone: true,
   imports: [CommonModule, RouterLink],
-  templateUrl: './star-details-page.html'
+  templateUrl: './star-details-page.html',
+  styleUrl: './star-details-page.css'
 })
 export class StarDetailsPageComponent implements OnInit {
   star?: SingleStar;
