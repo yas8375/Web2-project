@@ -4,14 +4,28 @@
       <a class="back-link" routerLink="/movies">&#8592; Back to catalog</a>
       <p class="eyebrow mb-2">Movie Details</p>
       <h1 class="detail-title">{{ movie?.title || 'Loading movie...' }}</h1>
+      <div class="hero-meta" *ngIf="movie">
+        <span>{{ movie.year }}</span>
+        <span>{{ movie.director || 'Unknown director' }}</span>
+        <span class="rating-pill"
+          ><span class="rating-icon">&#9734;</span>{{ movie.rating ?? 'N/A'
+          }}</span
+        >
+      </div>
     </div>
   </div>
 
   <div class="detail-surface">
-    <div class="alert alert-danger mb-4" *ngIf="errorMessage">{{ errorMessage }}</div>
+    <div class="alert alert-danger mb-4" *ngIf="errorMessage">
+      {{ errorMessage }}
+    </div>
 
     <div class="text-center py-5" *ngIf="loading">
-      <div class="spinner-border text-info" role="status" aria-hidden="true"></div>
+      <div
+        class="spinner-border text-info"
+        role="status"
+        aria-hidden="true"
+      ></div>
       <p class="mt-3 mb-0 text-muted">Loading movie...</p>
     </div>
 
@@ -57,7 +71,11 @@
         <div class="detail-block">
           <h3>Actors</h3>
           <div class="link-list" *ngIf="stars.length > 0; else noStars">
-            <a class="person-link" *ngFor="let star of stars" [routerLink]="['/stars', star.id]">
+            <a
+              class="person-link"
+              *ngFor="let star of stars"
+              [routerLink]="['/stars', star.id]"
+            >
               {{ star.name }}
             </a>
           </div>
@@ -65,11 +83,23 @@
 
         <div class="cart-panel">
           <div class="quantity-control" aria-label="Quantity">
-            <button type="button" (click)="decreaseQuantity()" [disabled]="quantity === 1">-</button>
+            <button
+              type="button"
+              (click)="decreaseQuantity()"
+              [disabled]="quantity === 1"
+            >
+              -
+            </button>
             <span>{{ quantity }}</span>
             <button type="button" (click)="increaseQuantity()">+</button>
           </div>
-          <button type="button" class="btn btn-info add-button" (click)="addToCart(movie.id)">Add to cart</button>
+          <button
+            type="button"
+            class="btn btn-info add-button"
+            (click)="addToCart(movie.id)"
+          >
+            Add to cart
+          </button>
         </div>
       </div>
     </div>

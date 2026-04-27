@@ -10,15 +10,31 @@
   padding-inline: 20px;
   color: #ebf5ff;
   background:
-    radial-gradient(circle at 14% 10%, rgba(38, 129, 220, 0.22), transparent 38%),
-    radial-gradient(circle at 88% 84%, rgba(136, 65, 164, 0.2), transparent 36%),
+    radial-gradient(
+      circle at 14% 10%,
+      rgba(38, 129, 220, 0.22),
+      transparent 38%
+    ),
+    radial-gradient(
+      circle at 88% 84%,
+      rgba(136, 65, 164, 0.2),
+      transparent 36%
+    ),
     linear-gradient(160deg, #0a1c48 0%, #0a2459 58%, #0b1a40 100%);
 }
 
 .confirm-shell {
   background:
-    radial-gradient(circle at 20% 12%, rgba(34, 154, 243, 0.2), transparent 38%),
-    radial-gradient(circle at 84% 76%, rgba(166, 72, 191, 0.16), transparent 36%),
+    radial-gradient(
+      circle at 20% 12%,
+      rgba(34, 154, 243, 0.2),
+      transparent 38%
+    ),
+    radial-gradient(
+      circle at 84% 76%,
+      rgba(166, 72, 191, 0.16),
+      transparent 36%
+    ),
     linear-gradient(155deg, #0b245b 0%, #0a2b68 58%, #0b214f 100%);
   border: 1px solid rgba(130, 173, 235, 0.2);
   border-radius: 24px;

@@ -7,8 +7,16 @@
   border-top: 1px solid rgba(99, 140, 255, 0.22);
   border-bottom: 1px solid rgba(99, 140, 255, 0.22);
   background:
-    radial-gradient(circle at top right, rgba(194, 66, 180, 0.22), transparent 28%),
-    radial-gradient(circle at bottom left, rgba(65, 164, 255, 0.18), transparent 30%),
+    radial-gradient(
+      circle at top right,
+      rgba(194, 66, 180, 0.22),
+      transparent 28%
+    ),
+    radial-gradient(
+      circle at bottom left,
+      rgba(65, 164, 255, 0.18),
+      transparent 30%
+    ),
     linear-gradient(180deg, #102447 0%, #162d5d 62%, #11274d 100%);
   color: #f7f8ff;
 }
@@ -142,7 +150,11 @@
 .browse-divider {
   height: 1px;
   margin-bottom: 0.85rem;
-  background: linear-gradient(90deg, rgba(84, 124, 216, 0.28), rgba(84, 124, 216, 0.06));
+  background: linear-gradient(
+    90deg,
+    rgba(84, 124, 216, 0.28),
+    rgba(84, 124, 216, 0.06)
+  );
 }
 
 .chip-row,

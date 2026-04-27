@@ -9,7 +9,7 @@ import { MovieService, MovieSummary, SingleStar } from '../../movie.service';
   standalone: true,
   imports: [CommonModule, RouterLink],
   templateUrl: './star-details-page.html',
-  styleUrl: './star-details-page.css'
+  styleUrl: './star-details-page.css',
 })
 export class StarDetailsPageComponent implements OnInit {
   star?: SingleStar;
@@ -21,6 +21,8 @@ export class StarDetailsPageComponent implements OnInit {
   constructor(
     private route: ActivatedRoute,
     private movieService: MovieService,
+    private cdr: ChangeDetectorRef,
+    private location: Location,
     private cdr: ChangeDetectorRef
   ) {}
 
@@ -44,15 +46,19 @@ export class StarDetailsPageComponent implements OnInit {
         this.errorMessage = err?.error?.message ?? 'Star not found';
         this.loading = false;
         this.cdr.detectChanges();
-      }
+      },
     });
   }
 
   sortMovies(direction: 'asc' | 'desc'): void {
     this.sortDirection = direction;
     const multiplier = direction === 'asc' ? 1 : -1;
-    this.movies = [...this.movies].sort((left, right) =>
-      multiplier * (left.title ?? '').localeCompare(right.title ?? '', undefined, { sensitivity: 'base' })
+    this.movies = [...this.movies].sort(
+      (left, right) =>
+        multiplier *
+        (left.title ?? '').localeCompare(right.title ?? '', undefined, {
+          sensitivity: 'base',
+        }),
     );
   }
 

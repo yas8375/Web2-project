@@ -2,7 +2,9 @@
   <div class="home-hero">
     <div class="home-hero__inner">
       <h1 class="home-title">Find Something Worth Watching</h1>
-      <p class="home-subtitle">Start with a quick title search, or browse by genre and title token.</p>
+      <p class="home-subtitle">
+        Start with a quick title search, or browse by genre and title token.
+      </p>
 
       <div class="search-card">
         <p class="error mb-3" *ngIf="errorMessage">{{ errorMessage }}</p>
@@ -10,6 +12,13 @@
         <div class="row g-3">
           <div class="col-12 col-lg-4">
             <label class="form-label search-label">Title</label>
+            <input
+              class="form-control search-input"
+              type="text"
+              [(ngModel)]="title"
+              placeholder="Type a movie title"
+              (keyup.enter)="searchMovies()"
+            />
             <div class="title-autocomplete">
               <input
                 class="form-control search-input"
@@ -45,7 +54,7 @@
               [(ngModel)]="year"
               placeholder="Year"
               (keyup.enter)="searchMovies()"
-            >
+            />
           </div>
           <div class="col-6 col-lg-3">
             <label class="form-label search-label">Director</label>
@@ -55,7 +64,7 @@
               [(ngModel)]="director"
               placeholder="Director"
               (keyup.enter)="searchMovies()"
-            >
+            />
           </div>
           <div class="col-12 col-lg-3">
             <label class="form-label search-label">Star</label>
@@ -65,16 +74,31 @@
               [(ngModel)]="star"
               placeholder="Star name"
               (keyup.enter)="searchMovies()"
-            >
+            />
           </div>
         </div>
 
         <div class="d-flex flex-wrap gap-2 mt-3">
-          <button class="btn btn-info search-button" type="button" (click)="searchMovies()">Start Search</button>
-          <button class="btn btn-outline-light" type="button" (click)="clearSearch()">Clear</button>
+          <button
+            class="btn btn-info search-button"
+            type="button"
+            (click)="searchMovies()"
+          >
+            Start Search
+          </button>
+          <button
+            class="btn btn-outline-light"
+            type="button"
+            (click)="clearSearch()"
+          >
+            Clear
+          </button>
         </div>
 
-        <p class="search-hint mb-0 mt-3">Use the home page for quick access. Detailed filters stay in the movies page.</p>
+        <p class="search-hint mb-0 mt-3">
+          Use the home page for quick access. Detailed filters stay in the
+          movies page.
+        </p>
       </div>
     </div>
   </div>
@@ -95,13 +119,17 @@
           {{ g.name }}
         </a>
       </div>
-      <p class="text-soft mb-0" *ngIf="!genresLoading && genres.length === 0">No genres available.</p>
+      <p class="text-soft mb-0" *ngIf="!genresLoading && genres.length === 0">
+        No genres available.
+      </p>
     </div>
 
     <div class="browse-section">
       <h2 class="browse-heading">Browse by Title</h2>
       <div class="browse-divider"></div>
-      <p class="browse-copy">Jump into the catalog using fixed title tokens from 0 to 9 and A to Z.</p>
+      <p class="browse-copy">
+        Jump into the catalog using fixed title tokens from 0 to 9 and A to Z.
+      </p>
       <div class="letter-grid">
         <a
           class="letter-chip"

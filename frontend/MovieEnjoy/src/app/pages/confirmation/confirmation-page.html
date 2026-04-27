@@ -3,9 +3,15 @@
     <div class="row justify-content-center">
       <div class="col-12 col-md-10 col-lg-8 col-xl-7">
         <div class="confirm-shell px-3 px-sm-4 px-lg-4 py-3 py-sm-3 py-lg-4">
-          <div class="d-flex flex-wrap align-items-center justify-content-between gap-3 mb-3">
+          <div
+            class="d-flex flex-wrap align-items-center justify-content-between gap-3 mb-3"
+          >
             <span class="confirm-kicker">Order Confirmation</span>
-            <span class="status-pill" [class.status-ok]="success" [class.status-fail]="!success">
+            <span
+              class="status-pill"
+              [class.status-ok]="success"
+              [class.status-fail]="!success"
+            >
               {{ success ? 'Payment successful' : 'Payment failed' }}
             </span>
           </div>
@@ -24,7 +30,9 @@
           </div>
 
           <ng-template #emptyItems>
-            <p class="empty-note mb-4">Your order was completed. No item details were returned.</p>
+            <p class="empty-note mb-4">
+              Your order was completed. No item details were returned.
+            </p>
           </ng-template>
 
           <a routerLink="/movies" class="btn back-btn w-100">Back to Movies</a>

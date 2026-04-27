@@ -25,5 +25,5 @@ export const routes: Routes = [
   { path: 'cart', component: CartPageComponent },
   { path: 'checkout', component: CheckoutPageComponent },
   { path: 'confirmation', component: ConfirmationPageComponent },
-  { path: '**', redirectTo: 'login' }
+  { path: '**', redirectTo: 'login' },
 ];

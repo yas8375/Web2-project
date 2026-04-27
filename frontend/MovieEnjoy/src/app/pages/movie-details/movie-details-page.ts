@@ -13,7 +13,7 @@ import { CartStateService } from '../../cart-state.service';
   standalone: true,
   imports: [CommonModule, RouterLink],
   templateUrl: './movie-details-page.html',
-  styleUrl: './movie-details-page.css'
+  styleUrl: './movie-details-page.css',
 })
 export class MovieDetailsPageComponent implements OnInit {
   movie?: SingleMovie;
@@ -29,7 +29,7 @@ export class MovieDetailsPageComponent implements OnInit {
     private router: Router,
     private cdr: ChangeDetectorRef,
     private authState: AuthStateService,
-    private cartState: CartStateService
+    private cartState: CartStateService,
   ) {}
 
   ngOnInit(): void {
@@ -51,7 +51,7 @@ export class MovieDetailsPageComponent implements OnInit {
         this.errorMessage = 'Movie not found';
         this.loading = false;
         this.cdr.detectChanges();
-      }
+      },
     });
   }
 
@@ -70,35 +70,38 @@ export class MovieDetailsPageComponent implements OnInit {
       this.router.navigate(['/login'], {
         queryParams: {
           returnUrl: this.router.url,
-          message: 'Please sign in before adding movies to the cart.'
-        }
+          message: 'Please sign in before adding movies to the cart.',
+        },
       });
       return;
     }
 
-    this.http.post(
-      `${environment.apiBaseUrl}/api/cart/items`,
-      { movieId, quantity: this.quantity },
-      { withCredentials: true }
-    ).subscribe({
-      next: () => {
-        this.cartState.notifyChanged();
-        this.router.navigate(['/cart']);
-      },
-      error: (err) => {
-        if (err?.status === 401) {
-          this.router.navigate(['/login'], {
-            queryParams: {
-              returnUrl: this.router.url,
-              message: 'Please sign in before adding movies to the cart.'
-            }
-          });
-          return;
-        }
+    this.http
+      .post(
+        `${environment.apiBaseUrl}/api/cart/items`,
+        { movieId, quantity: this.quantity },
+        { withCredentials: true },
+      )
+      .subscribe({
+        next: () => {
+          this.cartState.notifyChanged();
+          this.router.navigate(['/cart']);
+        },
+        error: (err) => {
+          if (err?.status === 401) {
+            this.router.navigate(['/login'], {
+              queryParams: {
+                returnUrl: this.router.url,
+                message: 'Please sign in before adding movies to the cart.',
+              },
+            });
+            return;
+          }
 
-        this.errorMessage = err?.error?.message ?? 'Failed to add movie to cart';
-        this.cdr.detectChanges();
-      }
-    });
+          this.errorMessage =
+            err?.error?.message ?? 'Failed to add movie to cart';
+          this.cdr.detectChanges();
+        },
+      });
   }
 }

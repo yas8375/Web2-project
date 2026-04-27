@@ -1,26 +1,23 @@
 <section class="cart-page">
-  
   <div class="cart-container">
     <a class="page-back-link" routerLink="/movies">&#8592; Back to Movies</a>
 
     <h1 class="cart-title">Shopping Cart</h1>
     <p class="alert error" *ngIf="errorMessage">{{ errorMessage }}</p>
-<p class="alert success" *ngIf="successMessage">{{ successMessage }}</p>
+    <p class="alert success" *ngIf="successMessage">{{ successMessage }}</p>
 
-    <button type="button" class="refresh-btn" (click)="loadCart()">Refresh</button>
+    <button type="button" class="refresh-btn" (click)="loadCart()">
+      Refresh
+    </button>
 
     <div class="cart-card">
-
       <div *ngIf="response?.items?.length > 0; else emptyCart">
         <div
-  class="cart-item"
-  *ngFor="let item of response.items; let last = last"
-  [class.no-border]="last"
->
-
-          <div class="movie-cover">
-            {{ item.title?.charAt(0) || 'M' }}
-          </div>
+          class="cart-item"
+          *ngFor="let item of response.items; let last = last"
+          [class.no-border]="last"
+        >
+          <div class="movie-cover">{{ item.title?.charAt(0) || 'M' }}</div>
 
           <div class="movie-details">
             <h5>{{ item.title }}</h5>
@@ -29,16 +26,29 @@
             <p class="movie-year">{{ item.year }}</p>
 
             <div class="quantity-box">
-              <button type="button" (click)="updateQuantity(item.movieId, item.quantity - 1)">−</button>
+              <button
+                type="button"
+                (click)="updateQuantity(item.movieId, item.quantity - 1)"
+              >
+                −
+              </button>
               <span>{{ item.quantity }}</span>
-              <button type="button" (click)="updateQuantity(item.movieId, item.quantity + 1)">+</button>
+              <button
+                type="button"
+                (click)="updateQuantity(item.movieId, item.quantity + 1)"
+              >
+                +
+              </button>
             </div>
           </div>
 
-          <button type="button" class="delete-btn" (click)="removeItem(item.movieId)">
+          <button
+            type="button"
+            class="delete-btn"
+            (click)="removeItem(item.movieId)"
+          >
             🗑 Remove
           </button>
-
         </div>
 
         <div class="cart-summary">
@@ -56,8 +66,6 @@
       <ng-template #emptyCart>
         <p class="empty-cart">Your cart is empty.</p>
       </ng-template>
-
     </div>
-
   </div>
 </section>

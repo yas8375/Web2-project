@@ -104,13 +104,13 @@ jobs:
         working-directory: backend/movies-backend
         run: |
           chmod +x mvnw
-          ./mvnw -q spring-boot:run "-Dspring-boot.run.profiles=mock" "-Dspring-boot.run.arguments=--server.port=8082" > ../../backend.log 2>&1 &
+          ./mvnw -q spring-boot:run "-Dspring-boot.run.profiles=mock" "-Dspring-boot.run.arguments=--server.port=8081" > ../../backend.log 2>&1 &
           echo $! > ../../backend.pid
 
       - name: Wait for Backend
         run: |
           for i in {1..60}; do
-            if curl -fsS "http://localhost:8082/api/movies?page=1&size=50" > /dev/null; then
+            if curl -fsS "http://localhost:8081/api/movies?page=1&size=50" > /dev/null; then
               echo "Backend is ready"
               exit 0
             fi
