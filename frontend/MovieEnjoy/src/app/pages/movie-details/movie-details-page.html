@@ -1,33 +1,90 @@
-<section>
-  <h1>Movie Details</h1>
-  <p *ngIf="loading">Loading movie...</p>
-  <p class="error" *ngIf="errorMessage">{{ errorMessage }}</p>
-
-  <div *ngIf="movie" class="card">
-    <h2>{{ movie.title }}</h2>
-    <p>ID: {{ movie.id }}</p>
-    <p>Year: {{ movie.year }}</p>
-    <p>Director: {{ movie.director }}</p>
-    <p>Rating: {{ movie.rating ?? 'N/A' }}</p>
-
-    <p>
-      <strong>Genres:</strong>
-      <span *ngIf="movie.genres.length === 0"> None</span>
-      <span *ngFor="let genre of movie.genres; let last = last">
-        {{ genre }}<span *ngIf="!last">, </span>
-      </span>
-    </p>
-
-    <p>
-      <strong>Stars:</strong>
-      <span *ngIf="stars.length === 0"> None</span>
-      <span *ngFor="let star of stars; let last = last">
-        <a [routerLink]="['/stars', star.id]">{{ star.name }}</a><span *ngIf="!last">, </span>
-      </span>
-    </p>
-
-    <button type="button" (click)="addToCart(movie.id)">Add to cart</button>
+<section class="detail-page">
+  <div class="detail-hero">
+    <div class="detail-hero__inner">
+      <a class="back-link" routerLink="/movies">Back to catalog</a>
+      <p class="eyebrow mb-2">Movie Details</p>
+      <h1 class="detail-title">{{ movie?.title || 'Loading movie...' }}</h1>
+      <div class="hero-meta" *ngIf="movie">
+        <span>{{ movie.year }}</span>
+        <span>{{ movie.director || 'Unknown director' }}</span>
+        <span class="rating-pill"><span class="rating-icon">&#9734;</span>{{ movie.rating ?? 'N/A' }}</span>
+      </div>
+    </div>
   </div>
 
-  <button type="button" routerLink="/movies">Back to list</button>
+  <div class="detail-surface">
+    <div class="alert alert-danger mb-4" *ngIf="errorMessage">{{ errorMessage }}</div>
+
+    <div class="text-center py-5" *ngIf="loading">
+      <div class="spinner-border text-info" role="status" aria-hidden="true"></div>
+      <p class="mt-3 mb-0 text-muted">Loading movie...</p>
+    </div>
+
+    <div class="details-layout" *ngIf="movie && !loading">
+      <div class="poster-panel" aria-hidden="true">
+        <span>{{ movie.title.charAt(0) }}</span>
+      </div>
+
+      <div class="info-panel">
+        <div class="section-heading">
+          <h2>Overview</h2>
+          <span class="id-pill">{{ movie.id }}</span>
+        </div>
+
+        <div class="meta-grid">
+          <div>
+            <span class="meta-label">Year</span>
+            <strong>{{ movie.year }}</strong>
+          </div>
+          <div>
+            <span class="meta-label">Director</span>
+            <strong>{{ movie.director || 'Unknown director' }}</strong>
+          </div>
+          <div>
+            <span class="meta-label">Rating</span>
+            <strong>{{ movie.rating ?? 'N/A' }}</strong>
+          </div>
+        </div>
+
+        <div class="detail-block">
+          <h3>Genres</h3>
+          <div class="chip-row" *ngIf="movie.genres.length > 0; else noGenres">
+            <a
+              class="detail-chip"
+              *ngFor="let genre of movie.genres"
+              [routerLink]="['/movies']"
+              [queryParams]="{ genre: genre }"
+            >
+              {{ genre }}
+            </a>
+          </div>
+        </div>
+
+        <div class="detail-block">
+          <h3>Stars</h3>
+          <div class="link-list" *ngIf="stars.length > 0; else noStars">
+            <a class="person-link" *ngFor="let star of stars" [routerLink]="['/stars', star.id]">
+              {{ star.name }}
+            </a>
+          </div>
+        </div>
+
+        <div class="cart-panel">
+          <div class="quantity-control" aria-label="Quantity">
+            <button type="button" (click)="decreaseQuantity()" [disabled]="quantity === 1">-</button>
+            <span>{{ quantity }}</span>
+            <button type="button" (click)="increaseQuantity()">+</button>
+          </div>
+          <button type="button" class="btn btn-info add-button" (click)="addToCart(movie.id)">Add to cart</button>
+        </div>
+      </div>
+    </div>
+
+    <ng-template #noGenres>
+      <p class="empty-copy mb-0">No genres listed.</p>
+    </ng-template>
+    <ng-template #noStars>
+      <p class="empty-copy mb-0">No stars listed.</p>
+    </ng-template>
+  </div>
 </section>
