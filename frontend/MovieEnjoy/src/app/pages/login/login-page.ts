@@ -1,4 +1,5 @@
 import { Component } from '@angular/core';
+import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { HttpClient } from '@angular/common/http';
 import { environment } from '../../../environments/environment';
@@ -9,15 +10,16 @@ import { AuthStateService } from '../../auth-state.service';
 @Component({
   selector: 'app-login-page',
   standalone: true,
-  imports: [FormsModule, RouterLink],
-  templateUrl: './login-page.html'
+  imports: [CommonModule, FormsModule],
+  templateUrl: './login-page.html',
+  styleUrl: './login-page.css'
 })
 export class LoginPageComponent {
   email = '';
   password = '';
   loading = false;
   message = '';
-  private readonly returnUrl: string;
+  messageType: 'success' | 'error' | 'info' = 'info';
 
   constructor(
     private http: HttpClient,
@@ -44,6 +46,7 @@ export class LoginPageComponent {
   onLogin(): void {
     if (!this.isAllowedEmail() || !this.isStrongPassword()) {
       this.message = 'Please enter a valid email and password.';
+      this.messageType = 'error';
       return;
     }
 
@@ -56,12 +59,14 @@ export class LoginPageComponent {
       next: () => {
         this.loading = false;
         this.message = 'Login successful.';
-        this.authState.setLoggedIn(this.email);
-        this.router.navigateByUrl(this.returnUrl);
+        this.messageType = 'success';
+        localStorage.setItem('customer_email', this.email.trim());
+        this.router.navigate(['/main']);
       },
       error: (err) => {
         this.loading = false;
         this.message = err?.error?.message ?? 'Login failed';
+        this.messageType = 'error';
       }
     });
   }

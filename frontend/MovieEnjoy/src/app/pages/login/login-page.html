@@ -1,10 +1,50 @@
-<section>
-  <h1>Login</h1>
-  <form (ngSubmit)="onLogin()" class="card">
-    <input type="email" name="email" [(ngModel)]="email" placeholder="Email" required />
-    <input type="password" name="password" [(ngModel)]="password" placeholder="Password" required />
-    <button type="submit" [disabled]="loading">{{ loading ? 'Loading...' : 'Login' }}</button>
-  </form>
-  <p>{{ message }}</p>
-  <p><a routerLink="/signup">Create a new account</a></p>
+<section class="login-theme py-5">
+  <div class="container">
+    <div class="login-shell p-4 p-md-5">
+      <span class="login-kicker">Account</span>
+      <h1 class="login-title mb-2">Login</h1>
+      <p class="login-subtitle mb-4">Sign in to continue.</p>
+
+      <form (ngSubmit)="onLogin()" novalidate>
+        <div class="mb-3">
+          <label for="email" class="form-label">Email</label>
+          <input
+            id="email"
+            type="email"
+            name="email"
+            class="form-control"
+            [(ngModel)]="email"
+            placeholder="name@example.com"
+            autocomplete="email"
+            required
+          >
+          <div class="form-text">Example: jbrown@ics185.edu</div>
+        </div>
+
+        <div class="mb-4">
+          <label for="password" class="form-label">Password</label>
+          <input
+            id="password"
+            type="password"
+            name="password"
+            class="form-control"
+            [(ngModel)]="password"
+            placeholder="Password"
+            autocomplete="current-password"
+            required
+          >
+          <div class="form-text">Example: keyboard</div>
+        </div>
+
+        <button type="submit" class="login-btn" [disabled]="loading">
+          <span *ngIf="loading" class="spinner-border spinner-border-sm" aria-hidden="true"></span>
+          {{ loading ? 'Loading...' : 'Login' }}
+        </button>
+      </form>
+
+      <div *ngIf="message" class="alert mt-4 mb-0" [ngClass]="messageType" role="alert">
+        {{ message }}
+      </div>
+    </div>
+  </div>
 </section>
