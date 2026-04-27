@@ -40,6 +40,19 @@
   margin-inline: auto;
 }
 
+.page-back-link {
+  display: inline-flex;
+  margin-bottom: 1rem;
+  color: #9fdbff;
+  font-weight: 700;
+  text-decoration: none;
+}
+
+.page-back-link:hover,
+.page-back-link:focus {
+  color: #ffffff;
+}
+
 .login-footer {
   text-align: center;
   color: rgba(226, 233, 255, 0.76);

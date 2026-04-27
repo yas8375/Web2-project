@@ -55,14 +55,6 @@
   letter-spacing: -0.04em;
 }
 
-.hero-meta {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: center;
-  gap: 0.75rem;
-  color: rgba(226, 233, 255, 0.76);
-}
-
 .rating-pill {
   display: inline-flex;
   align-items: center;
@@ -149,15 +141,24 @@
   border: 1px solid rgba(106, 133, 196, 0.14);
   border-radius: 0.75rem;
   background: #f6f9ff;
+  color: #111111;
 }
 
 .meta-label {
   display: block;
   margin-bottom: 0.25rem;
-  color: #6780ac;
+  color: #1a1a1a;
   font-size: 0.78rem;
   font-weight: 800;
   text-transform: uppercase;
+}
+
+.meta-grid strong,
+.detail-block h3,
+.detail-chip,
+.person-link,
+.empty-copy {
+  color: #111111;
 }
 
 .detail-block {
@@ -190,12 +191,12 @@
   border: 1px solid rgba(92, 120, 181, 0.3);
   border-radius: 999px;
   background: #ffffff;
-  color: #22365f;
+  color: #111111;
   text-decoration: none;
 }
 
 .person-link {
-  color: #0d5fd3;
+  color: #111111;
   font-weight: 700;
 }
 
@@ -207,7 +208,7 @@
 }
 
 .empty-copy {
-  color: #58709d;
+  color: #111111;
 }
 .cart-panel {
   display: flex;

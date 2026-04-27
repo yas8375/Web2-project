@@ -412,6 +412,31 @@ public class MovieService {
                 "U", "V", "W", "X", "Y", "Z");
     }
 
+    public List<String> suggestTitles(String query, Integer limit) {
+        String safeQuery = trimToNull(query);
+        if (safeQuery == null) {
+            return List.of();
+        }
+
+        int safeLimit = limit == null || limit < 1 ? 8 : Math.min(limit, 20);
+        MovieRepository movieRepository = movieRepositoryProvider.getIfAvailable();
+        if (movieRepository == null) {
+            String lower = safeQuery.toLowerCase(Locale.ROOT);
+            return MOCK_MOVIES.stream()
+                    .map(Movie::getTitle)
+                    .filter(title -> title.toLowerCase(Locale.ROOT).startsWith(lower))
+                    .sorted(String.CASE_INSENSITIVE_ORDER)
+                    .limit(safeLimit)
+                    .toList();
+        }
+
+        try {
+            return movieRepository.findTitleSuggestions(safeQuery, safeLimit);
+        } catch (DataAccessException ex) {
+            return List.of();
+        }
+    }
+
     private SingleMovieDTO.StarSummaryDTO toStarSummary(String row) {
         if (row == null || row.isBlank()) {
             return new SingleMovieDTO.StarSummaryDTO("", "");

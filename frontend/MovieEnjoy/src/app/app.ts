@@ -24,6 +24,10 @@ export class App {
     return this.authState.isLoggedIn();
   }
 
+  get isLoginRoute(): boolean {
+    return this.router.url.startsWith('/login');
+  }
+
   logout(): void {
     this.http
       .post(
