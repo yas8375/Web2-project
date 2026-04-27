@@ -12,13 +12,15 @@ import { CartStateService } from '../../cart-state.service';
   selector: 'app-movie-details-page',
   standalone: true,
   imports: [CommonModule, RouterLink],
-  templateUrl: './movie-details-page.html'
+  templateUrl: './movie-details-page.html',
+  styleUrl: './movie-details-page.css'
 })
 export class MovieDetailsPageComponent implements OnInit {
   movie?: SingleMovie;
   stars: StarSummary[] = [];
   errorMessage = '';
   loading = false;
+  quantity = 1;
 
   constructor(
     private route: ActivatedRoute,
@@ -53,6 +55,16 @@ export class MovieDetailsPageComponent implements OnInit {
     });
   }
 
+  decreaseQuantity(): void {
+    if (this.quantity > 1) {
+      this.quantity--;
+    }
+  }
+
+  increaseQuantity(): void {
+    this.quantity++;
+  }
+
   addToCart(movieId: string): void {
     if (!this.authState.isLoggedIn()) {
       this.router.navigate(['/login'], {
@@ -66,7 +78,7 @@ export class MovieDetailsPageComponent implements OnInit {
 
     this.http.post(
       `${environment.apiBaseUrl}/api/cart/items`,
-      { movieId, quantity: 1 },
+      { movieId, quantity: this.quantity },
       { withCredentials: true }
     ).subscribe({
       next: () => {

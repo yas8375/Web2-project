@@ -1,11 +1,9 @@
 <section>
-  <h1>Movie Details</h1>
   <p *ngIf="loading">Loading movie...</p>
   <p class="error" *ngIf="errorMessage">{{ errorMessage }}</p>
 
   <div *ngIf="movie" class="card">
     <h2>{{ movie.title }}</h2>
-    <p>ID: {{ movie.id }}</p>
     <p>Year: {{ movie.year }}</p>
     <p>Director: {{ movie.director }}</p>
     <p>Rating: {{ movie.rating ?? 'N/A' }}</p>
@@ -26,7 +24,14 @@
       </span>
     </p>
 
-    <button type="button" (click)="addToCart(movie.id)">Add to cart</button>
+    <div class="add-to-cart-row">
+      <div class="quantity-control" aria-label="Quantity">
+        <button type="button" (click)="decreaseQuantity()" [disabled]="quantity === 1">-</button>
+        <span>{{ quantity }}</span>
+        <button type="button" (click)="increaseQuantity()">+</button>
+      </div>
+      <button type="button" class="add-button" (click)="addToCart(movie.id)">Add to cart</button>
+    </div>
   </div>
 
   <button type="button" routerLink="/movies">Back to list</button>
