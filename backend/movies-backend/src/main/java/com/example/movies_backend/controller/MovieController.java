@@ -113,4 +113,11 @@ public class MovieController {
     public ResponseEntity<?> getTitles() {
         return ResponseEntity.ok(movieService.getTitleLetters());
     }
+
+    @GetMapping("/movies/suggest")
+    public ResponseEntity<List<String>> suggestTitles(
+            @RequestParam String query,
+            @RequestParam(defaultValue = "8") Integer limit) {
+        return ResponseEntity.ok(movieService.suggestTitles(query, limit));
+    }
 }

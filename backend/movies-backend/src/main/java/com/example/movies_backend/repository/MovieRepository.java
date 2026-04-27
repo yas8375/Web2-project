@@ -201,4 +201,15 @@ public interface MovieRepository extends JpaRepository<Movie, String> {
 
     @Query(value = "SELECT DISTINCT UPPER(SUBSTRING(m.title, 1, 1)) AS letter FROM movies m ORDER BY letter", nativeQuery = true)
     List<String> findTitleLetters();
+
+    @Query(
+            value = """
+            SELECT DISTINCT m.title
+            FROM movies m
+            WHERE LOWER(m.title) LIKE LOWER(CONCAT(:prefix, '%'))
+            ORDER BY m.title
+            LIMIT :limit
+            """,
+            nativeQuery = true)
+    List<String> findTitleSuggestions(@Param("prefix") String prefix, @Param("limit") Integer limit);
 }
