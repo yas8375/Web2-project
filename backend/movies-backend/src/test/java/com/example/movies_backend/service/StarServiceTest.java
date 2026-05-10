@@ -14,8 +14,6 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.beans.factory.ObjectProvider;
 
 import com.example.movies_backend.dto.SingleStarDTO;
-import com.example.movies_backend.model.Movie;
-import com.example.movies_backend.repository.MovieRepository;
 import com.example.movies_backend.repository.StarRepository;
 
 @ExtendWith(MockitoExtension.class)
@@ -27,35 +25,24 @@ class StarServiceTest {
     @Mock
     private ObjectProvider<StarRepository> starRepositoryProvider;
 
-    @Mock
-    private MovieRepository movieRepository;
-
-    @Mock
-    private ObjectProvider<MovieRepository> movieRepositoryProvider;
-
     private StarService starService;
 
     private void setupService() {
-        starService = new StarService(starRepositoryProvider, movieRepositoryProvider);
+        starService = new StarService(starRepositoryProvider);
     }
 
-    private void stubBothProviders() {
+    private void stubProvider() {
         when(starRepositoryProvider.getIfAvailable()).thenReturn(starRepository);
-        when(movieRepositoryProvider.getIfAvailable()).thenReturn(movieRepository);
     }
 
     @Test
     void getStarById_returnsStarDetails_whenFound() {
         setupService();
-        stubBothProviders();
+        stubProvider();
         when(starRepository.findStarRowsById("nm123"))
                 .thenReturn(List.of("nm123|Star Name|1970"));
-        when(starRepository.findMovieIdsByStarId("nm123"))
-                .thenReturn(List.of("tt1"));
-        when(movieRepository.findMovieDetailsById("tt1"))
-                .thenReturn(java.util.Optional.of(new Movie("tt1", "Movie One", 2000, "Director One")));
-        when(movieRepository.findRatingByMovieId("tt1"))
-                .thenReturn(java.util.Optional.of(8.1f));
+        when(starRepository.findMovieSummariesByStarId("nm123"))
+                .thenReturn(List.of(new Object[] { "tt1", "Movie One", 2000, "Director One", 8.1f }));
 
         SingleStarDTO result = starService.getStarById("nm123");
 

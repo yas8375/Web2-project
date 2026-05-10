@@ -9,8 +9,6 @@ import org.springframework.stereotype.Service;
 
 import com.example.movies_backend.dto.MovieSummaryDTO;
 import com.example.movies_backend.dto.SingleStarDTO;
-import com.example.movies_backend.model.Movie;
-import com.example.movies_backend.repository.MovieRepository;
 import com.example.movies_backend.repository.StarRepository;
 
 @Service
@@ -29,13 +27,9 @@ public class StarService {
                     List.of(new MovieSummaryDTO("tt1000001", "Alpha Movie", 1990, "Director A", 7.5f))));
 
     private final ObjectProvider<StarRepository> starRepositoryProvider;
-    private final ObjectProvider<MovieRepository> movieRepositoryProvider;
 
-    public StarService(
-            ObjectProvider<StarRepository> starRepositoryProvider,
-            ObjectProvider<MovieRepository> movieRepositoryProvider) {
+    public StarService(ObjectProvider<StarRepository> starRepositoryProvider) {
         this.starRepositoryProvider = starRepositoryProvider;
-        this.movieRepositoryProvider = movieRepositoryProvider;
     }
 
     public SingleStarDTO getStarById(String starId) {
@@ -74,14 +68,10 @@ public class StarService {
 
         List<MovieSummaryDTO> movies = List.of();
         try {
-            MovieRepository movieRepository = movieRepositoryProvider.getIfAvailable();
-            List<String> movieIds = starRepository.findMovieIdsByStarId(starId);
-            if (movieRepository != null) {
-                movies = movieIds.stream()
-                        .map(movieId -> toMovieSummary(movieRepository, movieId))
-                        .filter(Objects::nonNull)
-                        .toList();
-            }
+            movies = starRepository.findMovieSummariesByStarId(starId).stream()
+                    .map(this::toMovieSummary)
+                    .filter(Objects::nonNull)
+                    .toList();
         } catch (DataAccessException ignored) {
             movies = List.of();
         }
@@ -93,26 +83,23 @@ public class StarService {
                 movies);
     }
 
-    private MovieSummaryDTO toMovieSummary(MovieRepository movieRepository, String movieId) {
-        try {
-            Movie movie = movieRepository.findMovieDetailsById(movieId).orElse(null);
-            if (movie == null) {
-                return null;
-            }
-            Float rating = null;
-            try {
-                rating = movieRepository.findRatingByMovieId(movieId).orElse(null);
-            } catch (DataAccessException ignored) {
-                rating = null;
-            }
-            return new MovieSummaryDTO(
-                    movie.getId(),
-                    movie.getTitle(),
-                    movie.getYear(),
-                    movie.getDirector(),
-                    rating);
-        } catch (DataAccessException ignored) {
+    private MovieSummaryDTO toMovieSummary(Object[] row) {
+        if (row == null || row.length < 5) {
             return null;
+        }
+        try {
+            String id = (String) row[0];
+            String title = (String) row[1];
+            Integer year = row[2] == null ? null : ((Number) row[2]).intValue();
+            String director = (String) row[3];
+            Float rating = row[4] == null ? null : ((Number) row[4]).floatValue();
+
+            return new MovieSummaryDTO(
+                    id,
+                    title,
+                    year,
+                    director,
+                    rating);
         } catch (RuntimeException ignored) {
             return null;
         }
