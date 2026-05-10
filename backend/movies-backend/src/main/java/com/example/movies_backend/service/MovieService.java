@@ -9,6 +9,7 @@ import java.util.Map;
 import java.util.stream.Stream;
 
 import org.springframework.beans.factory.ObjectProvider;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.dao.DataAccessException;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
@@ -89,6 +90,9 @@ public class MovieService {
         return movieRepository.findAll(PageRequest.of(safePage - 1, safeSize)).getContent();
     }
 
+    @Cacheable(
+            value = "moviesSearch",
+            key = "#title + ':' + #year + ':' + #director + ':' + #star + ':' + #genre + ':' + #letter + ':' + #sort + ':' + #order + ':' + #page + ':' + #size")
     public List<MovieListItemDTO> searchMovies(
             String title,
             Integer year,
@@ -180,6 +184,7 @@ public class MovieService {
         }
     }
 
+    @Cacheable(value = "movieDetails", key = "#movieId")
     public SingleMovieDTO getMovieById(String movieId) {
         MovieRepository movieRepository = movieRepositoryProvider.getIfAvailable();
         if (movieRepository == null) {
@@ -384,6 +389,7 @@ public class MovieService {
         return result;
     }
 
+    @Cacheable("allGenres")
     public List<GenreDTO> getAllGenres() {
         MovieRepository movieRepository = movieRepositoryProvider.getIfAvailable();
         if (movieRepository == null) {
@@ -395,6 +401,7 @@ public class MovieService {
                 .toList();
     }
 
+    @Cacheable("titleLetters")
     public List<String> getTitleLetters() {
         MovieRepository movieRepository = movieRepositoryProvider.getIfAvailable();
         if (movieRepository == null) {
@@ -412,6 +419,7 @@ public class MovieService {
                 "U", "V", "W", "X", "Y", "Z");
     }
 
+    @Cacheable(value = "titleSuggestions", key = "#query + ':' + #limit")
     public List<String> suggestTitles(String query, Integer limit) {
         String safeQuery = trimToNull(query);
         if (safeQuery == null) {
