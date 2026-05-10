@@ -90,6 +90,9 @@ public class MovieService {
         return movieRepository.findAll(PageRequest.of(safePage - 1, safeSize)).getContent();
     }
 
+    @Cacheable(
+            value = "moviesSearch",
+            key = "#title + ':' + #year + ':' + #director + ':' + #star + ':' + #genre + ':' + #letter + ':' + #sort + ':' + #order + ':' + #page + ':' + #size")
     public List<MovieListItemDTO> searchMovies(
             String title,
             Integer year,
