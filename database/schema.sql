@@ -40,7 +40,7 @@ CREATE TABLE customers (
     ccId VARCHAR(20) NOT NULL REFERENCES creditcards(id),
     address VARCHAR(200) NOT NULL,
     email VARCHAR(50) NOT NULL,
-    password VARCHAR(20) NOT NULL
+    password VARCHAR(60) NOT NULL
 );
 
 CREATE TABLE sales (

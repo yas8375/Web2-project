@@ -42,7 +42,7 @@ class StarServiceTest {
         when(starRepository.findStarRowsById("nm123"))
                 .thenReturn(List.of("nm123|Star Name|1970"));
         when(starRepository.findMovieSummariesByStarId("nm123"))
-                .thenReturn(List.of(new Object[] { "tt1", "Movie One", 2000, "Director One", 8.1f }));
+                .thenReturn(List.<Object[]>of(new Object[] { "tt1", "Movie One", 2000, "Director One", 8.1f }));
 
         SingleStarDTO result = starService.getStarById("nm123");
 
