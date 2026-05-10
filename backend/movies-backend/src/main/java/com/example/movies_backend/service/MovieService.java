@@ -414,6 +414,7 @@ public class MovieService {
                 "U", "V", "W", "X", "Y", "Z");
     }
 
+    @Cacheable(value = "titleSuggestions", key = "#query + ':' + #limit")
     public List<String> suggestTitles(String query, Integer limit) {
         String safeQuery = trimToNull(query);
         if (safeQuery == null) {
