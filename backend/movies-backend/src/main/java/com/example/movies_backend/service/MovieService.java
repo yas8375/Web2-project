@@ -9,6 +9,7 @@ import java.util.Map;
 import java.util.stream.Stream;
 
 import org.springframework.beans.factory.ObjectProvider;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.dao.DataAccessException;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
@@ -395,6 +396,7 @@ public class MovieService {
                 .toList();
     }
 
+    @Cacheable("titleLetters")
     public List<String> getTitleLetters() {
         MovieRepository movieRepository = movieRepositoryProvider.getIfAvailable();
         if (movieRepository == null) {
