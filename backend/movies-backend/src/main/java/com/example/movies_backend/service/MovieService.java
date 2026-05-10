@@ -385,6 +385,7 @@ public class MovieService {
         return result;
     }
 
+    @Cacheable("allGenres")
     public List<GenreDTO> getAllGenres() {
         MovieRepository movieRepository = movieRepositoryProvider.getIfAvailable();
         if (movieRepository == null) {
