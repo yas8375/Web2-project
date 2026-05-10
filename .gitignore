@@ -20,6 +20,10 @@ build/
 .env
 .env.*
 !.env.example
+*.p12
+*.jks
+*.keystore
+backend/movies-backend/.certs/
 
 # Local override configs
 *.local
