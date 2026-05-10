@@ -10,6 +10,6 @@ public class CacheConfig {
 
     @Bean
     public CacheManager cacheManager() {
-        return new ConcurrentMapCacheManager("titleLetters", "titleSuggestions", "allGenres");
+        return new ConcurrentMapCacheManager("titleLetters", "titleSuggestions", "allGenres", "movieDetails");
     }
 }

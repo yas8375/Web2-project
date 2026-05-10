@@ -181,6 +181,7 @@ public class MovieService {
         }
     }
 
+    @Cacheable(value = "movieDetails", key = "#movieId")
     public SingleMovieDTO getMovieById(String movieId) {
         MovieRepository movieRepository = movieRepositoryProvider.getIfAvailable();
         if (movieRepository == null) {
