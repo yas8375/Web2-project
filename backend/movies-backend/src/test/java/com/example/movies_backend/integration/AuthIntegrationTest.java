@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.webmvc.test.autoconfigure.AutoConfigureMockMvc;
 import org.springframework.http.MediaType;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
@@ -18,6 +19,8 @@ import com.example.movies_backend.repository.CustomerRepository;
 @AutoConfigureMockMvc
 @ActiveProfiles("integration")
 class AuthIntegrationTest {
+
+    private final BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
 
     @Autowired
     private MockMvc mockMvc;
@@ -34,7 +37,7 @@ class AuthIntegrationTest {
                 "1234",
                 "Address",
                 "valid@example.com",
-                "correct-password"
+                passwordEncoder.encode("correct-password")
         ));
     }
 
