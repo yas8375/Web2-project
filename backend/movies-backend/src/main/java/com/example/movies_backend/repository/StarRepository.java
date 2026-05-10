@@ -24,4 +24,14 @@ public interface StarRepository extends JpaRepository<Star, String> {
             ORDER BY sim.movieId
             """, nativeQuery = true)
     List<String> findMovieIdsByStarId(@Param("starId") String starId);
+
+    @Query(value = """
+            SELECT m.id, m.title, m.year, m.director, r.rating
+            FROM stars_in_movies sim
+            JOIN movies m ON m.id = sim.movieId
+            LEFT JOIN ratings r ON r.movieId = m.id
+            WHERE sim.starId = :starId
+            ORDER BY m.title, m.id
+            """, nativeQuery = true)
+    List<Object[]> findMovieSummariesByStarId(@Param("starId") String starId);
 }
