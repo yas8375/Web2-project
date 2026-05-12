@@ -46,18 +46,7 @@ public class MovieController {
             @RequestParam(defaultValue = "title") String sort,
             @RequestParam(defaultValue = "asc") String order,
             @RequestParam(defaultValue = "1") Integer page,
-            @RequestParam(defaultValue = "50") Integer size) {
-
-        if (title == null
-                && year == null
-                && director == null
-                && star == null
-                && genre == null
-                && letter == null
-                && "title".equals(sort)
-                && "asc".equals(order)) {
-            movieService.getMoviesPage(page, size);
-        }
+            @RequestParam(defaultValue = "20") Integer size) {
 
         List<MovieListItemDTO> movies = movieService.searchMovies(
                 title,

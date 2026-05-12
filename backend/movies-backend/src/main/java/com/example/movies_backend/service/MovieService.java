@@ -82,7 +82,7 @@ public class MovieService {
 
     public List<Movie> getMoviesPage(Integer page, Integer size) {
         int safePage = page == null || page < 1 ? 1 : page;
-        int safeSize = size == null || size < 1 ? 50 : size;
+        int safeSize = size == null || size < 1 ? 20 : size;
         MovieRepository movieRepository = movieRepositoryProvider.getIfAvailable();
         if (movieRepository == null) {
             return paginate(MOCK_MOVIES, safePage, safeSize);
@@ -105,7 +105,7 @@ public class MovieService {
             Integer page,
             Integer size) {
         int safePage = page == null || page < 1 ? 1 : page;
-        int safeSize = size == null || size < 1 ? 50 : size;
+        int safeSize = size == null || size < 1 ? 20 : size;
 
         String safeTitle = trimToNull(title);
         String safeDirector = trimToNull(director);

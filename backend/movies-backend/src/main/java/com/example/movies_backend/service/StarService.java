@@ -33,6 +33,10 @@ public class StarService {
     }
 
     public SingleStarDTO getStarById(String starId) {
+        return getStarById(starId, 1, 20);
+    }
+
+    public SingleStarDTO getStarById(String starId, int page, int size) {
         StarRepository starRepository = starRepositoryProvider.getIfAvailable();
         if (starRepository == null) {
             return MOCK_STARS.stream()
@@ -67,8 +71,11 @@ public class StarService {
         SingleStarDTO star = toStar(starRows.get(0));
 
         List<MovieSummaryDTO> movies = List.of();
+        int safeSize = Math.max(1, size);
+        int safePage = Math.max(1, page);
+        int offset = (safePage - 1) * safeSize;
         try {
-            movies = starRepository.findMovieSummariesByStarId(starId).stream()
+            movies = starRepository.findMovieSummariesByStarId(starId, safeSize, offset).stream()
                     .map(this::toMovieSummary)
                     .filter(Objects::nonNull)
                     .toList();

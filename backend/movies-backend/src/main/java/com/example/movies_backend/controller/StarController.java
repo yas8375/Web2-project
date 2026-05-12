@@ -8,6 +8,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -33,8 +34,11 @@ public class StarController {
      * HTTP 501 Not Implemented for Phase 2 (contract only).
      */
     @GetMapping("/stars/{starId}")
-    public ResponseEntity<?> getStarById(@PathVariable String starId) {
-        SingleStarDTO star = starService.getStarById(starId);
+    public ResponseEntity<?> getStarById(
+            @PathVariable String starId,
+            @RequestParam(defaultValue = "1") int page,
+            @RequestParam(defaultValue = "20") int size) {
+        SingleStarDTO star = starService.getStarById(starId, page, size);
         if (star == null) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND)
                     .body(Map.of(

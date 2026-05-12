@@ -17,6 +17,10 @@ export class StarDetailsPageComponent implements OnInit {
   errorMessage = '';
   loading = false;
   sortDirection: 'asc' | 'desc' = 'asc';
+  currentPage = 1;
+  readonly pageSize = 20;
+  hasNextPage = false;
+  private starId = '';
 
   constructor(
     private route: ActivatedRoute,
@@ -30,12 +34,19 @@ export class StarDetailsPageComponent implements OnInit {
       this.errorMessage = 'Star id is required';
       return;
     }
+    this.starId = starId;
+    this.loadPage(1);
+  }
 
+  private loadPage(page: number): void {
     this.loading = true;
-    this.movieService.getStarById(starId).subscribe({
+    this.errorMessage = '';
+    this.movieService.getStarById(this.starId, page, this.pageSize).subscribe({
       next: (data) => {
         this.star = data;
         this.movies = [...(data.movies ?? [])];
+        this.currentPage = page;
+        this.hasNextPage = this.movies.length === this.pageSize;
         this.sortMovies(this.sortDirection);
         this.loading = false;
         this.cdr.detectChanges();
@@ -46,6 +57,20 @@ export class StarDetailsPageComponent implements OnInit {
         this.cdr.detectChanges();
       },
     });
+  }
+
+  nextPage(): void {
+    if (this.loading || !this.hasNextPage) {
+      return;
+    }
+    this.loadPage(this.currentPage + 1);
+  }
+
+  prevPage(): void {
+    if (this.loading || this.currentPage <= 1) {
+      return;
+    }
+    this.loadPage(this.currentPage - 1);
   }
 
   sortMovies(direction: 'asc' | 'desc'): void {
