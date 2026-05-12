@@ -4,6 +4,7 @@ import org.junit.jupiter.api.Test;
 import static org.mockito.Mockito.when;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.webmvc.test.autoconfigure.WebMvcTest;
+import org.springframework.cache.CacheManager;
 import org.springframework.context.annotation.Import;
 import org.springframework.dao.DataAccessResourceFailureException;
 import org.springframework.http.MediaType;
@@ -26,9 +27,12 @@ class MovieControllerRobustnessTest {
     @MockitoBean
     private MovieService movieService;
 
+    @MockitoBean
+    private CacheManager cacheManager;
+
     @Test
     void getMovies_returns503AndSafeJson_whenServiceThrowsDatabaseFailure() throws Exception {
-        when(movieService.getMoviesPage(1, 50))
+        when(movieService.searchMovies(null, null, null, null, null, null, "title", "asc", 1, 20))
                 .thenThrow(new DataAccessResourceFailureException("DB is down"));
 
         mockMvc.perform(get("/api/movies"))
@@ -40,7 +44,7 @@ class MovieControllerRobustnessTest {
 
     @Test
     void getMovies_returns500AndSafeJson_whenUnexpectedExceptionOccurs() throws Exception {
-        when(movieService.getMoviesPage(1, 50))
+        when(movieService.searchMovies(null, null, null, null, null, null, "title", "asc", 1, 20))
                 .thenThrow(new RuntimeException("Unexpected crash"));
 
         mockMvc.perform(get("/api/movies"))

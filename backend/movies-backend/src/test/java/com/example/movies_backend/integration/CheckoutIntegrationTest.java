@@ -5,12 +5,15 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.webmvc.test.autoconfigure.AutoConfigureMockMvc;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+
+import com.example.movies_backend.service.JwtService;
 
 @SpringBootTest
 @AutoConfigureMockMvc
@@ -20,11 +23,15 @@ class CheckoutIntegrationTest {
     @Autowired
     private MockMvc mockMvc;
 
+    @Autowired
+    private JwtService jwtService;
+
     // Expected status (Phase 4): 200. Fails now because checkout logic is still not implemented.
     @Test
     @Tag("phase4")
     void checkout_returnsOkAndOrderConfirmation_whenPayloadIsValid() throws Exception {
         mockMvc.perform(post("/api/checkout")
+                        .header(HttpHeaders.AUTHORIZATION, bearerToken())
                         .contentType(MediaType.APPLICATION_JSON)
                         .content("""
                                 {
@@ -44,6 +51,7 @@ class CheckoutIntegrationTest {
     @Tag("phase4")
     void checkout_returnsBadRequest_whenPayloadIsInvalid() throws Exception {
         mockMvc.perform(post("/api/checkout")
+                        .header(HttpHeaders.AUTHORIZATION, bearerToken())
                         .contentType(MediaType.APPLICATION_JSON)
                         .content("""
                                 {
@@ -56,5 +64,9 @@ class CheckoutIntegrationTest {
                 .andExpect(status().isBadRequest())
                 .andExpect(jsonPath("$.success").value(false))
                 .andExpect(jsonPath("$.error").exists());
+    }
+
+    private String bearerToken() {
+        return "Bearer " + jwtService.generateToken("valid@example.com", 42);
     }
 }

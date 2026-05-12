@@ -64,7 +64,7 @@ Example response:
 File: `backend/movies-backend/src/main/java/com/example/movies_backend/controller/AuthController.java`
 
 ### POST `/api/login`
-- Logic: Contract endpoint for customer login.
+- Logic: Authenticates a customer and returns a signed JWT.
 - Params (request body):
 ```json
 {
@@ -73,7 +73,20 @@ File: `backend/movies-backend/src/main/java/com/example/movies_backend/controlle
 }
 ```
 - Return:
-  - `501 Not Implemented` (Phase 2 contract only)
+  - `200 OK` with JWT payload on valid credentials
+  - `400 Bad Request` if email/password are missing
+  - `401 Unauthorized` if credentials are invalid
+
+Example response:
+```json
+{
+  "message": "Login successful",
+  "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...",
+  "tokenType": "Bearer",
+  "expiresInSeconds": 3600,
+  "customerId": 1
+}
+```
 
 ---
 

@@ -11,6 +11,7 @@ import java.util.List;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.webmvc.test.autoconfigure.WebMvcTest;
+import org.springframework.cache.CacheManager;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
 
@@ -27,9 +28,12 @@ class MovieControllerTest {
     @MockitoBean
     private MovieService movieService;
 
+    @MockitoBean
+    private CacheManager cacheManager;
+
     @Test
     void getMovies_shouldReturnMovieList() throws Exception {
-        when(movieService.searchMovies(null, null, null, null, null, null, "title", "asc", 1, 50))
+        when(movieService.searchMovies(null, null, null, null, null, null, "title", "asc", 1, 20))
                 .thenReturn(List.of(
                         new MovieListItemDTO("tt1", "Alpha", 2000, "Director A", null, List.of(), List.of()),
                         new MovieListItemDTO("tt2", "Beta", 2001, "Director B", null, List.of(), List.of())));

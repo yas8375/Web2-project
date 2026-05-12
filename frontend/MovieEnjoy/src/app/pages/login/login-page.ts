@@ -6,6 +6,14 @@ import { environment } from '../../../environments/environment';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { AuthStateService } from '../../auth-state.service';
 
+interface LoginResponse {
+  message: string;
+  token?: string;
+  tokenType?: string;
+  customerId?: number;
+  expiresInSeconds?: number;
+}
+
 @Component({
   selector: 'app-login-page',
   standalone: true,
@@ -54,7 +62,7 @@ export class LoginPageComponent {
     this.loading = true;
     this.message = '';
     this.http
-      .post(
+      .post<LoginResponse>(
         `${environment.apiBaseUrl}/api/login`,
         {
           email: this.email,
@@ -63,11 +71,17 @@ export class LoginPageComponent {
         { withCredentials: true },
       )
       .subscribe({
-        next: () => {
+        next: (response) => {
           this.loading = false;
+          if (!response.token) {
+            this.message = 'Login response did not include a JWT.';
+            this.messageType = 'error';
+            return;
+          }
+
           this.message = 'Login successful.';
           this.messageType = 'success';
-          this.authState.setLoggedIn(this.email);
+          this.authState.setLoggedIn(this.email, response.token);
           this.router.navigateByUrl(this.returnUrl);
         },
         error: (err) => {
