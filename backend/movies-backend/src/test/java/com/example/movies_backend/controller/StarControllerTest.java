@@ -10,6 +10,7 @@ import java.util.List;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.webmvc.test.autoconfigure.WebMvcTest;
+import org.springframework.cache.CacheManager;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
 
@@ -26,9 +27,12 @@ class StarControllerTest {
   @MockitoBean
   private StarService starService;
 
+  @MockitoBean
+  private CacheManager cacheManager;
+
   @Test
   void getStarById_shouldReturnStarDetails() throws Exception {
-    when(starService.getStarById("nm0000138")).thenReturn(
+    when(starService.getStarById("nm0000138", 1, 20)).thenReturn(
         new SingleStarDTO(
             "nm0000138",
             "Star Name",
@@ -44,7 +48,7 @@ class StarControllerTest {
 
   @Test
   void getStarById_shouldReturn404_whenStarMissing() throws Exception {
-    when(starService.getStarById("nm-missing")).thenReturn(null);
+    when(starService.getStarById("nm-missing", 1, 20)).thenReturn(null);
 
     mockMvc.perform(get("/api/stars/nm-missing"))
         .andExpect(status().isNotFound())

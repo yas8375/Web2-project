@@ -7,6 +7,7 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.webmvc.test.autoconfigure.WebMvcTest;
+import org.springframework.cache.CacheManager;
 import org.springframework.http.MediaType;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
@@ -31,6 +32,9 @@ class CheckoutControllerTest {
   // Replace CheckoutService bean with Mockito mock inside Spring test context
   @MockitoBean
   private CheckoutService checkoutService;
+
+  @MockitoBean
+  private CacheManager cacheManager;
 
   @Test
   void checkout_shouldReturn200_andCallService_whenRequestIsValid() throws Exception {

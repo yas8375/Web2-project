@@ -41,7 +41,7 @@ class StarServiceTest {
         stubProvider();
         when(starRepository.findStarRowsById("nm123"))
                 .thenReturn(List.of("nm123|Star Name|1970"));
-        when(starRepository.findMovieSummariesByStarId("nm123"))
+        when(starRepository.findMovieSummariesByStarId("nm123", 20, 0))
                 .thenReturn(List.<Object[]>of(new Object[] { "tt1", "Movie One", 2000, "Director One", 8.1f }));
 
         SingleStarDTO result = starService.getStarById("nm123");
@@ -52,6 +52,7 @@ class StarServiceTest {
         assertEquals(1, result.getMovies().size());
         assertEquals("tt1", result.getMovies().get(0).getId());
         verify(starRepository).findStarRowsById("nm123");
+        verify(starRepository).findMovieSummariesByStarId("nm123", 20, 0);
     }
 
     @Test
