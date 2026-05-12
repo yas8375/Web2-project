@@ -32,6 +32,10 @@ public interface StarRepository extends JpaRepository<Star, String> {
             LEFT JOIN ratings r ON r.movieId = m.id
             WHERE sim.starId = :starId
             ORDER BY m.title, m.id
+            LIMIT :limit OFFSET :offset
             """, nativeQuery = true)
-    List<Object[]> findMovieSummariesByStarId(@Param("starId") String starId);
+    List<Object[]> findMovieSummariesByStarId(
+            @Param("starId") String starId,
+            @Param("limit") int limit,
+            @Param("offset") int offset);
 }

@@ -52,11 +52,16 @@
           class="btn btn-outline-secondary"
           type="button"
           (click)="prevPage()"
-          [disabled]="page <= 1"
+          [disabled]="loading || page <= 1"
         >
           Previous
         </button>
-        <button class="btn btn-outline-dark" type="button" (click)="nextPage()">
+        <button
+          class="btn btn-outline-dark"
+          type="button"
+          (click)="nextPage()"
+          [disabled]="loading || !hasNextPage"
+        >
           Next
         </button>
       </div>

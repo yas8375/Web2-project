@@ -74,10 +74,10 @@ export class MoviesPageComponent implements OnInit {
   genre = '';
   letter = '';
   page = 1;
-  size = 50;
+  size = 20;
   sort = 'title';
   order = 'asc';
-  pageSizes = [10, 25, 50, 100];
+  pageSizes = [10, 20, 50, 100];
   genres: Array<{ id: number; name: string }> = [];
 
   constructor(
@@ -104,13 +104,13 @@ export class MoviesPageComponent implements OnInit {
         this.letter = (params.get('letter') ?? '').trim();
 
         const pageParam = Number(params.get('page') ?? '1');
-        const sizeParam = Number(params.get('size') ?? '50');
+        const sizeParam = Number(params.get('size') ?? '20');
         const sortParam = (params.get('sort') ?? 'title').trim();
         const orderParam = (params.get('order') ?? 'asc').trim();
 
         this.page = Number.isFinite(pageParam) && pageParam > 0 ? pageParam : 1;
         this.size =
-          Number.isFinite(sizeParam) && sizeParam > 0 ? sizeParam : 50;
+          Number.isFinite(sizeParam) && sizeParam > 0 ? sizeParam : 20;
         this.sort = sortParam || 'title';
         this.order = orderParam === 'desc' ? 'desc' : 'asc';
 
@@ -164,7 +164,7 @@ export class MoviesPageComponent implements OnInit {
   }
 
   onPageSizeChange(value: number): void {
-    const size = Number.isFinite(value) && value > 0 ? value : 50;
+    const size = Number.isFinite(value) && value > 0 ? value : 20;
     this.updateQueryParams({ size, page: 1 });
   }
 
@@ -277,6 +277,10 @@ export class MoviesPageComponent implements OnInit {
 
   get totalPages(): number {
     return this.movies.length < this.size ? this.page : this.page + 1;
+  }
+
+  get hasNextPage(): boolean {
+    return this.movies.length === this.size;
   }
 
   get hasActiveFilters(): boolean {
