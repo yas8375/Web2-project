@@ -1,8 +1,12 @@
 package com.example.movies_backend.service;
 
 import java.nio.charset.StandardCharsets;
+import java.security.MessageDigest;
 import java.time.Instant;
 import java.util.Base64;
+import java.util.Optional;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import javax.crypto.Mac;
 import javax.crypto.spec.SecretKeySpec;
@@ -61,6 +65,55 @@ public class JwtService {
         return expirationSeconds;
     }
 
+    public Optional<JwtClaims> validateToken(String token) {
+        if (token == null || token.isBlank()) {
+            return Optional.empty();
+        }
+
+        String[] parts = token.split("\\.", -1);
+        if (parts.length != 3 || parts[0].isBlank() || parts[1].isBlank() || parts[2].isBlank()) {
+            return Optional.empty();
+        }
+
+        String unsignedToken = parts[0] + "." + parts[1];
+        String expectedSignature = sign(unsignedToken);
+        if (!MessageDigest.isEqual(
+                expectedSignature.getBytes(StandardCharsets.US_ASCII),
+                parts[2].getBytes(StandardCharsets.US_ASCII))) {
+            return Optional.empty();
+        }
+
+        try {
+            String payload = new String(Base64.getUrlDecoder().decode(parts[1]), StandardCharsets.UTF_8);
+
+            String email = stringClaim(payload, "sub");
+            if (email == null || email.isBlank()) {
+                email = stringClaim(payload, "email");
+            }
+
+            Long expiresAt = longClaim(payload, "exp");
+            if (email == null || email.isBlank() || expiresAt == null) {
+                return Optional.empty();
+            }
+
+            if (expiresAt <= Instant.now().getEpochSecond()) {
+                return Optional.empty();
+            }
+
+            return Optional.of(new JwtClaims(
+                    email.trim(),
+                    integerClaim(payload, "customerId"),
+                    longClaim(payload, "iat"),
+                    expiresAt));
+        } catch (Exception ex) {
+            return Optional.empty();
+        }
+    }
+
+    public boolean isTokenValid(String token) {
+        return validateToken(token).isPresent();
+    }
+
     private String base64Url(String value) {
         return Base64.getUrlEncoder()
                 .withoutPadding()
@@ -102,4 +155,69 @@ public class JwtService {
         }
         return escaped.append("\"").toString();
     }
+
+    private String stringClaim(String payload, String name) {
+        Matcher matcher = Pattern.compile("\"" + Pattern.quote(name) + "\"\\s*:\\s*\"((?:\\\\.|[^\"\\\\])*)\"")
+                .matcher(payload);
+        return matcher.find() ? unescapeJsonString(matcher.group(1)) : null;
+    }
+
+    private Long longClaim(String payload, String name) {
+        Matcher matcher = Pattern.compile("\"" + Pattern.quote(name) + "\"\\s*:\\s*(-?\\d+)")
+                .matcher(payload);
+        if (!matcher.find()) {
+            return null;
+        }
+        try {
+            return Long.parseLong(matcher.group(1));
+        } catch (NumberFormatException ex) {
+            return null;
+        }
+    }
+
+    private Integer integerClaim(String payload, String name) {
+        Long value = longClaim(payload, name);
+        if (value == null || value < Integer.MIN_VALUE || value > Integer.MAX_VALUE) {
+            return null;
+        }
+        return value.intValue();
+    }
+
+    private String unescapeJsonString(String value) {
+        StringBuilder unescaped = new StringBuilder();
+        for (int i = 0; i < value.length(); i++) {
+            char c = value.charAt(i);
+            if (c != '\\' || i == value.length() - 1) {
+                unescaped.append(c);
+                continue;
+            }
+
+            char escaped = value.charAt(++i);
+            switch (escaped) {
+                case '"' -> unescaped.append('"');
+                case '\\' -> unescaped.append('\\');
+                case '/' -> unescaped.append('/');
+                case 'b' -> unescaped.append('\b');
+                case 'f' -> unescaped.append('\f');
+                case 'n' -> unescaped.append('\n');
+                case 'r' -> unescaped.append('\r');
+                case 't' -> unescaped.append('\t');
+                case 'u' -> {
+                    if (i + 4 >= value.length()) {
+                        return null;
+                    }
+                    try {
+                        unescaped.append((char) Integer.parseInt(value.substring(i + 1, i + 5), 16));
+                        i += 4;
+                    } catch (NumberFormatException ex) {
+                        return null;
+                    }
+                }
+                default -> unescaped.append(escaped);
+            }
+        }
+        return unescaped.toString();
+    }
+
+    public record JwtClaims(String email, Integer customerId, Long issuedAt, Long expiresAt) {}
 }
