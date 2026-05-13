@@ -16,6 +16,44 @@ Full-stack movie rental web application inspired by CS122B, implemented with Ang
 - `database/movie-data.sql` - DB seed data
 - `API_SPECIFICATION.md` - API/interface contract
 
+## Local Run
+### Frontend
+From `frontend/MovieEnjoy`:
+
+```powershell
+cd d:\Desktop\Web2-project\frontend\MovieEnjoy
+npm install
+npm start
+```
+
+Frontend runs on:
+
+```text
+http://localhost:4200
+```
+
+### Backend
+From `backend/movies-backend`:
+
+```powershell
+cd d:\Desktop\Web2-project\backend\movies-backend
+$env:DB_URL="jdbc:postgresql://localhost:5432/moviedb"
+$env:DB_USER="postgres"
+$env:DB_PASS="1234"
+.\mvnw spring-boot:run
+```
+
+Backend runs on:
+
+```text
+http://localhost:8081
+```
+
+### Notes
+- The backend reads database credentials from environment variables.
+- Start PostgreSQL locally before running Spring Boot.
+- If dependencies are already installed for the frontend, `npm install` can be skipped.
+
 ## Phase 3 Deliverables Summary
 This repository includes all Phase 3 testing deliverables:
 - Unit tests
