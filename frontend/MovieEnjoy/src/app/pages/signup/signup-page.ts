@@ -3,6 +3,8 @@ import { Component } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { FormsModule } from '@angular/forms';
 import { Router, RouterLink } from '@angular/router';
+import { TimeoutError } from 'rxjs';
+import { switchMap, timeout } from 'rxjs/operators';
 import { environment } from '../../../environments/environment';
 
 @Component({
@@ -39,21 +41,39 @@ export class SignupPageComponent {
 
     this.loading = true;
     this.message = '';
+    this.success = false;
 
     this.http
-      .post(
-        `${environment.apiBaseUrl}/api/signup`,
+      .get<{ exists: boolean }>(
+        `${environment.apiBaseUrl}/api/signup/check-email`,
         {
-          firstName: this.firstName.trim(),
-          lastName: this.lastName.trim(),
-          address: this.address.trim(),
-          creditCardId: this.creditCardId.replace(/[\s-]+/g, ''),
-          expiration: this.expiration.trim(),
-          email: this.email.trim(),
-          password: this.password,
-          confirmPassword: this.confirmPassword,
+          params: { email: this.email.trim() },
+          withCredentials: true,
         },
-        { withCredentials: true },
+      )
+      .pipe(
+        timeout(8000),
+        switchMap((response) => {
+          if (response?.exists) {
+            throw new Error('Email already exists.');
+          }
+
+          return this.http.post(
+            `${environment.apiBaseUrl}/api/signup`,
+            {
+              firstName: this.firstName.trim(),
+              lastName: this.lastName.trim(),
+              address: this.address.trim(),
+              creditCardId: this.creditCardId.replace(/[\s-]+/g, ''),
+              expiration: this.expiration.trim(),
+              email: this.email.trim(),
+              password: this.password,
+              confirmPassword: this.confirmPassword,
+            },
+            { withCredentials: true },
+          );
+        }),
+        timeout(8000),
       )
       .subscribe({
         next: () => {
@@ -69,7 +89,10 @@ export class SignupPageComponent {
         error: (err) => {
           this.success = false;
           this.loading = false;
-          this.message = err?.error?.message ?? 'Signup failed';
+          this.message =
+            err instanceof TimeoutError
+              ? 'Signup request timed out. Please make sure the backend is running.'
+              : err?.error?.message ?? err?.message ?? 'Signup failed';
         },
       });
   }

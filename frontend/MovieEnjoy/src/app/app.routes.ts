@@ -10,6 +10,7 @@ import { BrowseTitlesPageComponent } from './pages/browse-titles/browse-titles-p
 import { CartPageComponent } from './pages/cart/cart-page';
 import { CheckoutPageComponent } from './pages/checkout/checkout-page';
 import { ConfirmationPageComponent } from './pages/confirmation/confirmation-page';
+import { authGuard } from './auth.guard';
 
 export const routes: Routes = [
   // Default landing page: login first.
@@ -22,8 +23,8 @@ export const routes: Routes = [
   { path: 'stars/:starId', component: StarDetailsPageComponent },
   { path: 'browse/genres', component: BrowseGenresPageComponent },
   { path: 'browse/titles', component: BrowseTitlesPageComponent },
-  { path: 'cart', component: CartPageComponent },
-  { path: 'checkout', component: CheckoutPageComponent },
-  { path: 'confirmation', component: ConfirmationPageComponent },
+   { path: 'cart', component: CartPageComponent, canActivate: [authGuard] },
+  { path: 'checkout', component: CheckoutPageComponent, canActivate: [authGuard] },
+  { path: 'confirmation', component: ConfirmationPageComponent, canActivate: [authGuard] },
   { path: '**', redirectTo: 'login' },
 ];

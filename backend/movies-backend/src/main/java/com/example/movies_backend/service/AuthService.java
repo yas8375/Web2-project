@@ -52,6 +52,14 @@ public class AuthService {
         return customer.map(Customer::getId).orElse(null);
     }
 
+    public boolean emailExists(String email) {
+        if (email == null || email.isBlank() || customerRepository == null) {
+            return false;
+        }
+
+        return customerRepository.existsByEmailIgnoreCase(email.trim());
+    }
+
     @Transactional
     public Integer signup(SignupRequestDTO request) {
         if (request == null) {
