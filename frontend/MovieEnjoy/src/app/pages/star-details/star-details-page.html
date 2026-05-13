@@ -35,6 +35,7 @@
           <div class="results-toolbar__meta">
             <span>{{ movies.length }} filmography results</span>
             <span>Sorted {{ sortDirection === 'asc' ? 'A-Z' : 'Z-A' }}</span>
+            <span>Page {{ currentPage }}</span>
           </div>
 
           <div class="sort-group">
@@ -82,6 +83,24 @@
                 </tr>
               </tbody>
             </table>
+          </div>
+          <div class="d-flex justify-content-between align-items-center mt-3">
+            <button
+              type="button"
+              class="btn btn-outline-secondary"
+              (click)="prevPage()"
+              [disabled]="loading || currentPage <= 1"
+            >
+              Previous
+            </button>
+            <button
+              type="button"
+              class="btn btn-outline-primary"
+              (click)="nextPage()"
+              [disabled]="loading || !hasNextPage"
+            >
+              Next
+            </button>
           </div>
         </div>
       </div>

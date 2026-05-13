@@ -4,6 +4,7 @@ import java.time.LocalDate;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -22,6 +23,13 @@ public class AuthService {
     @Autowired(required = false)
     private CreditCardRepository creditCardRepository;
 
+    private BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
+
+    @Autowired(required = false)
+    public void setPasswordEncoder(BCryptPasswordEncoder passwordEncoder) {
+        this.passwordEncoder = passwordEncoder;
+    }
+
     public boolean login(String email, String password) {
         if (email == null || email.isBlank() || password == null || password.isBlank()) {
             return false;
@@ -36,7 +44,7 @@ public class AuthService {
             return false;
         }
 
-        return password.equals(customer.get().getPassword());
+        return passwordEncoder.matches(password, customer.get().getPassword());
     }
 
     public Integer getCustomerIdByEmail(String email) {
@@ -129,7 +137,7 @@ public class AuthService {
                 normalizedCardId,
                 address,
                 email,
-                password);
+                passwordEncoder.encode(password));
 
         return customerRepository.save(customer).getId();
     }

@@ -1,5 +1,6 @@
 package com.example.movies_backend.controller;
 
+import java.util.LinkedHashMap;
 import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,6 +16,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.example.movies_backend.dto.SignupRequestDTO;
 import com.example.movies_backend.service.AuthService;
+import com.example.movies_backend.service.JwtService;
 
 import jakarta.servlet.http.HttpSession;
 
@@ -36,6 +38,8 @@ public class AuthController {
         boolean exists = authService.emailExists(email);
         return ResponseEntity.ok(Map.of("exists", exists));
     }
+    @Autowired
+    private JwtService jwtService;
 
     /**
      * Logic:
@@ -69,7 +73,17 @@ public class AuthController {
             session.setAttribute("customerId", customerId);
         }
 
-        return ResponseEntity.ok(Map.of("message", "Login successful"));
+        String token = jwtService.generateToken(email, customerId);
+        Map<String, Object> response = new LinkedHashMap<>();
+        response.put("message", "Login successful");
+        response.put("token", token);
+        response.put("tokenType", "Bearer");
+        response.put("expiresInSeconds", jwtService.getExpirationSeconds());
+        if (customerId != null) {
+            response.put("customerId", customerId);
+        }
+
+        return ResponseEntity.ok(response);
     }
 
     @PostMapping("/signup")

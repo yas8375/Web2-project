@@ -6,9 +6,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.webmvc.test.autoconfigure.AutoConfigureMockMvc;
 import org.springframework.http.MediaType;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import com.example.movies_backend.model.Customer;
@@ -18,6 +20,8 @@ import com.example.movies_backend.repository.CustomerRepository;
 @AutoConfigureMockMvc
 @ActiveProfiles("integration")
 class AuthIntegrationTest {
+
+    private final BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
 
     @Autowired
     private MockMvc mockMvc;
@@ -34,7 +38,7 @@ class AuthIntegrationTest {
                 "1234",
                 "Address",
                 "valid@example.com",
-                "correct-password"
+                passwordEncoder.encode("correct-password")
         ));
     }
 
@@ -51,7 +55,9 @@ class AuthIntegrationTest {
                                   "password": "correct-password"
                                 }
                                 """))
-                .andExpect(status().isOk());
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.token").isString())
+                .andExpect(jsonPath("$.tokenType").value("Bearer"));
     }
 
     // Expected status (Phase 4): 401. Fails now because login is still not implemented.

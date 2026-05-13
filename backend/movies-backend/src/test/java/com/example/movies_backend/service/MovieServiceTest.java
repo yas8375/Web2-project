@@ -55,24 +55,24 @@ class MovieServiceTest {
   void getMoviesPage_usesDefaultPageAndSize_whenNull() {
     stubRepositoryProvider();
     var page = new PageImpl<>(List.of(new Movie()));
-    when(movieRepository.findAll(PageRequest.of(0, 50))).thenReturn(page);
+    when(movieRepository.findAll(PageRequest.of(0, 20))).thenReturn(page);
 
     List<Movie> result = movieService.getMoviesPage(null, null);
 
     assertEquals(1, result.size());
-    verify(movieRepository).findAll(PageRequest.of(0, 50));
+    verify(movieRepository).findAll(PageRequest.of(0, 20));
   }
 
   @Test
   void getMoviesPage_clampsInvalidValues_toDefaults() {
     stubRepositoryProvider();
     var page = new PageImpl<>(List.of(new Movie(), new Movie()));
-    when(movieRepository.findAll(PageRequest.of(0, 50))).thenReturn(page);
+    when(movieRepository.findAll(PageRequest.of(0, 20))).thenReturn(page);
 
     List<Movie> result = movieService.getMoviesPage(0, -5);
 
     assertEquals(2, result.size());
-    verify(movieRepository).findAll(PageRequest.of(0, 50));
+    verify(movieRepository).findAll(PageRequest.of(0, 20));
   }
 
   @Test

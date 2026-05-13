@@ -8,12 +8,15 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
 import com.example.movies_backend.model.Customer;
 import com.example.movies_backend.repository.CustomerRepository;
 
 @ExtendWith(MockitoExtension.class)
 class AuthServiceTest {
+
+  private final BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
 
   @Mock
   private CustomerRepository customerRepository;
@@ -35,7 +38,7 @@ class AuthServiceTest {
             "1234",
             "Address",
             "valid@example.com",
-            "correct-password"
+            passwordEncoder.encode("correct-password")
         )));
 
     boolean ok = authService.login("valid@example.com", "correct-password");
@@ -59,7 +62,7 @@ class AuthServiceTest {
             "1234",
             "Address",
             "valid@example.com",
-            "correct-password"
+            passwordEncoder.encode("correct-password")
         )));
 
     boolean ok = authService.login("valid@example.com", "wrong-password");

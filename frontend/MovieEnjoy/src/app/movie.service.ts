@@ -96,7 +96,7 @@ export class MovieService {
     }
 
     httpParams = httpParams.set('page', String(safeParams.page ?? 1));
-    httpParams = httpParams.set('size', String(safeParams.size ?? 50));
+    httpParams = httpParams.set('size', String(safeParams.size ?? 20));
 
     if (safeParams.sort) {
       httpParams = httpParams.set('sort', safeParams.sort);
@@ -112,9 +112,13 @@ export class MovieService {
     return this.http.get<SingleMovie>(`${this.api}/${movieId}`);
   }
 
-  getStarById(starId: string): Observable<SingleStar> {
+  getStarById(starId: string, page: number = 1, size: number = 20): Observable<SingleStar> {
+    const params = new HttpParams()
+      .set('page', String(page))
+      .set('size', String(size));
     return this.http.get<SingleStar>(
       `${environment.apiBaseUrl}/api/stars/${starId}`,
+      { params },
     );
   }
 }

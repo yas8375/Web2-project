@@ -18,6 +18,7 @@ import jakarta.servlet.http.HttpSession;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.webmvc.test.autoconfigure.WebMvcTest;
+import org.springframework.cache.CacheManager;
 import org.springframework.http.MediaType;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
@@ -44,6 +45,9 @@ class CartControllerTest {
   // Replace CartService bean with a Mockito mock inside the Spring test context
   @MockitoBean
   private CartService cartService;
+
+  @MockitoBean
+  private CacheManager cacheManager;
 
   /**
    * Phase 3 current behavior:
