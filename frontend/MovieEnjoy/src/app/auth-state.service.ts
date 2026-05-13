@@ -8,11 +8,7 @@ export class AuthStateService {
   isLoggedIn(): boolean {
     if (!this.hasLocalStorage()) return false;
     const token = (localStorage.getItem(this.authTokenKey) ?? '').trim();
-    if (token.length > 0) return true;
-
-    return (
-      (localStorage.getItem(this.customerEmailKey) ?? '').trim().length > 0
-    );
+    return token.length > 0;
   }
 
   setLoggedIn(email: string, token?: string): void {

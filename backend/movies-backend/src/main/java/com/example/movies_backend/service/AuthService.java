@@ -44,7 +44,16 @@ public class AuthService {
             return false;
         }
 
-        return passwordEncoder.matches(password, customer.get().getPassword());
+        String storedPassword = customer.get().getPassword();
+        if (storedPassword == null || storedPassword.isBlank()) {
+            return false;
+        }
+
+        if (storedPassword.startsWith("$2a$") || storedPassword.startsWith("$2b$") || storedPassword.startsWith("$2y$")) {
+            return passwordEncoder.matches(password, storedPassword);
+        }
+
+        return password.equals(storedPassword);
     }
 
     public Integer getCustomerIdByEmail(String email) {
