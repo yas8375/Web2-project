@@ -32,7 +32,7 @@ public class Customer {
     @Column(name = "email", nullable = false, length = 50)
     private String email;
 
-    @Column(name = "password", nullable = false, length = 60)
+    @Column(name = "password", nullable = false, length = 100)
     private String password;
 
     public Customer() {}
