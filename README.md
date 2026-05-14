@@ -228,6 +228,31 @@ The workflow runs:
 Stress/performance tests are now integrated in CI through the `Stress Test (k6 Smoke)` job, and can also be run locally using the npm scripts listed above.
 Some E2E scenarios represent future expected behavior and may fail intentionally until the related features are fully implemented.
 
+## Performance Improvements Applied
+We applied the following backend/frontend optimizations to reduce query cost and response time:
+
+1. Database indexing
+- Added/restored indexes on high-cost join and filter columns (`movies.title`, `movies.year`, `ratings.movieId`, `stars.name`, `genres.name`, and junction tables: `stars_in_movies.movieId`, `stars_in_movies.starId`, `genres_in_movies.movieId`, `genres_in_movies.genreId`).
+- This reduced full scans on relationship-heavy queries.
+
+2. Server-side pagination
+- Star details filmography now uses `page`/`size` with SQL `LIMIT/OFFSET`.
+- Movies listing defaults were reduced to smaller page sizes to lower per-request load.
+- Result: fewer rows processed and returned on each request.
+
+3. Frontend incremental loading
+- Updated pagination behavior so the UI requests one page at a time instead of large result sets.
+- Result: faster first render and less network/database pressure.
+
+4. Service-level caching
+- Added Spring Cache (`@Cacheable`) for repeated read endpoints:
+  movie search, movie details, genres, title letters, and title suggestions.
+- Result: fewer repeated database hits for common reads.
+
+Performance measurement approach:
+- We used SQL logging and slow-query logging mainly for diagnostics/measurement, not as direct performance optimizations.
+- We used the browser DevTools Network tab to measure request timing, payload size, and overall response behavior before and after the changes.
+
 
 
 
