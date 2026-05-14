@@ -12,13 +12,31 @@
         <div class="row g-3">
           <div class="col-12 col-lg-4">
             <label class="form-label search-label">Title</label>
-            <input
-              class="form-control search-input"
-              type="text"
-              [(ngModel)]="title"
-              placeholder="Type a movie title"
-              (keyup.enter)="searchMovies()"
-            />
+            <div class="title-autocomplete">
+              <input
+                class="form-control search-input"
+                type="text"
+                [ngModel]="title"
+                (ngModelChange)="onTitleInput($event)"
+                placeholder="Type a movie title"
+                (focus)="onTitleFocus()"
+                (blur)="onTitleBlur()"
+                (keydown)="onTitleKeydown($event)"
+                (keyup.enter)="searchMovies()"
+              />
+
+              <div class="suggestions-menu" *ngIf="showSuggestions">
+                <button
+                  type="button"
+                  class="suggestion-item"
+                  *ngFor="let suggestion of titleSuggestions; let i = index"
+                  [class.active]="i === activeSuggestionIndex"
+                  (mousedown)="selectTitleSuggestion(suggestion)"
+                >
+                  {{ suggestion }}
+                </button>
+              </div>
+            </div>
           </div>
           <div class="col-6 col-lg-2">
             <label class="form-label search-label">Year</label>

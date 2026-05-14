@@ -43,6 +43,19 @@
   margin-inline: auto;
 }
 
+.page-back-link {
+  display: inline-flex;
+  margin-bottom: 1rem;
+  color: #9fdbff;
+  font-weight: 700;
+  text-decoration: none;
+}
+
+.page-back-link:hover,
+.page-back-link:focus {
+  color: #ffffff;
+}
+
 .confirm-kicker {
   display: inline-block;
   padding: 0.38rem 0.85rem;

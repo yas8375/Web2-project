@@ -119,9 +119,30 @@
   color: #fff;
 }
 
-.form-text {
-  color: rgba(203, 224, 255, 0.86);
-  font-size: 0.82rem;
+.password-field {
+  display: flex;
+  align-items: stretch;
+}
+
+.password-field .form-control {
+  border-top-right-radius: 0;
+  border-bottom-right-radius: 0;
+}
+
+.password-toggle {
+  min-width: 6rem;
+  border: 1px solid rgba(114, 161, 228, 0.55);
+  border-left: 0;
+  border-top-right-radius: 12px;
+  border-bottom-right-radius: 12px;
+  background: rgba(17, 34, 76, 0.96);
+  color: #eef6ff;
+  font-weight: 500;
+}
+
+.password-toggle:hover,
+.password-toggle:focus {
+  background: rgba(25, 47, 97, 0.98);
 }
 
 .login-btn {

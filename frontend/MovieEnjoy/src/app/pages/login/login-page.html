@@ -1,12 +1,11 @@
 <section class="login-theme py-5">
   <div class="container">
     <div class="login-shell p-4 p-md-5">
-      <a class="page-back-link" routerLink="/main">&#8592; Back to Home</a>
       <span class="login-kicker">Account</span>
       <h1 class="login-title mb-2">Login</h1>
       <p class="login-subtitle mb-4">Sign in to continue.</p>
 
-      <form (ngSubmit)="onLogin()" novalidate>
+      <form (ngSubmit)="onLogin()" novalidate autocomplete="off">
         <div class="mb-3">
           <label for="email" class="form-label">Email</label>
           <input
@@ -16,25 +15,36 @@
             class="form-control"
             [(ngModel)]="email"
             placeholder="name@example.com"
-            autocomplete="email"
+            autocomplete="off"
+            autocapitalize="off"
+            spellcheck="false"
             required
           />
-          <div class="form-text">Example: jbrown@ics185.edu</div>
         </div>
 
         <div class="mb-4">
           <label for="password" class="form-label">Password</label>
-          <input
-            id="password"
-            type="password"
-            name="password"
-            class="form-control"
-            [(ngModel)]="password"
-            placeholder="Password"
-            autocomplete="current-password"
-            required
-          />
-          <div class="form-text">Example: keyboard</div>
+          <div class="password-field">
+            <input
+              id="password"
+              [type]="showPassword ? 'text' : 'password'"
+              name="password"
+              class="form-control"
+              [(ngModel)]="password"
+              placeholder="Password"
+              autocomplete="new-password"
+              autocapitalize="off"
+              spellcheck="false"
+              required
+            />
+            <button
+              type="button"
+              class="password-toggle"
+              (click)="togglePasswordVisibility()"
+            >
+              {{ showPassword ? 'Hide' : 'Show' }}
+            </button>
+          </div>
         </div>
 
         <button type="submit" class="login-btn" [disabled]="loading">

@@ -9,6 +9,7 @@ import { environment } from '../../../environments/environment';
   standalone: true,
   imports: [CommonModule, RouterLink],
   templateUrl: './browse-titles-page.html',
+  styleUrl: './browse-titles-page.css',
 })
 export class BrowseTitlesPageComponent implements OnInit {
   letters: string[] = [

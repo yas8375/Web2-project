@@ -21,6 +21,7 @@ import { environment } from '../../../environments/environment';
   styleUrl: './main-page.css',
 })
 export class MainPageComponent implements OnInit, OnDestroy {
+  private readonly searchStateKey = 'main_search_state';
   private readonly browseTokens = [
     '0',
     '1',
@@ -81,6 +82,7 @@ export class MainPageComponent implements OnInit, OnDestroy {
   ) {}
 
   ngOnInit(): void {
+    this.restoreSearchState();
     this.loadGenres();
     this.titleInputSub = this.titleInput$
       .pipe(
@@ -149,6 +151,7 @@ export class MainPageComponent implements OnInit, OnDestroy {
       queryParams['star'] = safeStar;
     }
 
+    this.saveSearchState();
     this.router.navigate(['/movies'], { queryParams });
   }
 
@@ -169,6 +172,7 @@ export class MainPageComponent implements OnInit, OnDestroy {
     this.titleSuggestions = [];
     this.showSuggestions = false;
     this.activeSuggestionIndex = -1;
+    this.clearSearchState();
   }
 
   onTitleInput(value: string): void {
@@ -261,5 +265,50 @@ export class MainPageComponent implements OnInit, OnDestroy {
         return null;
       })
       .filter((item): item is { id: number; name: string } => item !== null);
+  }
+
+  private saveSearchState(): void {
+    if (typeof sessionStorage === 'undefined') {
+      return;
+    }
+
+    sessionStorage.setItem(
+      this.searchStateKey,
+      JSON.stringify({
+        title: this.title.trim(),
+        year: this.year.trim(),
+        director: this.director.trim(),
+        star: this.star.trim(),
+      }),
+    );
+  }
+
+  private restoreSearchState(): void {
+    if (typeof sessionStorage === 'undefined') {
+      return;
+    }
+
+    const raw = sessionStorage.getItem(this.searchStateKey);
+    if (!raw) {
+      return;
+    }
+
+    try {
+      const state = JSON.parse(raw) as Partial<Record<'title' | 'year' | 'director' | 'star', string>>;
+      this.title = typeof state.title === 'string' ? state.title : '';
+      this.year = typeof state.year === 'string' ? state.year : '';
+      this.director = typeof state.director === 'string' ? state.director : '';
+      this.star = typeof state.star === 'string' ? state.star : '';
+    } catch {
+      this.clearSearchState();
+    }
+  }
+
+  private clearSearchState(): void {
+    if (typeof sessionStorage === 'undefined') {
+      return;
+    }
+
+    sessionStorage.removeItem(this.searchStateKey);
   }
 }
