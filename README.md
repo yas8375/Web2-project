@@ -49,6 +49,37 @@ Backend runs on:
 http://localhost:8081
 ```
 
+### Backend (HTTPS - Dev)
+This project supports running the backend over HTTPS locally using a self-signed development certificate.
+
+From `backend/movies-backend`:
+
+```powershell
+# 1) Generate a local self-signed certificate (ignored by git)
+.\scripts\generate-dev-ssl.ps1 -StorePass "your_p12_password"
+
+# 2) Set DB credentials (do not commit secrets)
+$env:DB_URL="jdbc:postgresql://localhost:5432/your_database_name"
+$env:DB_USER="your_db_user"
+$env:DB_PASS="your_db_password"
+
+# 3) Run backend with HTTPS profile
+$env:SPRING_PROFILES_ACTIVE="https"
+$env:SERVER_PORT="8443"   # change if the port is already in use (e.g., 9443)
+$env:SSL_KEYSTORE_PATH="C:\path\to\Web2-project\backend\movies-backend\.certs\localhost.p12"
+$env:SSL_KEYSTORE_PASSWORD="your_p12_password"
+
+.\mvnw spring-boot:run
+```
+
+Then open:
+
+```text
+https://localhost:8443
+```
+
+Note: Browsers will show a certificate warning for self-signed certificates. This is expected for local development.
+
 ### Notes
 - The backend reads database credentials from environment variables.
 - Do not commit real database credentials or secrets to GitHub.
