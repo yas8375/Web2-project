@@ -116,6 +116,9 @@ Notes:
 - Do not commit real database credentials or secrets to GitHub.
 - Start PostgreSQL locally before running Spring Boot.
 - If dependencies are already installed for the frontend, `npm install` can be skipped.
+- Optional: define `CORS_ALLOWED_ORIGINS` for local development, for example:
+  `$env:CORS_ALLOWED_ORIGINS="http://localhost:4200,http://127.0.0.1:4200"`
+- This externalizes the allowed frontend origins and replaces hardcoded CORS values in the backend controllers.
 
 ## Phase 3 Deliverables Summary
 This repository includes all Phase 3 testing deliverables:
@@ -286,5 +289,28 @@ Performance measurement approach:
 
 
 
+## Phase 6 Frontend Security
+- Protected routes are enforced in Angular using `AuthGuard`.
+- Direct URL access to protected pages such as cart, checkout, and confirmation is prevented for unauthenticated users.
+- JWT tokens returned by `/api/login` are stored in frontend auth state.
+- Protected API requests automatically include `Authorization: Bearer <token>` through `HttpInterceptor`.
+- If a protected request returns `401 Unauthorized`, the frontend clears auth state and redirects the user to the login page.
 
+## Authentication & Password Security
+The backend includes basic authentication for customer signup and login.
 
+### Implemented Auth Features
+- `POST /api/signup` creates a new customer account.
+- `POST /api/login` validates customer credentials.
+- `POST /api/logout` invalidates the current session.
+- Customer passwords are hashed with BCrypt before they are stored in the database.
+- Login compares the submitted password against the stored BCrypt hash using `BCryptPasswordEncoder.matches(...)`.
+- Legacy plain-text passwords are upgraded automatically: when an existing customer logs in successfully with an old plain-text password, the backend immediately replaces it with a BCrypt hash.
+
+### Database Password Column
+BCrypt hashes are longer than plain-text passwords, so the `customers.password` column must allow 60 characters:
+
+```sql
+ALTER TABLE customers
+ALTER COLUMN password TYPE VARCHAR(60);
+```

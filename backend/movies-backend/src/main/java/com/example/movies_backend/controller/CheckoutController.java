@@ -5,7 +5,6 @@ import jakarta.servlet.http.HttpSession;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -17,14 +16,6 @@ import com.example.movies_backend.service.CheckoutService;
 
 @RestController
 @RequestMapping("/api")
-@CrossOrigin(
-        originPatterns = {
-                "http://localhost:*",
-                "http://127.0.0.1:*",
-                "https://localhost:*",
-                "https://127.0.0.1:*"
-        },
-        allowCredentials = "true")
 public class CheckoutController {
 
     @Autowired
