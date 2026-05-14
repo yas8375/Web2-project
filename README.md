@@ -33,25 +33,11 @@ http://localhost:4200
 ```
 
 ### Frontend (HTTPS - Dev)
-The Angular dev server can also be run over HTTPS locally. This is optional; certificates are generated locally and ignored by git.
+From `frontend/MovieEnjoy`:
 
-1) Install `mkcert` (Windows):
-```powershell
-winget install FiloSottile.mkcert
-```
-
-2) Generate a local certificate for `localhost` (store the files under `backend/movies-backend/.certs`):
-```powershell
-cd C:\path\to\Web2-project\backend\movies-backend
-mkdir .certs
-cd .certs
-mkcert localhost 127.0.0.1 ::1
-```
-
-3) Run the Angular dev server with SSL:
 ```powershell
 cd C:\path\to\Web2-project\frontend\MovieEnjoy
-npm start -- --ssl true --ssl-cert "C:\path\to\Web2-project\backend\movies-backend\.certs\localhost+2.pem" --ssl-key "C:\path\to\Web2-project\backend\movies-backend\.certs\localhost+2-key.pem" --port 4201
+npm start -- --ssl --port 4201
 ```
 
 Frontend runs on:
@@ -107,20 +93,14 @@ https://localhost:8443
 ```
 
 Notes:
-- Browsers will show a certificate warning for self-signed certificates. This is expected for local development.
-- If your frontend is also served over HTTPS (e.g., `https://localhost:4201`), you may need to open the backend URL once in the browser and click "Advanced" -> "Continue" so the browser allows calls to the self-signed certificate.
 - If your machine already uses port `8443` for another tool, prefer running the backend HTTPS on `9443` and open `https://localhost:9443` instead.
 
 ### Notes
 - The backend reads database credentials from environment variables.
-- Do not commit real database credentials or secrets to GitHub.
-- Start PostgreSQL locally before running Spring Boot.
 - If dependencies are already installed for the frontend, `npm install` can be skipped.
 - Optional: define `CORS_ALLOWED_ORIGINS` for local development, for example:
   `$env:CORS_ALLOWED_ORIGINS="http://localhost:4200,http://127.0.0.1:4200"`
 - This externalizes the allowed frontend origins and replaces hardcoded CORS values in the backend controllers.
-- HTTPS local development uses a self-signed certificate.
-- Browsers may show a certificate warning unless the certificate is trusted locally on the developer machine.
 
 ## Phase 3 Deliverables Summary
 This repository includes all Phase 3 testing deliverables:
@@ -291,7 +271,7 @@ Performance measurement approach:
 
 
 
-## Phase 6 Frontend Security
+## Frontend Security
 - Protected routes are enforced in Angular using `AuthGuard`.
 - Direct URL access to protected pages such as cart, checkout, and confirmation is prevented for unauthenticated users.
 - JWT tokens returned by `/api/login` are stored in frontend auth state.
@@ -316,3 +296,32 @@ BCrypt hashes are longer than plain-text passwords, so the `customers.password` 
 ALTER TABLE customers
 ALTER COLUMN password TYPE VARCHAR(60);
 ```
+## Backend JWT & API Protection
+
+The backend protects private APIs using JSON Web Tokens (JWT) after a customer logs in successfully.
+
+### Implemented JWT Features
+- JwtService generates a signed JWT after successful login.
+- The JWT includes customer identity data such as email, customer ID, issued time, and expiration time.
+- The login response returns the token with tokenType: Bearer so the frontend can send it in future requests.
+- JWT settings are configurable through:
+  - jwt.secret
+  - jwt.expiration-seconds
+
+### API Protection
+- A custom JwtAuthenticationFilter checks incoming requests for the Authorization: Bearer <token> header.
+- The filter validates the JWT signature and expiration before allowing access to protected APIs.
+- If the token is valid, the authenticated customer is added to the Spring Security context.
+- Protected backend routes include cart, checkout, orders, rentals, profile, and customer APIs.
+- Public routes such as login, signup, movies, genres, titles, and stars remain accessible without a token.
+
+### Unauthorized Requests
+- Requests to protected APIs without a token return 401 Unauthorized.
+- Requests with invalid or expired tokens also return 401 Unauthorized.
+
+### Testing
+JWT security was tested using:
+- JwtServiceTest
+- JwtSecurityIntegrationTest
+
+The tests verify JWT creation, token validation, invalid token rejection, expired token rejection, and protected API access behavior.
