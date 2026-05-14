@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { HttpClient } from '@angular/common/http';
@@ -21,9 +21,10 @@ interface LoginResponse {
   templateUrl: './login-page.html',
   styleUrl: './login-page.css',
 })
-export class LoginPageComponent {
+export class LoginPageComponent implements OnInit {
   email = '';
   password = '';
+  showPassword = false;
   loading = false;
   message = '';
   messageType: 'success' | 'error' | 'info' = 'info';
@@ -40,6 +41,11 @@ export class LoginPageComponent {
       this.route.snapshot.queryParamMap.get('returnUrl') ?? '/main';
   }
 
+  ngOnInit(): void {
+    this.email = this.route.snapshot.queryParamMap.get('email') ?? '';
+    this.password = this.route.snapshot.queryParamMap.get('password') ?? '';
+  }
+
   isAllowedEmail(email: string = this.email): boolean {
     const value = (email ?? '').trim();
     // Keep policy simple for now: must look like an email.
@@ -50,6 +56,10 @@ export class LoginPageComponent {
     const value = (password ?? '').trim();
     // Keep policy simple for now: at least 4 chars (dataset uses short passwords).
     return value.length >= 4;
+  }
+
+  togglePasswordVisibility(): void {
+    this.showPassword = !this.showPassword;
   }
 
   onLogin(): void {

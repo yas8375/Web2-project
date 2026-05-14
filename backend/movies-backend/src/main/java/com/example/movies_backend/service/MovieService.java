@@ -432,8 +432,15 @@ public class MovieService {
             String lower = safeQuery.toLowerCase(Locale.ROOT);
             return MOCK_MOVIES.stream()
                     .map(Movie::getTitle)
-                    .filter(title -> title.toLowerCase(Locale.ROOT).startsWith(lower))
-                    .sorted(String.CASE_INSENSITIVE_ORDER)
+                    .filter(title -> title.toLowerCase(Locale.ROOT).contains(lower))
+                    .sorted((left, right) -> {
+                        boolean leftStartsWith = left.toLowerCase(Locale.ROOT).startsWith(lower);
+                        boolean rightStartsWith = right.toLowerCase(Locale.ROOT).startsWith(lower);
+                        if (leftStartsWith != rightStartsWith) {
+                            return leftStartsWith ? -1 : 1;
+                        }
+                        return String.CASE_INSENSITIVE_ORDER.compare(left, right);
+                    })
                     .limit(safeLimit)
                     .toList();
         }

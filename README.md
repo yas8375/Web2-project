@@ -37,9 +37,9 @@ From `backend/movies-backend`:
 
 ```powershell
 cd d:\Desktop\Web2-project\backend\movies-backend
-$env:DB_URL="jdbc:postgresql://localhost:5432/moviedb"
-$env:DB_USER="postgres"
-$env:DB_PASS="1234"
+$env:DB_URL="jdbc:postgresql://localhost:5432/your_database_name"
+$env:DB_USER="your_db_user"
+$env:DB_PASS="your_db_password"
 .\mvnw spring-boot:run
 ```
 
@@ -51,6 +51,7 @@ http://localhost:8081
 
 ### Notes
 - The backend reads database credentials from environment variables.
+- Do not commit real database credentials or secrets to GitHub.
 - Start PostgreSQL locally before running Spring Boot.
 - If dependencies are already installed for the frontend, `npm install` can be skipped.
 

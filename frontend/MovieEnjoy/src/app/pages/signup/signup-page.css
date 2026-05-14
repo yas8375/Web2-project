@@ -63,6 +63,12 @@
   box-shadow: 0 0 0 0.2rem rgba(72, 181, 255, 0.18);
 }
 
+.field-hint {
+  margin-top: 0.35rem;
+  color: rgba(226, 233, 255, 0.72);
+  font-size: 0.8rem;
+}
+
 .eye-button {
   min-width: 5rem;
 }

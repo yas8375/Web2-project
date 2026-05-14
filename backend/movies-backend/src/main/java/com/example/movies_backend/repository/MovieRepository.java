@@ -204,10 +204,18 @@ public interface MovieRepository extends JpaRepository<Movie, String> {
 
     @Query(
             value = """
-            SELECT DISTINCT m.title
-            FROM movies m
-            WHERE LOWER(m.title) LIKE LOWER(CONCAT(:prefix, '%'))
-            ORDER BY m.title
+            SELECT ranked.title
+            FROM (
+              SELECT DISTINCT
+                m.title AS title,
+                CASE
+                  WHEN LOWER(m.title) LIKE LOWER(CONCAT(:prefix, '%')) THEN 0
+                  ELSE 1
+                END AS match_rank
+              FROM movies m
+              WHERE LOWER(m.title) LIKE LOWER(CONCAT('%', :prefix, '%'))
+            ) ranked
+            ORDER BY ranked.match_rank, ranked.title
             LIMIT :limit
             """,
             nativeQuery = true)

@@ -9,6 +9,7 @@ import { environment } from '../../../environments/environment';
   standalone: true,
   imports: [CommonModule, RouterLink],
   templateUrl: './browse-genres-page.html',
+  styleUrl: './browse-genres-page.css',
 })
 export class BrowseGenresPageComponent implements OnInit {
   genres: Array<{ id: number; name: string }> = [];
