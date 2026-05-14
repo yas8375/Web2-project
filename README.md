@@ -58,7 +58,6 @@ http://localhost:8081
   `$env:CORS_ALLOWED_ORIGINS="http://localhost:4200,http://127.0.0.1:4200"`
 - This externalizes the allowed frontend origins and replaces hardcoded CORS values in the backend controllers.
 
-
 ## Phase 3 Deliverables Summary
 This repository includes all Phase 3 testing deliverables:
 - Unit tests
@@ -235,3 +234,21 @@ Performance measurement approach:
 - Protected API requests automatically include `Authorization: Bearer <token>` through `HttpInterceptor`.
 - If a protected request returns `401 Unauthorized`, the frontend clears auth state and redirects the user to the login page.
 
+## Authentication & Password Security
+The backend includes basic authentication for customer signup and login.
+
+### Implemented Auth Features
+- `POST /api/signup` creates a new customer account.
+- `POST /api/login` validates customer credentials.
+- `POST /api/logout` invalidates the current session.
+- Customer passwords are hashed with BCrypt before they are stored in the database.
+- Login compares the submitted password against the stored BCrypt hash using `BCryptPasswordEncoder.matches(...)`.
+- Legacy plain-text passwords are upgraded automatically: when an existing customer logs in successfully with an old plain-text password, the backend immediately replaces it with a BCrypt hash.
+
+### Database Password Column
+BCrypt hashes are longer than plain-text passwords, so the `customers.password` column must allow 60 characters:
+
+```sql
+ALTER TABLE customers
+ALTER COLUMN password TYPE VARCHAR(60);
+```
