@@ -119,6 +119,8 @@ Notes:
 - Optional: define `CORS_ALLOWED_ORIGINS` for local development, for example:
   `$env:CORS_ALLOWED_ORIGINS="http://localhost:4200,http://127.0.0.1:4200"`
 - This externalizes the allowed frontend origins and replaces hardcoded CORS values in the backend controllers.
+- HTTPS local development uses a self-signed certificate.
+- Browsers may show a certificate warning unless the certificate is trusted locally on the developer machine.
 
 ## Phase 3 Deliverables Summary
 This repository includes all Phase 3 testing deliverables:
