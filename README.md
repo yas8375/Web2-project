@@ -32,6 +32,34 @@ Frontend runs on:
 http://localhost:4200
 ```
 
+### Frontend (HTTPS - Dev)
+The Angular dev server can also be run over HTTPS locally. This is optional; certificates are generated locally and ignored by git.
+
+1) Install `mkcert` (Windows):
+```powershell
+winget install FiloSottile.mkcert
+```
+
+2) Generate a local certificate for `localhost` (store the files under `backend/movies-backend/.certs`):
+```powershell
+cd d:\Desktop\Web2-project\backend\movies-backend
+mkdir .certs
+cd .certs
+mkcert localhost 127.0.0.1 ::1
+```
+
+3) Run the Angular dev server with SSL:
+```powershell
+cd d:\Desktop\Web2-project\frontend\MovieEnjoy
+npm start -- --ssl true --ssl-cert "d:\Desktop\Web2-project\backend\movies-backend\.certs\localhost+2.pem" --ssl-key "d:\Desktop\Web2-project\backend\movies-backend\.certs\localhost+2-key.pem" --port 4201
+```
+
+Frontend runs on:
+
+```text
+https://localhost:4201
+```
+
 ### Backend
 From `backend/movies-backend`:
 
