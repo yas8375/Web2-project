@@ -54,6 +54,10 @@ http://localhost:8081
 - Do not commit real database credentials or secrets to GitHub.
 - Start PostgreSQL locally before running Spring Boot.
 - If dependencies are already installed for the frontend, `npm install` can be skipped.
+- Optional: define `CORS_ALLOWED_ORIGINS` for local development, for example:
+  `$env:CORS_ALLOWED_ORIGINS="http://localhost:4200,http://127.0.0.1:4200"`
+- This externalizes the allowed frontend origins and replaces hardcoded CORS values in the backend controllers.
+
 
 ## Phase 3 Deliverables Summary
 This repository includes all Phase 3 testing deliverables:
@@ -199,5 +203,10 @@ Some E2E scenarios represent future expected behavior and may fail intentionally
 
 
 
-
+## Phase 6 Frontend Security
+- Protected routes are enforced in Angular using `AuthGuard`.
+- Direct URL access to protected pages such as cart, checkout, and confirmation is prevented for unauthenticated users.
+- JWT tokens returned by `/api/login` are stored in frontend auth state.
+- Protected API requests automatically include `Authorization: Bearer <token>` through `HttpInterceptor`.
+- If a protected request returns `401 Unauthorized`, the frontend clears auth state and redirects the user to the login page.
 
