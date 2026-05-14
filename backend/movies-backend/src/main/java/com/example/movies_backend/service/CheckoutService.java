@@ -95,8 +95,8 @@ public class CheckoutService {
         List<Map<String, Object>> items =
                 (List<Map<String, Object>>) cartSummary.getOrDefault("items", new ArrayList<>());
 
-        if (items.isEmpty()) {
-            items = List.of(Map.of("movieId", "tt0421974", "quantity", 1));
+        if (items == null || items.isEmpty()) {
+            return new CheckoutResponseDTO(false, "Cart is empty");
         }
 
         LocalDate saleDate = LocalDate.now();
