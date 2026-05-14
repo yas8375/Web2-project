@@ -19,7 +19,12 @@ import com.example.movies_backend.service.MovieService;
 
 @RestController
 @RequestMapping("/api")
-@CrossOrigin(originPatterns = {"http://localhost:*", "http://127.0.0.1:*"})
+@CrossOrigin(originPatterns = {
+        "http://localhost:*",
+        "http://127.0.0.1:*",
+        "https://localhost:*",
+        "https://127.0.0.1:*"
+})
 public class MovieController {
 
     @Autowired

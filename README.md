@@ -21,7 +21,7 @@ Full-stack movie rental web application inspired by CS122B, implemented with Ang
 From `frontend/MovieEnjoy`:
 
 ```powershell
-cd d:\Desktop\Web2-project\frontend\MovieEnjoy
+cd C:\path\to\Web2-project\frontend\MovieEnjoy
 npm install
 npm start
 ```
@@ -42,7 +42,7 @@ winget install FiloSottile.mkcert
 
 2) Generate a local certificate for `localhost` (store the files under `backend/movies-backend/.certs`):
 ```powershell
-cd d:\Desktop\Web2-project\backend\movies-backend
+cd C:\path\to\Web2-project\backend\movies-backend
 mkdir .certs
 cd .certs
 mkcert localhost 127.0.0.1 ::1
@@ -50,8 +50,8 @@ mkcert localhost 127.0.0.1 ::1
 
 3) Run the Angular dev server with SSL:
 ```powershell
-cd d:\Desktop\Web2-project\frontend\MovieEnjoy
-npm start -- --ssl true --ssl-cert "d:\Desktop\Web2-project\backend\movies-backend\.certs\localhost+2.pem" --ssl-key "d:\Desktop\Web2-project\backend\movies-backend\.certs\localhost+2-key.pem" --port 4201
+cd C:\path\to\Web2-project\frontend\MovieEnjoy
+npm start -- --ssl true --ssl-cert "C:\path\to\Web2-project\backend\movies-backend\.certs\localhost+2.pem" --ssl-key "C:\path\to\Web2-project\backend\movies-backend\.certs\localhost+2-key.pem" --port 4201
 ```
 
 Frontend runs on:
@@ -64,7 +64,7 @@ https://localhost:4201
 From `backend/movies-backend`:
 
 ```powershell
-cd d:\Desktop\Web2-project\backend\movies-backend
+cd C:\path\to\Web2-project\backend\movies-backend
 $env:DB_URL="jdbc:postgresql://localhost:5432/your_database_name"
 $env:DB_USER="your_db_user"
 $env:DB_PASS="your_db_password"
@@ -93,7 +93,7 @@ $env:DB_PASS="your_db_password"
 
 # 3) Run backend with HTTPS profile
 $env:SPRING_PROFILES_ACTIVE="https"
-$env:SERVER_PORT="8443"   # change if the port is already in use (e.g., 9443)
+$env:SERVER_PORT="8443"   # if 8443 is already in use, use 9443 (or any free port)
 $env:SSL_KEYSTORE_PATH="C:\path\to\Web2-project\backend\movies-backend\.certs\localhost.p12"
 $env:SSL_KEYSTORE_PASSWORD="your_p12_password"
 
@@ -106,7 +106,10 @@ Then open:
 https://localhost:8443
 ```
 
-Note: Browsers will show a certificate warning for self-signed certificates. This is expected for local development.
+Notes:
+- Browsers will show a certificate warning for self-signed certificates. This is expected for local development.
+- If your frontend is also served over HTTPS (e.g., `https://localhost:4201`), you may need to open the backend URL once in the browser and click "Advanced" -> "Continue" so the browser allows calls to the self-signed certificate.
+- If your machine already uses port `8443` for another tool, prefer running the backend HTTPS on `9443` and open `https://localhost:9443` instead.
 
 ### Notes
 - The backend reads database credentials from environment variables.
